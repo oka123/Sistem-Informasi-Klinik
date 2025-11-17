@@ -6,4 +6,4 @@ Sistem ini membantu pengelolaan data pasien, jadwal dokter, rekam medis, serta s
 - Pengelolaan jadwal dokter
 - Penyimpanan dan pencarian rekam medis
 - Pengelolaan stok obat
-- Laporan dan analisis data klinik
+- Laporan dan analisis data klinik.
