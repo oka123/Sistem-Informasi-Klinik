@@ -1,0 +1,9 @@
+jlink --module-path "%JAVA_HOME%\jmods" --add-modules java.base,java.desktop,java.logging,java.sql --output JRE --strip-debug --no-header-files --no-man-pages --compress zip-9
+
+jlink --compress 2 --no-header-files --no-man-pages --module-path $JAVA_HOME/jmods --add-modules java.base,java.desktop --output JRE
+
+jpackage --name KlinikSehatSelalu --input target --main-jar KlinikGUI-Beta.jar --main-class Main.Main --icon clinic.ico --runtime-image JRE --win-dir-chooser --win-menu --win-shortcut --win-per-user-install --dest output --type exe
+
+jpackage --name KlinikSehatSelalu --input ./target/ --main-jar KlinikGUI-Beta.jar --main-class Main.Main --icon ./clinic.ico --win-dir-chooser --win-menu --win-shortcut --dest ./output/ --type exe
+
+C:\Program Files\Java\jdk-25\bin
