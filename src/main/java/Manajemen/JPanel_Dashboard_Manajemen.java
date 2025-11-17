@@ -1,54 +1,133 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JPanel.java to edit this template
- */
+
 package Manajemen;
 
+import Database.KoneksiDatabase;
+import Main.ThreadPoolManager;
 import java.awt.CardLayout;
 import java.awt.Container;
 import java.awt.Image;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.text.NumberFormat;
+import java.util.Locale;
 import javax.swing.ImageIcon;
+import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
-/**
- *
- * @author USER
- */
-public class JPanel_Dashboard_Manajemen extends javax.swing.JPanel {
+// Inheritance (extends)
+// Abstraction (implements)
+public class JPanel_Dashboard_Manajemen extends javax.swing.JPanel implements Manajemen {
+    // Atribut
+    Connection conn = KoneksiDatabase.getConnection();
     
+    // Icon
     private final ImageIcon kunjunganIcon = new ImageIcon(getClass().getResource("/Kunjungan.png"));
     private final ImageIcon pendapatanIcon = new ImageIcon(getClass().getResource("/pendapatan.png"));
     private final ImageIcon patientIcon = new ImageIcon(getClass().getResource("/patient.png"));
     
-    
-    /**
-     * Creates new form JPanel_Dashboard_Admin
-     */
-    public JPanel_Dashboard_Manajemen() {
+    // Constructor
+    public JPanel_Dashboard_Manajemen(String namaManajemen) { 
         initComponents();
         
-        // Menjadwalkan update gambar setelah ukuran tombol tersedia
+        // Set Teks Selamat Datang dengan Nama
+        if (namaManajemen != null && !namaManajemen.isEmpty()) {
+            lblWelcome.setText("Selamat datang kembali, " + namaManajemen + "! Ini adalah ringkasan klinik Anda hari ini.");
+        } else {
+            lblWelcome.setText("Selamat datang kembali, Nama Default Manajemen! Ini adalah ringkasan klinik Anda hari ini.");
+        }
+        
+        // Kode Icon (Tetap sama)
         SwingUtilities.invokeLater(() -> {
-            // Sesuaikan ukuran gambar
-            lblIconKunjungan.setIcon(new ImageIcon(kunjunganIcon.getImage().getScaledInstance(lblIconKunjungan.getWidth(), lblIconKunjungan.getHeight(), Image.SCALE_SMOOTH)));
-            lblIconPendapatan.setIcon(new ImageIcon(pendapatanIcon.getImage().getScaledInstance(lblIconPendapatan.getWidth(), lblIconPendapatan.getHeight(), Image.SCALE_SMOOTH)));
-            lblIconPasien.setIcon(new ImageIcon(patientIcon.getImage().getScaledInstance(lblIconPasien.getWidth(), lblIconPasien.getHeight(), Image.SCALE_SMOOTH)));
+            setResizedIcon(lblIconKunjungan, kunjunganIcon);
+            setResizedIcon(lblIconPendapatan, pendapatanIcon);
+            setResizedIcon(lblIconPasien, patientIcon);
         });
         
         loadDashboardData();
     }
     
+    // Helper method untuk resize icon agar kode lebih rapi
+    private void setResizedIcon(javax.swing.JLabel label, ImageIcon icon) {
+        if (label.getWidth() > 0 && label.getHeight() > 0) {
+            label.setIcon(new ImageIcon(icon.getImage().getScaledInstance(
+                label.getWidth(), label.getHeight(), Image.SCALE_SMOOTH)));
+        }
+    }
+    
+    // Konsep Polimorfisme (Method Overriding)
+    @Override
     public void loadDashboardData() {
-        // Contoh (angka_dari_db harus berupa String)
-//        lblJumlahPasien.setText(angka_dari_db_pasien);
-//        lblJumlahDokter.setText(angka_dari_db_dokter);
+        // TAMPILAN AWAL (Di UI Thread)
+        this.setCursor(java.awt.Cursor.getPredefinedCursor(java.awt.Cursor.WAIT_CURSOR));
+        refreshButton.setEnabled(false);
+        // Ubah teks label jadi indikator loading
+        lblJumlahKunjungan.setText("...");
+        lblTotalPendapatan.setText("...");
+        lblJumlahPasien.setText("...");
+        
+        // 2. PROSES BACKGROUND (Thread Sederhana)
+        ThreadPoolManager.getInstance().submit(() -> {
+            try {
+                if (this.conn != null) {
+                    // Variabel penampung hasil
+                    String txtKunjungan = "0";
+                    String txtPendapatan = "Rp 0";
+                    String txtPasien = "0";
+                    
+                    // Gabungkan semua query dalam satu query
+                    String sql = 
+                        "SELECT " + 
+                            " (SELECT COUNT(*) FROM kunjungan WHERE DATE(tanggal_kunjungan) = CURDATE()) AS total_kunjungan, " + 
+                            " (SELECT SUM(total_bayar) FROM pembayaran WHERE DATE(tanggal_bayar) = CURDATE()) AS total_pendapatan, " + 
+                            " (SELECT COUNT(*) FROM pasien) AS total_pasien";
+                    
+                    // Eksekusi query gabungan
+                    try (PreparedStatement ps = this.conn.prepareStatement(sql); 
+                         ResultSet rs = ps.executeQuery()) {
+                        if (rs.next()) {
+                            // Ambil hasil dari query gabungan
+                            txtKunjungan = String.valueOf(rs.getLong("total_kunjungan"));
+                            txtPendapatan = formatRupiah(rs.getDouble("total_pendapatan"));
+                            txtPasien = String.valueOf(rs.getLong("total_pasien"));
+                        }
+                    }
+                    
+                    // --- 3. UPDATE UI (SELESAI) ---
+                    // Karena kita di dalam Thread, kita harus pakai SwingUtilities untuk update GUI
+                    String finalKunjungan = txtKunjungan;
+                    String finalPendapatan = txtPendapatan;
+                    String finalPasien = txtPasien;
+
+                    SwingUtilities.invokeLater(() -> {
+                        lblJumlahKunjungan.setText(finalKunjungan);
+                        lblTotalPendapatan.setText(finalPendapatan);
+                        lblJumlahPasien.setText(finalPasien);
+                        // Balikin kursor dan refresh button ke normal
+                        setCursor(java.awt.Cursor.getDefaultCursor());
+                        refreshButton.setEnabled(true);
+                    });
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+                // Jika error, balikin kursor juga
+                SwingUtilities.invokeLater(() -> { 
+                    setCursor(java.awt.Cursor.getDefaultCursor());
+                    refreshButton.setEnabled(true);
+                    JOptionPane.showMessageDialog(null, "Gagal memuat data dashboard: " + e.getMessage());
+                });
+            } 
+        });
+    }
+    
+    // Format angka ke Rupiah Indonesia
+    private String formatRupiah(double number) {
+        Locale localeID = new Locale("id", "ID");
+        NumberFormat formatRupiah = NumberFormat.getCurrencyInstance(localeID);
+        return formatRupiah.format(number);
     }
 
-    /**
-     * This method is called from within the constructor to initialize the form.
-     * WARNING: Do NOT modify this code. The content of this method is always
-     * regenerated by the Form Editor.
-     */
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -58,19 +137,20 @@ public class JPanel_Dashboard_Manajemen extends javax.swing.JPanel {
         jSeparator1 = new javax.swing.JSeparator();
         cardTotalKunjungan = new javax.swing.JPanel();
         lblIconKunjungan = new javax.swing.JLabel();
-        lblJumlahPasien = new javax.swing.JLabel();
-        lblTitlePasien = new javax.swing.JLabel();
-        cardTotalPendapatan = new javax.swing.JPanel();
-        lblIconPendapatan = new javax.swing.JLabel();
-        lblJumlahDokter = new javax.swing.JLabel();
-        lblTitleDokter = new javax.swing.JLabel();
-        cardPasien = new javax.swing.JPanel();
-        lblIconPasien = new javax.swing.JLabel();
         lblJumlahKunjungan = new javax.swing.JLabel();
         lblTitleKunjungan = new javax.swing.JLabel();
+        cardTotalPendapatan = new javax.swing.JPanel();
+        lblIconPendapatan = new javax.swing.JLabel();
+        lblTotalPendapatan = new javax.swing.JLabel();
+        lblTitlePendapatan = new javax.swing.JLabel();
+        cardPasien = new javax.swing.JPanel();
+        lblIconPasien = new javax.swing.JLabel();
+        lblJumlahPasien = new javax.swing.JLabel();
+        lblTitlePasien = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
         jSeparator2 = new javax.swing.JSeparator();
-        btnAksesTambahPasien = new javax.swing.JButton();
+        btnLihatLaporan = new javax.swing.JButton();
+        refreshButton = new javax.swing.JLabel();
 
         setBackground(new java.awt.Color(255, 255, 255));
 
@@ -79,7 +159,7 @@ public class JPanel_Dashboard_Manajemen extends javax.swing.JPanel {
         lblJudul.setText("Dashboard");
 
         lblWelcome.setFont(new java.awt.Font("sansserif", 0, 14)); // NOI18N
-        lblWelcome.setForeground(new java.awt.Color(153, 153, 153));
+        lblWelcome.setForeground(new java.awt.Color(102, 102, 102));
         lblWelcome.setText("Selamat datang kembali, [Nama Pemilik Klinik]! Ini adalah ringkasan klinik Anda hari ini.");
 
         jSeparator1.setForeground(new java.awt.Color(0, 0, 0));
@@ -90,12 +170,15 @@ public class JPanel_Dashboard_Manajemen extends javax.swing.JPanel {
 
         lblIconKunjungan.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Kunjungan.png"))); // NOI18N
 
-        lblJumlahPasien.setFont(new java.awt.Font("sansserif", 1, 36)); // NOI18N
-        lblJumlahPasien.setText("1.420");
+        lblJumlahKunjungan.setFont(new java.awt.Font("sansserif", 1, 36)); // NOI18N
+        lblJumlahKunjungan.setForeground(new java.awt.Color(51, 51, 51));
+        lblJumlahKunjungan.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblJumlahKunjungan.setText("2");
+        lblJumlahKunjungan.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
 
-        lblTitlePasien.setFont(new java.awt.Font("sansserif", 0, 14)); // NOI18N
-        lblTitlePasien.setForeground(new java.awt.Color(102, 102, 102));
-        lblTitlePasien.setText("Total Kunjungan");
+        lblTitleKunjungan.setFont(new java.awt.Font("sansserif", 0, 14)); // NOI18N
+        lblTitleKunjungan.setForeground(new java.awt.Color(102, 102, 102));
+        lblTitleKunjungan.setText("Total Kunjungan");
 
         javax.swing.GroupLayout cardTotalKunjunganLayout = new javax.swing.GroupLayout(cardTotalKunjungan);
         cardTotalKunjungan.setLayout(cardTotalKunjunganLayout);
@@ -106,8 +189,8 @@ public class JPanel_Dashboard_Manajemen extends javax.swing.JPanel {
                 .addComponent(lblIconKunjungan, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(cardTotalKunjunganLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(lblJumlahPasien)
-                    .addComponent(lblTitlePasien, javax.swing.GroupLayout.PREFERRED_SIZE, 154, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(lblTitleKunjungan, javax.swing.GroupLayout.PREFERRED_SIZE, 154, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lblJumlahKunjungan, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
         cardTotalKunjunganLayout.setVerticalGroup(
@@ -117,9 +200,9 @@ public class JPanel_Dashboard_Manajemen extends javax.swing.JPanel {
                 .addGroup(cardTotalKunjunganLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
                     .addComponent(lblIconKunjungan, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(cardTotalKunjunganLayout.createSequentialGroup()
-                        .addComponent(lblJumlahPasien)
+                        .addComponent(lblJumlahKunjungan)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(lblTitlePasien)))
+                        .addComponent(lblTitleKunjungan)))
                 .addGap(23, 23, 23))
         );
 
@@ -129,12 +212,14 @@ public class JPanel_Dashboard_Manajemen extends javax.swing.JPanel {
 
         lblIconPendapatan.setIcon(new javax.swing.ImageIcon(getClass().getResource("/pendapatan.png"))); // NOI18N
 
-        lblJumlahDokter.setFont(new java.awt.Font("sansserif", 1, 25)); // NOI18N
-        lblJumlahDokter.setText("Rp. 150.000.000");
+        lblTotalPendapatan.setFont(new java.awt.Font("sansserif", 1, 25)); // NOI18N
+        lblTotalPendapatan.setForeground(new java.awt.Color(51, 51, 51));
+        lblTotalPendapatan.setText("Rp. 150.000.000");
+        lblTotalPendapatan.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
 
-        lblTitleDokter.setFont(new java.awt.Font("sansserif", 0, 14)); // NOI18N
-        lblTitleDokter.setForeground(new java.awt.Color(102, 102, 102));
-        lblTitleDokter.setText("Total Pendapatan");
+        lblTitlePendapatan.setFont(new java.awt.Font("sansserif", 0, 14)); // NOI18N
+        lblTitlePendapatan.setForeground(new java.awt.Color(102, 102, 102));
+        lblTitlePendapatan.setText("Total Pendapatan");
 
         javax.swing.GroupLayout cardTotalPendapatanLayout = new javax.swing.GroupLayout(cardTotalPendapatan);
         cardTotalPendapatan.setLayout(cardTotalPendapatanLayout);
@@ -145,8 +230,8 @@ public class JPanel_Dashboard_Manajemen extends javax.swing.JPanel {
                 .addComponent(lblIconPendapatan, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(cardTotalPendapatanLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(lblTitleDokter, javax.swing.GroupLayout.PREFERRED_SIZE, 172, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(lblJumlahDokter))
+                    .addComponent(lblTitlePendapatan, javax.swing.GroupLayout.PREFERRED_SIZE, 172, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lblTotalPendapatan))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         cardTotalPendapatanLayout.setVerticalGroup(
@@ -156,9 +241,9 @@ public class JPanel_Dashboard_Manajemen extends javax.swing.JPanel {
                 .addGroup(cardTotalPendapatanLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
                     .addComponent(lblIconPendapatan, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(cardTotalPendapatanLayout.createSequentialGroup()
-                        .addComponent(lblJumlahDokter)
+                        .addComponent(lblTotalPendapatan)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(lblTitleDokter)))
+                        .addComponent(lblTitlePendapatan)))
                 .addGap(23, 23, 23))
         );
 
@@ -168,12 +253,15 @@ public class JPanel_Dashboard_Manajemen extends javax.swing.JPanel {
 
         lblIconPasien.setIcon(new javax.swing.ImageIcon(getClass().getResource("/patient.png"))); // NOI18N
 
-        lblJumlahKunjungan.setFont(new java.awt.Font("sansserif", 1, 36)); // NOI18N
-        lblJumlahKunjungan.setText("125");
+        lblJumlahPasien.setFont(new java.awt.Font("sansserif", 1, 36)); // NOI18N
+        lblJumlahPasien.setForeground(new java.awt.Color(51, 51, 51));
+        lblJumlahPasien.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblJumlahPasien.setText("125");
+        lblJumlahPasien.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
 
-        lblTitleKunjungan.setFont(new java.awt.Font("sansserif", 0, 14)); // NOI18N
-        lblTitleKunjungan.setForeground(new java.awt.Color(102, 102, 102));
-        lblTitleKunjungan.setText("Pasien Baru");
+        lblTitlePasien.setFont(new java.awt.Font("sansserif", 0, 14)); // NOI18N
+        lblTitlePasien.setForeground(new java.awt.Color(102, 102, 102));
+        lblTitlePasien.setText("Pasien");
 
         javax.swing.GroupLayout cardPasienLayout = new javax.swing.GroupLayout(cardPasien);
         cardPasien.setLayout(cardPasienLayout);
@@ -183,10 +271,10 @@ public class JPanel_Dashboard_Manajemen extends javax.swing.JPanel {
                 .addContainerGap()
                 .addComponent(lblIconPasien, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(cardPasienLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(lblJumlahKunjungan)
-                    .addComponent(lblTitleKunjungan))
-                .addContainerGap(77, Short.MAX_VALUE))
+                .addGroup(cardPasienLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(lblTitlePasien, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(lblJumlahPasien, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(95, Short.MAX_VALUE))
         );
         cardPasienLayout.setVerticalGroup(
             cardPasienLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -195,25 +283,36 @@ public class JPanel_Dashboard_Manajemen extends javax.swing.JPanel {
                 .addGroup(cardPasienLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
                     .addComponent(lblIconPasien, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(cardPasienLayout.createSequentialGroup()
-                        .addComponent(lblJumlahKunjungan)
+                        .addComponent(lblJumlahPasien)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(lblTitleKunjungan)))
+                        .addComponent(lblTitlePasien)))
                 .addContainerGap(26, Short.MAX_VALUE))
         );
 
         jLabel1.setFont(new java.awt.Font("sansserif", 1, 18)); // NOI18N
+        jLabel1.setForeground(new java.awt.Color(51, 51, 51));
         jLabel1.setText("Akses Cepat");
 
         jSeparator2.setForeground(new java.awt.Color(0, 0, 0));
 
-        btnAksesTambahPasien.setBackground(new java.awt.Color(50, 120, 220));
-        btnAksesTambahPasien.setFont(new java.awt.Font("sansserif", 1, 14)); // NOI18N
-        btnAksesTambahPasien.setForeground(new java.awt.Color(255, 255, 255));
-        btnAksesTambahPasien.setText("Lihat Semua Laporan");
-        btnAksesTambahPasien.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        btnAksesTambahPasien.addActionListener(new java.awt.event.ActionListener() {
+        btnLihatLaporan.setBackground(new java.awt.Color(50, 120, 220));
+        btnLihatLaporan.setFont(new java.awt.Font("sansserif", 1, 14)); // NOI18N
+        btnLihatLaporan.setForeground(new java.awt.Color(255, 255, 255));
+        btnLihatLaporan.setText("📊  Lihat Laporan");
+        btnLihatLaporan.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnLihatLaporan.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnAksesTambahPasienActionPerformed(evt);
+                btnLihatLaporanActionPerformed(evt);
+            }
+        });
+
+        refreshButton.setFont(new java.awt.Font("SansSerif", 1, 28)); // NOI18N
+        refreshButton.setForeground(new java.awt.Color(0, 0, 0));
+        refreshButton.setText("🔄");
+        refreshButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        refreshButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                refreshButtonMouseClicked(evt);
             }
         });
 
@@ -230,11 +329,14 @@ public class JPanel_Dashboard_Manajemen extends javax.swing.JPanel {
                         .addGap(15, 15, 15)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(lblWelcome)
-                            .addComponent(lblJudul)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(lblJudul)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(refreshButton))
                             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                                 .addComponent(jSeparator2, javax.swing.GroupLayout.Alignment.LEADING)
                                 .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                            .addComponent(btnAksesTambahPasien)
+                            .addComponent(btnLihatLaporan)
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(cardTotalKunjungan, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(18, 18, 18)
@@ -247,9 +349,11 @@ public class JPanel_Dashboard_Manajemen extends javax.swing.JPanel {
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(16, 16, 16)
-                .addComponent(lblJudul)
-                .addGap(12, 12, 12)
+                .addGap(22, 22, 22)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                    .addComponent(lblJudul)
+                    .addComponent(refreshButton))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(lblWelcome)
                 .addGap(18, 18, 18)
                 .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -263,25 +367,23 @@ public class JPanel_Dashboard_Manajemen extends javax.swing.JPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btnAksesTambahPasien, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(42, Short.MAX_VALUE))
+                .addComponent(btnLihatLaporan, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(37, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    private void btnAksesTambahPasienActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAksesTambahPasienActionPerformed
-        // TODO add your handling code here:
+    private void btnLihatLaporanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLihatLaporanActionPerformed
         Container parent = this.getParent();
-
-        // 2. Dapatkan CardLayout dari panelContent
         CardLayout cl = (CardLayout) parent.getLayout();
-
-        // 3. Panggil kartu "cardPasien"
         cl.show(parent, "cardLaporan");
-    }//GEN-LAST:event_btnAksesTambahPasienActionPerformed
+    }//GEN-LAST:event_btnLihatLaporanActionPerformed
 
+    private void refreshButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_refreshButtonMouseClicked
+        this.loadDashboardData();
+    }//GEN-LAST:event_refreshButtonMouseClicked
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btnAksesTambahPasien;
+    private javax.swing.JButton btnLihatLaporan;
     private javax.swing.JPanel cardPasien;
     private javax.swing.JPanel cardTotalKunjungan;
     private javax.swing.JPanel cardTotalPendapatan;
@@ -292,12 +394,13 @@ public class JPanel_Dashboard_Manajemen extends javax.swing.JPanel {
     private javax.swing.JLabel lblIconPasien;
     private javax.swing.JLabel lblIconPendapatan;
     private javax.swing.JLabel lblJudul;
-    private javax.swing.JLabel lblJumlahDokter;
     private javax.swing.JLabel lblJumlahKunjungan;
     private javax.swing.JLabel lblJumlahPasien;
-    private javax.swing.JLabel lblTitleDokter;
     private javax.swing.JLabel lblTitleKunjungan;
     private javax.swing.JLabel lblTitlePasien;
+    private javax.swing.JLabel lblTitlePendapatan;
+    private javax.swing.JLabel lblTotalPendapatan;
     private javax.swing.JLabel lblWelcome;
+    private javax.swing.JLabel refreshButton;
     // End of variables declaration//GEN-END:variables
 }
