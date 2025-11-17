@@ -1,51 +1,67 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
+
 package Database;
 
+import io.github.cdimascio.dotenv.Dotenv;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.sql.Statement;
 import javax.swing.JOptionPane;
-//import java.sql.*;
  
 public class KoneksiDatabase {
-
-    Connection conn;
-    public KoneksiDatabase(){
-        try{
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            conn = DriverManager.getConnection("jdbc:mysql://klinik-klinik.c.aivencloud.com:12241/klinik?useCompression=true", "avnadmin", "AVNS_5e6NcoUQA0Q-vk_YdAs");
+    
+    // Atribut
+    private static Connection koneksi;
+    // Load file .env
+    private static final Dotenv dotenv = Dotenv.load();
+    
+    public static Connection getConnection() {
+        try {
+            // Memastikan koneksi baru hanya dibuat jika belum ada atau sudah tertutup
+            if (koneksi == null || koneksi.isClosed()) {
+                String hostname = dotenv.get("DB_HOST");
+                String port = dotenv.get("DB_PORT");
+                String database = dotenv.get("DB_DATABASE");
+                String username = dotenv.get("DB_USERNAME");
+                String password = dotenv.get("DB_PASSWORD");
+                
+                try {
+                    // Load Driver (Opsional untuk Java terbaru, tapi bagus untuk kompatibilitas)
+                    Class.forName("com.mysql.cj.jdbc.Driver");
+                    // Buat URL koneksi dengan atribut
+                    String url = String.format("jdbc:mysql://%s:%s/%s?useCompression=true", hostname, port, database);
+                    // Buat Koneksi Baru
+                    koneksi = DriverManager.getConnection(url, username, password);
+                    
+                    // Sinkronisasi zona waktu (Asia/Singapore sesuai WITA)
+                    // Menggunakan try-with-resources agar 'stmt' otomatis ditutup
+                    try (Statement stmt = koneksi.createStatement()) {
+                        stmt.executeUpdate("SET time_zone = 'Asia/Singapore'");
+                    }
+                } catch (ClassNotFoundException | SQLException e) {
+                    JOptionPane.showMessageDialog(null, "Gagal Koneksi Database: " + e.getMessage());
+                    // Return null atau lempar exception agar program tahu koneksi gagal
+                    return null;
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
-        catch(ClassNotFoundException | SQLException e){
-            JOptionPane.showMessageDialog(null, e);
-        }
+        
+        // Kembalikan koneksi yang SUDAH ADA (Reuse)
+        return koneksi;
     }
-    // Atribut untuk koneksi database
-    //private final String hostname;
-//    private final String database;
-//    private final String port;
-//    private final String username;
-//    private final String password;
     
-//    public KoneksiDatabase () {
-//        this.hostname = "ywhq0t.h.filess.io";
-//        this.database = "klinik_uncleroll";
-//        this.port = "61002";
-//        this.username = "klinik_uncleroll";
-//        this.password = "31f424b42139b5f830f0f408f0892aaf30d7f095";
-//    }
-    
-    // Metode untuk membuat koneksi ke database
-//    public Connection connect() throws SQLException {
-//        // Menyusun URL koneksi dengan menggunakan atribut
-//        String url = String.format("jdbc:mysql://%s:%s/%s?useCompression=true", hostname, port, database);
-//        // Mengembalikan koneksi
-//        return DriverManager.getConnection(url, username, password);
-//    }
-    
-    public Connection getConnection() throws SQLException{
-        return conn;
+    public static void closeConnection() {
+        try {
+            if (koneksi != null && !koneksi.isClosed()) {
+                koneksi.close();
+            }
+        } catch (SQLException e) {
+            System.err.println("Gagal menutup koneksi database: " + e.getMessage());
+        } finally {
+            // Penting: Set ke null agar saat login lagi, getConnection() membuat objek baru
+            koneksi = null;
+        }
     }
 }

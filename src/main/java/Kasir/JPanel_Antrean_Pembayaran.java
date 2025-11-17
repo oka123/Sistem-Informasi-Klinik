@@ -1,76 +1,174 @@
+
 package Kasir;
 
-import javax.swing.*;
+import Database.KoneksiDatabase;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
-import java.awt.*;
 
-public class JPanel_Antrean_Pembayaran extends JPanel {
-
-    private JTable table;
-    private DefaultTableModel model;
-    private JTextField txtCari;
-    private JButton btnProses, btnRefresh;
+public class JPanel_Antrean_Pembayaran extends javax.swing.JPanel {
 
     public JPanel_Antrean_Pembayaran() {
-        setLayout(new BorderLayout());
+        initComponents();
+        tampilkanAntrean();
 
-        String[] kolom = {"ID", "Nama Pasien", "Layanan", "Biaya", "Status"};
-        model = new DefaultTableModel(kolom, 0);
-        table = new JTable(model);
-
-        JScrollPane scroll = new JScrollPane(table);
-
-        JPanel panelAtas = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        txtCari = new JTextField(20);
-        btnRefresh = new JButton("Refresh");
-        panelAtas.add(new JLabel("Cari Nama:"));
-        panelAtas.add(txtCari);
-        panelAtas.add(btnRefresh);
-
-        btnProses = new JButton("Proses Pembayaran");
-
-        add(panelAtas, BorderLayout.NORTH);
-        add(scroll, BorderLayout.CENTER);
-        add(btnProses, BorderLayout.SOUTH);
-
-        loadData();
-        setupListeners();
+        // Listener tombol proses pembayaran
+        btnProsesPembayaran.addActionListener((java.awt.event.ActionEvent evt) -> {
+            btnProsesPembayaranActionPerformed(evt);
+        });
     }
 
-    private void loadData() {
-        model.setRowCount(0);
-        for (String[] row : Dummy_Data.getAntrean()) {
-            model.addRow(row);
+    // =========================
+    // METHOD TAMPILKAN ANTREAN
+    // =========================
+  public final void tampilkanAntrean() {
+    DefaultTableModel model = new DefaultTableModel();
+    model.addColumn("ID Kunjungan"); 
+    model.addColumn("Nama Pasien");  
+    model.addColumn("Layanan");      
+    model.addColumn("Total Tagihan"); 
+    model.addColumn("Status");        
+
+    java.text.NumberFormat kursIndonesia = java.text.NumberFormat.getCurrencyInstance(
+            new java.util.Locale("id", "ID")
+    );
+
+    try {
+        // SQL yang diperbaiki: Mengambil nama layanan dari master layanan dan menjumlahkan biaya
+        try (Connection conn = KoneksiDatabase.getConnection()) {
+            // SQL yang diperbaiki: Mengambil nama layanan dari master layanan dan menjumlahkan biaya
+            String sql =
+                    "SELECT " +
+                    "    k.kunjungan_id, " +
+                    "    pas.nama_pasien, " +
+                    "    GROUP_CONCAT(l.nama_layanan SEPARATOR ', ') AS daftar_layanan, " +
+                    "    SUM(dl.biaya_saat_ini) AS total_tagihan, " +
+                    "    k.status_kunjungan " +
+                    "FROM kunjungan k " +
+                    "JOIN pasien pas ON k.pasien_id = pas.pasien_id " +
+                    "LEFT JOIN detail_layanan dl ON k.kunjungan_id = dl.kunjungan_id " +
+                    "LEFT JOIN layanan l ON dl.layanan_id = l.layanan_id " +
+                    "WHERE k.status_kunjungan = 'Menunggu Pembayaran' " +
+                    "GROUP BY k.kunjungan_id";
+            
+            Statement stat = conn.createStatement();
+            ResultSet res = stat.executeQuery(sql);
+            
+            while (res.next()) {
+                // Mengambil hasil SUM dari detail_layanan
+                double biayaAngka = res.getDouble("total_tagihan");
+                String biayaFormatted = kursIndonesia.format(biayaAngka);
+                
+                model.addRow(new Object[] {
+                    res.getString("kunjungan_id"),
+                    res.getString("nama_pasien"),
+                    // Menampilkan daftar layanan yang sudah digabung (GROUP_CONCAT)
+                    res.getString("daftar_layanan") == null ? "Tidak ada layanan" : res.getString("daftar_layanan"),
+                    biayaFormatted,
+                    res.getString("status_kunjungan")
+                });
+            }
+            
+            tblAntreanBayar.setModel(model);
+            
+            res.close();
+            stat.close();
         }
+
+    } catch (SQLException e) {
+        JOptionPane.showMessageDialog(this, "Gagal memuat antrean: " + e.getMessage());
+        e.printStackTrace(); // Penting untuk debugging
     }
+}
+    // ==================================
+    // EVENT PROSES PEMBAYARAN (VERSI 1)
+    // ==================================
+    private void btnProsesPembayaranActionPerformed(
+            java.awt.event.ActionEvent evt) {
 
-    private void setupListeners() {
-        btnRefresh.addActionListener(e -> loadData());
+        int baris = tblAntreanBayar.getSelectedRow();
 
-        txtCari.addCaretListener(e -> {
-            String keyword = txtCari.getText().toLowerCase();
-            model.setRowCount(0);
-            for (String[] row : Dummy_Data.getAntrean()) {
-                if (row[1].toLowerCase().contains(keyword)) {
-                    model.addRow(row);
-                }
+    if (baris != -1) {
+        // LOGIKA: Ambil ID Kunjungan dari kolom indeks 0
+        String idKunjungan = tblAntreanBayar.getValueAt(baris, 0).toString();
+
+        javax.swing.JFrame parentFrame = 
+                (javax.swing.JFrame) javax.swing.SwingUtilities.getWindowAncestor(this);
+
+        // Membuka JDialog Pembayaran dengan mengirimkan ID Kunjungan
+        JDialog_Pembayaran dialog = new JDialog_Pembayaran(parentFrame, true, idKunjungan);
+        dialog.setVisible(true);
+
+        // Refresh tabel setelah pembayaran diproses
+        tampilkanAntrean();
+
+    } else {
+        JOptionPane.showMessageDialog(this, "Pilih data dalam antrean terlebih dahulu!");
+    }
+}
+    /**
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is always
+     * regenerated by the Form Editor.
+     */
+    @SuppressWarnings("unchecked")
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    private void initComponents() {
+
+        jLabel1 = new javax.swing.JLabel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        tblAntreanBayar = new javax.swing.JTable();
+        jPanel1 = new javax.swing.JPanel();
+        btnProsesPembayaran = new javax.swing.JButton();
+
+        setLayout(new java.awt.BorderLayout());
+
+        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel1.setText("Antrean Pembayaran");
+        add(jLabel1, java.awt.BorderLayout.PAGE_START);
+
+        tblAntreanBayar.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null}
+            },
+            new String [] {
+                "ID Kunjungan", "Nama Pasien", "Layanan", "Total Tagihan", "Status"
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.Integer.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
             }
         });
+        jScrollPane1.setViewportView(tblAntreanBayar);
 
-        btnProses.addActionListener(e -> {
-            int selectedRow = table.getSelectedRow();
-            if (selectedRow < 0) {
-                JOptionPane.showMessageDialog(this, "Pilih data dulu!", "Warning", JOptionPane.WARNING_MESSAGE);
-                return;
-            }
+        add(jScrollPane1, java.awt.BorderLayout.CENTER);
 
-            String id = model.getValueAt(selectedRow, 0).toString();
-            String nama = model.getValueAt(selectedRow, 1).toString();
-            String biaya = model.getValueAt(selectedRow, 3).toString();
+        jPanel1.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT));
 
-            new Dialog_Pembayaran(null, true, id, nama, biaya).setVisible(true);
-            loadData();
-        });
-    }
+        btnProsesPembayaran.setText("Proses Pembayaran");
+        jPanel1.add(btnProsesPembayaran);
+
+        add(jPanel1, java.awt.BorderLayout.PAGE_END);
+    }// </editor-fold>//GEN-END:initComponents
+
+
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnProsesPembayaran;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JTable tblAntreanBayar;
+    // End of variables declaration//GEN-END:variables
+
 }
 

@@ -4,10 +4,9 @@
 
 package Main;
 
+import Database.KoneksiDatabase;
 import java.sql.Connection;
 import java.sql.SQLException;
-import Database.KoneksiDatabase;
-
 import java.awt.Font;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
@@ -39,13 +38,12 @@ public class Main {
         UIManager.put("Table.font", globalFont);     // Untuk tabel
         
 //      Uji Coba Koneksi ke DB
-        KoneksiDatabase koneksiDB = new KoneksiDatabase();
         try {
-            Connection conn = koneksiDB.getConnection();
-            if (conn != null) {
-                JOptionPane.showMessageDialog(null, "Koneksi ke Database Berhasil, Silahkan Login!");
+            try (Connection conn = KoneksiDatabase.getConnection()) {
+                if (conn == null) {
+                    JOptionPane.showMessageDialog(null, "Koneksi ke Database Gagal, Periksa Koneksi Internet Anda!");
+                }
             }
-            conn.close();
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(null, "Terjadi kesalahan saat koneksi: " + e.getMessage());
         }
