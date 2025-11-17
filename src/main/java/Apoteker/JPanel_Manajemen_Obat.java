@@ -201,21 +201,31 @@ private void setupListeners() {
 
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
+<<<<<<< HEAD
         txtCariObat = new javax.swing.JTextField();
         btnCari = new javax.swing.JButton();
         jSeparator1 = new javax.swing.JSeparator();
+=======
+        txtCari = new javax.swing.JTextField();
+        btnCari = new javax.swing.JButton();
+>>>>>>> 0a4dd43 ()
         btnTambahObat = new javax.swing.JButton();
         btnEditObat = new javax.swing.JButton();
         btnHapusObat = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         tblDataObat = new javax.swing.JTable();
+<<<<<<< HEAD
         jScrollBar1 = new javax.swing.JScrollBar();
 
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+=======
+
+>>>>>>> 0a4dd43 ()
         setLayout(new java.awt.BorderLayout());
 
         jLabel1.setText("Cari Obat");
         jPanel1.add(jLabel1);
+<<<<<<< HEAD
 
         txtCariObat.setPreferredSize(new java.awt.Dimension(140, 22));
         jPanel1.add(txtCariObat);
@@ -233,6 +243,13 @@ private void setupListeners() {
         jSeparator1.setPreferredSize(new java.awt.Dimension(70, 10));
         jPanel1.add(jSeparator1);
 
+=======
+        jPanel1.add(txtCari);
+
+        btnCari.setText("Cari");
+        jPanel1.add(btnCari);
+
+>>>>>>> 0a4dd43 ()
         btnTambahObat.setText("Tambah Obat");
         jPanel1.add(btnTambahObat);
 
@@ -252,6 +269,7 @@ private void setupListeners() {
                 {null, null, null, null, null}
             },
             new String [] {
+<<<<<<< HEAD
                 "ID Obat", "Nama Obat", "Satuan", "Harga", "Stok"
             }
         ) {
@@ -289,6 +307,16 @@ private void setupListeners() {
         }
     }//GEN-LAST:event_btnCariActionPerformed
 
+=======
+                "ID Obat", "Nama Obat", "Satuan", "Harga Jual", "Stok"
+            }
+        ));
+        jScrollPane1.setViewportView(tblDataObat);
+
+        add(jScrollPane1, java.awt.BorderLayout.CENTER);
+    }// </editor-fold>//GEN-END:initComponents
+
+>>>>>>> 0a4dd43 ()
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCari;
@@ -297,6 +325,7 @@ private void setupListeners() {
     private javax.swing.JButton btnTambahObat;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
+<<<<<<< HEAD
     private javax.swing.JScrollBar jScrollBar1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSeparator jSeparator1;
@@ -305,3 +334,10 @@ private void setupListeners() {
     // End of variables declaration//GEN-END:variables
 
 }
+=======
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JTable tblDataObat;
+    private javax.swing.JTextField txtCari;
+    // End of variables declaration//GEN-END:variables
+}
+>>>>>>> 0a4dd43 ()

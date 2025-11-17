@@ -11,6 +11,7 @@ public class JFrame_Main_Apoteker extends javax.swing.JFrame {
 
     private JPanel_Antrean_Resep panelAntreanResep;
     private JPanel_Manajemen_Obat panelManajemenObat;
+<<<<<<< HEAD
   
     public JFrame_Main_Apoteker() {
         initComponents();
@@ -22,6 +23,23 @@ public class JFrame_Main_Apoteker extends javax.swing.JFrame {
         panelAntreanResep = new JPanel_Antrean_Resep(this);
         panelManajemenObat = new JPanel_Manajemen_Obat(this);
         
+=======
+    /**
+     * Creates new form JFrame_Main_Apoteker
+     */
+    
+    public JFrame_Main_Apoteker() {
+        initComponents();
+        setupMainFrame();
+    }
+
+    private void setupMainFrame() {
+        // Inisialisasi Panel
+        panelAntreanResep = new JPanel_Antrean_Resep(this); // Mengirim reference frame
+        panelManajemenObat = new JPanel_Manajemen_Obat(this); // Mengirim reference frame
+        
+        // Dapatkan CardLayout dari panelKonten
+>>>>>>> 0a4dd43 ()
         CardLayout cardLayout = (CardLayout) panelKonten.getLayout();
         
         panelKonten.add(panelAntreanResep, "AntreanResep");
@@ -32,8 +50,16 @@ public class JFrame_Main_Apoteker extends javax.swing.JFrame {
         btnAntreanResep.addActionListener(e -> cardLayout.show(panelKonten, "AntreanResep"));
         btnManajemenObat.addActionListener(e -> cardLayout.show(panelKonten, "ManajemenObat"));
         
+<<<<<<< HEAD
     
     }
+=======
+        // Mengubah teks btnAntreanResep agar tidak terpotong
+        btnAntreanResep.setText("Antrean Resep");
+    }
+    
+    
+>>>>>>> 0a4dd43 ()
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -47,6 +73,7 @@ public class JFrame_Main_Apoteker extends javax.swing.JFrame {
         btnAntreanResep = new javax.swing.JButton();
         btnManajemenObat = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
+<<<<<<< HEAD
         btn_logout = new javax.swing.JButton();
         panelKonten = new javax.swing.JPanel();
 
@@ -62,10 +89,22 @@ public class JFrame_Main_Apoteker extends javax.swing.JFrame {
 
         btnManajemenObat.setText("Manajemen Obat");
         btnManajemenObat.setName("btnManajemenObat"); // NOI18N
+=======
+        panelKonten = new javax.swing.JPanel();
+
+        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+
+        jPanel1.setBackground(new java.awt.Color(34, 40, 49));
+
+        btnAntreanResep.setText("Antrean Resep");
+
+        btnManajemenObat.setText("Manajemen Obat");
+>>>>>>> 0a4dd43 ()
 
         jLabel1.setForeground(new java.awt.Color(255, 255, 255));
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel1.setText("Menu Apoteker");
+<<<<<<< HEAD
         jLabel1.setName("jLabel1"); // NOI18N
 
         btn_logout.setBackground(new java.awt.Color(220, 53, 69));
@@ -80,12 +119,15 @@ public class JFrame_Main_Apoteker extends javax.swing.JFrame {
                 btn_logoutActionPerformed(evt);
             }
         });
+=======
+>>>>>>> 0a4dd43 ()
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
+<<<<<<< HEAD
                 .addGap(22, 22, 22)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(btn_logout)
@@ -94,6 +136,14 @@ public class JFrame_Main_Apoteker extends javax.swing.JFrame {
                         .addComponent(btnManajemenObat, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(btnAntreanResep, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addContainerGap(23, Short.MAX_VALUE))
+=======
+                .addContainerGap()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(btnManajemenObat, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btnAntreanResep, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+>>>>>>> 0a4dd43 ()
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -104,20 +154,28 @@ public class JFrame_Main_Apoteker extends javax.swing.JFrame {
                 .addComponent(btnAntreanResep, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(btnManajemenObat, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
+<<<<<<< HEAD
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 164, Short.MAX_VALUE)
                 .addComponent(btn_logout, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(49, 49, 49))
+=======
+                .addContainerGap(253, Short.MAX_VALUE))
+>>>>>>> 0a4dd43 ()
         );
 
         getContentPane().add(jPanel1, java.awt.BorderLayout.LINE_START);
 
+<<<<<<< HEAD
         panelKonten.setName("panelKonten"); // NOI18N
+=======
+>>>>>>> 0a4dd43 ()
         panelKonten.setLayout(new java.awt.CardLayout());
         getContentPane().add(panelKonten, java.awt.BorderLayout.CENTER);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+<<<<<<< HEAD
     private void btn_logoutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_logoutActionPerformed
         // TODO add your handling code here:
         // Tampilkan konfirmasi
@@ -136,6 +194,8 @@ public class JFrame_Main_Apoteker extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_btn_logoutActionPerformed
 
+=======
+>>>>>>> 0a4dd43 ()
     /**
      * @param args the command line arguments
      */
@@ -155,7 +215,10 @@ public static void main(String args[]) {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAntreanResep;
     private javax.swing.JButton btnManajemenObat;
+<<<<<<< HEAD
     private javax.swing.JButton btn_logout;
+=======
+>>>>>>> 0a4dd43 ()
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel panelKonten;

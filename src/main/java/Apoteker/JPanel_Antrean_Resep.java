@@ -110,15 +110,28 @@ public class JPanel_Antrean_Resep extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+<<<<<<< HEAD
         jScrollPane2 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
         tblAntreanResep = new javax.swing.JLabel();
+=======
+        jLabel1 = new javax.swing.JLabel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        tblAntreanResep = new javax.swing.JTable();
+>>>>>>> 0a4dd43 ()
         jPanel1 = new javax.swing.JPanel();
         btnProsesResep = new javax.swing.JButton();
 
         setLayout(new java.awt.BorderLayout());
 
+<<<<<<< HEAD
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
+=======
+        jLabel1.setText("Antrean Resep Belum Diambil");
+        add(jLabel1, java.awt.BorderLayout.PAGE_START);
+
+        tblAntreanResep.setModel(new javax.swing.table.DefaultTableModel(
+>>>>>>> 0a4dd43 ()
             new Object [][] {
                 {null, null, null, null},
                 {null, null, null, null},
@@ -126,6 +139,7 @@ public class JPanel_Antrean_Resep extends javax.swing.JPanel {
                 {null, null, null, null}
             },
             new String [] {
+<<<<<<< HEAD
                 "ID Pasien", "Waktu", "Nama Pasien", "Dokter"
             }
         ));
@@ -144,6 +158,14 @@ public class JPanel_Antrean_Resep extends javax.swing.JPanel {
         tblAntreanResep.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         tblAntreanResep.setText("Antrean Resep");
         add(tblAntreanResep, java.awt.BorderLayout.PAGE_START);
+=======
+                "ID Resep", "Waktu", "Nama Pasien", "Nama Dokter"
+            }
+        ));
+        jScrollPane1.setViewportView(tblAntreanResep);
+
+        add(jScrollPane1, java.awt.BorderLayout.CENTER);
+>>>>>>> 0a4dd43 ()
 
         jPanel1.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT));
 
@@ -156,9 +178,16 @@ public class JPanel_Antrean_Resep extends javax.swing.JPanel {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnProsesResep;
+<<<<<<< HEAD
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTable jTable1;
     private javax.swing.JLabel tblAntreanResep;
+=======
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JTable tblAntreanResep;
+>>>>>>> 0a4dd43 ()
     // End of variables declaration//GEN-END:variables
 }
