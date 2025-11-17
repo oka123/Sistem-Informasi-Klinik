@@ -64,6 +64,13 @@ Sistem ini membantu pengelolaan data pasien, jadwal dokter, rekam medis, serta s
 - Pengelolaan jadwal dokter
 - Penyimpanan dan pencarian rekam medis
 - Pengelolaan stok obat
+<<<<<<< HEAD
 - Laporan dan analisis data klinik
 >>>>>>> 10ddf57 (updated readme)
+<<<<<<< HEAD
 >>>>>>> a2ca410 (updated readme)
+=======
+=======
+- Laporan dan analisis data klinik.
+>>>>>>> 3446eec (test)
+>>>>>>> 74a1288 (test)
