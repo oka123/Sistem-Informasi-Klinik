@@ -11,7 +11,7 @@ import javax.swing.JOptionPane;
 //import java.sql.*;
  
 public class KoneksiDatabase {
-
+//test123
     Connection conn;
     public KoneksiDatabase(){
         try{
