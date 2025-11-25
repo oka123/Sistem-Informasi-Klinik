@@ -45,6 +45,11 @@
             <version>RELEASE270</version>
 >>>>>>> 8cae046 (final (kayaknya)2)
         </dependency>
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml</artifactId>
+            <version>5.5.0</version>
+        </dependency>
     </dependencies>
 
     <properties>

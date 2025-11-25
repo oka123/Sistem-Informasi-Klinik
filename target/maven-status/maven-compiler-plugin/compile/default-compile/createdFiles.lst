@@ -2,13 +2,16 @@ Manajemen\JFrame_Main_Manajemen$6.class
 Resepsionis\JDialog_Form_Pasien.class
 Resepsionis\JPanel_Registrasi_Kunjungan$2.class
 Kasir\JFrame_Main_Kasir$1.class
+Manajemen\JPanel_Dashboard_Manajemen$2.class
 Kasir\JPanel_Antrean_Pembayaran.class
+Manajemen\JPanel_Laporan$3.class
 Resepsionis\JDialog_Form_Pasien$3.class
 Resepsionis\JFrame_Main_Resepsionis$8.class
 Resepsionis\JDialog_Form_Jadwal.class
 Dokter\JPanel_Antrean_Pasien.class
 Dokter\JPanel_Riwayat_Rekam_Medis$1.class
 Resepsionis\JPanel_Dashboard_Resepsionis$1.class
+Manajemen\JDialog_Form_Dokter$3.class
 Apoteker\Obat.class
 Manajemen\JPanel_Manajemen_Dokter$4.class
 Resepsionis\JFrame_Main_Resepsionis$5.class
@@ -26,6 +29,7 @@ Resepsionis\JPanel_Manajemen_Pasien.class
 Resepsionis\JPanel_Dashboard_Resepsionis.class
 Resepsionis\JPanel_Informasi_Dokter.class
 Resepsionis\JPanel_Registrasi_Kunjungan$DokterItem.class
+Manajemen\JPanel_Manajemen_User$5.class
 Dokter\JDialog_Rekam_Medis.class
 Resepsionis\JPanel_Manajemen_Jadwal.class
 Resepsionis\JFrame_Main_Resepsionis$10.class
@@ -66,8 +70,8 @@ Main\JFrame_Login$4.class
 Resepsionis\JPanel_Informasi_Dokter$3.class
 Resepsionis\JPanel_Manajemen_Jadwal$2.class
 Resepsionis\JDialog_Form_Jadwal$DokterItem.class
-Manajemen\JDialog_Form_User$3$1.class
 Apoteker\JDialogProsesResep.class
+Manajemen\JPanel_Manajemen_User$4.class
 Manajemen\JFrame_Main_Manajemen$2.class
 Resepsionis\JFrame_Main_Resepsionis$4.class
 Manajemen\JPanel_Laporan$2.class
@@ -82,6 +86,7 @@ Resepsionis\JFrame_Main_Resepsionis$1.class
 Dokter\JPanel_Riwayat_Rekam_Medis$2.class
 Dokter\JPanel_Riwayat_Rekam_Medis.class
 Manajemen\JPanel_Manajemen_Dokter.class
+Manajemen\JPanel_Dashboard_Manajemen$3.class
 Manajemen\JPanel_Manajemen_Dokter$3.class
 Dokter\JDialog_Rekam_Medis$2.class
 Resepsionis\JDialog_Form_Pasien$4.class
@@ -94,7 +99,6 @@ Database\KoneksiDatabase.class
 Resepsionis\JFrame_Main_Resepsionis$3.class
 Apoteker\SistemFarmasiApotekerLogic.class
 Dokter\JFrame_Main_Dokter$4.class
-Main\JFrame_Login$5.class
 Resepsionis\JFrame_Main_Resepsionis.class
 Manajemen\JFrame_Main_Manajemen$8.class
 Manajemen\JFrame_Main_Manajemen$4.class
