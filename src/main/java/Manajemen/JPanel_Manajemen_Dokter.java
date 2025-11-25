@@ -268,6 +268,7 @@ public final class JPanel_Manajemen_Dokter extends javax.swing.JPanel {
             }
         });
 
+        tblDokter.setAutoCreateRowSorter(true);
         tblDokter.setFont(new java.awt.Font("SansSerif", 0, 14)); // NOI18N
         tblDokter.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {

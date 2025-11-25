@@ -187,6 +187,7 @@ public class JPanel_Manajemen_User extends javax.swing.JPanel {
             }
         });
 
+        tblUser.setAutoCreateRowSorter(true);
         tblUser.setFont(new java.awt.Font("SansSerif", 0, 14)); // NOI18N
         tblUser.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -327,13 +328,16 @@ public class JPanel_Manajemen_User extends javax.swing.JPanel {
 
     private void btnEditUserActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditUserActionPerformed
         int selectedRow = tblUser.getSelectedRow();
+        
         if (selectedRow == -1) {
             JOptionPane.showMessageDialog(this, "Mohon pilih baris data user yang ingin diubah.", "Peringatan", JOptionPane.WARNING_MESSAGE);
             return;
         }
-
+        
+        int modelRow = tblUser.convertRowIndexToModel(selectedRow);
+        
         DefaultTableModel model = (DefaultTableModel) tblUser.getModel();
-        String userId = model.getValueAt(selectedRow, 0).toString();
+        String userId = model.getValueAt(modelRow, 0).toString();
 
         JFrame parentFrame = (JFrame) SwingUtilities.getWindowAncestor(this); 
         
@@ -351,10 +355,12 @@ public class JPanel_Manajemen_User extends javax.swing.JPanel {
             JOptionPane.showMessageDialog(this, "Mohon pilih baris data user yang ingin dihapus.", "Peringatan", JOptionPane.WARNING_MESSAGE);
             return;
         }
-
+        int modelRow = tblUser.convertRowIndexToModel(selectedRow);
+        
         DefaultTableModel model = (DefaultTableModel) tblUser.getModel();
-        String userId = model.getValueAt(selectedRow, 0).toString();
-        String username = model.getValueAt(selectedRow, 1).toString();
+        
+        String userId = model.getValueAt(modelRow, 0).toString();
+        String username = model.getValueAt(modelRow, 1).toString();
 
         int confirm = JOptionPane.showConfirmDialog(this, 
                 "Apakah Anda yakin ingin menghapus User: " + username + "?", 

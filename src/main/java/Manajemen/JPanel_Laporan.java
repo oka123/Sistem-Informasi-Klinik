@@ -118,6 +118,7 @@ public class JPanel_Laporan extends javax.swing.JPanel {
             }
         });
 
+        tblLaporan.setAutoCreateRowSorter(true);
         tblLaporan.setFont(new java.awt.Font("SansSerif", 0, 14)); // NOI18N
         tblLaporan.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
