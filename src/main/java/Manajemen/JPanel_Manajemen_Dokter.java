@@ -16,7 +16,6 @@ import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableModel;
 
 public final class JPanel_Manajemen_Dokter extends javax.swing.JPanel {
-    
     // Constructor
     public JPanel_Manajemen_Dokter() {
         initComponents();

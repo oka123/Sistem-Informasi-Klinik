@@ -25,7 +25,6 @@ import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 public class JPanel_Laporan extends javax.swing.JPanel {
-
 //    Deklarasi Atribut
     private final NumberFormat formatRupiah;
     private String tempTotalText = "";
@@ -84,7 +83,7 @@ public class JPanel_Laporan extends javax.swing.JPanel {
         comboJenisLaporan.setBackground(new java.awt.Color(50, 120, 220));
         comboJenisLaporan.setFont(new java.awt.Font("SansSerif", 0, 18)); // NOI18N
         comboJenisLaporan.setForeground(new java.awt.Color(255, 255, 255));
-        comboJenisLaporan.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Laporan Pendapatan", "Laporan Kunjungan Pasien", "Laporan Penjualan Obat", " " }));
+        comboJenisLaporan.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Laporan Pendapatan", "Laporan Kunjungan Pasien", "Laporan Penjualan Obat" }));
         comboJenisLaporan.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         comboJenisLaporan.setOpaque(true);
         comboJenisLaporan.addActionListener(new java.awt.event.ActionListener() {
@@ -161,6 +160,7 @@ public class JPanel_Laporan extends javax.swing.JPanel {
         btnExportData.setFont(new java.awt.Font("SansSerif", 0, 18)); // NOI18N
         btnExportData.setForeground(new java.awt.Color(255, 255, 255));
         btnExportData.setText("Export Data");
+        btnExportData.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         btnExportData.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnExportDataActionPerformed(evt);
@@ -275,10 +275,8 @@ public class JPanel_Laporan extends javax.swing.JPanel {
                 switch (jenisLaporan) {
                     case "Laporan Pendapatan" -> resultModel = loadLaporanPendapatans(sqlDari, sqlSampai);
                     case "Laporan Kunjungan Pasien" -> resultModel = loadLaporanKunjungans(sqlDari, sqlSampai);
-                    // case Laporan Obat: Saya perhatikan di kode Anda tertulis "Laporan Penjualan Obat" di switch
-                    // tapi "Laporan Penggunaan Obat" di string. Sesuaikan dengan string di JComboBox Anda.
-                    // Di sini saya pakai "Laporan Penggunaan Obat" sesuai method loadLaporanObat sebelumnya.
-                    case "Laporan Penggunaan Obat" -> resultModel = loadLaporanObats(sqlDari, sqlSampai);
+                    case "Laporan Penjualan Obat" -> resultModel = loadLaporanObats(sqlDari, sqlSampai);
+                    default -> JOptionPane.showMessageDialog(this, "Jenis laporan tidak valid.");
                 }
             } catch (Exception e) {
                 errorMsg = e.getMessage();
@@ -329,8 +327,9 @@ public class JPanel_Laporan extends javax.swing.JPanel {
 //            default -> JOptionPane.showMessageDialog(this, "Jenis laporan tidak valid.");
 //        }
 //        this.setCursor(Cursor.getDefaultCursor());
-//    }
-//    
+
+    }
+    
 //    private void loadLaporanPendapatan(java.sql.Date dari, java.sql.Date sampai) {
 //        DefaultTableModel model = new DefaultTableModel();
 //        model.setColumnIdentifiers(new Object[]{"ID Pembayaran", "Tanggal Bayar", "Kasir", "Metode", "Biaya Jasa", "Biaya Obat", "Total Bayar"});
@@ -378,92 +377,92 @@ public class JPanel_Laporan extends javax.swing.JPanel {
 //            JOptionPane.showMessageDialog(this, "Gagal memuat laporan pendapatan: " + e.getMessage());
 //            e.printStackTrace();
 //        }
-    }
+//    }
     
-    private void loadLaporanKunjungan(java.sql.Date dari, java.sql.Date sampai) {
-        DefaultTableModel model = new DefaultTableModel();
-        model.setColumnIdentifiers(new Object[]{"Tanggal", "Pasien", "Dokter", "Status"});
-        
-        int totalKunjungan = 0;
-
-        // Query JOIN: Kunjungan -> Pasien -> Dokter -> User (Untuk nama dokter)
-        String sql = "SELECT k.tanggal_kunjungan, p.nama_pasien, u.nama_lengkap AS nama_dokter, k.status_kunjungan " +
-                     "FROM kunjungan k " +
-                     "JOIN pasien p ON k.pasien_id = p.pasien_id " +
-                     "JOIN dokter d ON k.dokter_id = d.dokter_id " +
-                     "JOIN user u ON d.user_id = u.user_id " + // Ambil nama dokter dari tabel user
-                     "WHERE DATE(k.tanggal_kunjungan) BETWEEN ? AND ?";
-
-        try (Connection conn = new KoneksiDatabase().getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            
-            pstmt.setDate(1, dari);
-            pstmt.setDate(2, sampai);
-            
-            ResultSet rs = pstmt.executeQuery();
-            
-            while (rs.next()) {
-                totalKunjungan++;
-                model.addRow(new Object[]{
-                    rs.getTimestamp("tanggal_kunjungan"),
-                    rs.getString("nama_pasien"),
-                    rs.getString("nama_dokter"),
-                    rs.getString("status_kunjungan")
-                });
-            }
-            
-            tblLaporan.setModel(model);
-            lblTotalPendapatan.setText("Total Kunjungan: " + totalKunjungan + " Pasien");
-            
-        } catch (SQLException e) {
-            JOptionPane.showMessageDialog(this, "Gagal memuat laporan kunjungan: " + e.getMessage());
-            e.printStackTrace();
-        }
-    }
+//    private void loadLaporanKunjungan(java.sql.Date dari, java.sql.Date sampai) {
+//        DefaultTableModel model = new DefaultTableModel();
+//        model.setColumnIdentifiers(new Object[]{"Tanggal", "Pasien", "Dokter", "Status"});
+//        
+//        int totalKunjungan = 0;
+//
+//        // Query JOIN: Kunjungan -> Pasien -> Dokter -> User (Untuk nama dokter)
+//        String sql = "SELECT k.tanggal_kunjungan, p.nama_pasien, u.nama_lengkap AS nama_dokter, k.status_kunjungan " +
+//                     "FROM kunjungan k " +
+//                     "JOIN pasien p ON k.pasien_id = p.pasien_id " +
+//                     "JOIN dokter d ON k.dokter_id = d.dokter_id " +
+//                     "JOIN user u ON d.user_id = u.user_id " + // Ambil nama dokter dari tabel user
+//                     "WHERE DATE(k.tanggal_kunjungan) BETWEEN ? AND ?";
+//
+//        try (Connection conn = new KoneksiDatabase().getConnection();
+//             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+//            
+//            pstmt.setDate(1, dari);
+//            pstmt.setDate(2, sampai);
+//            
+//            ResultSet rs = pstmt.executeQuery();
+//            
+//            while (rs.next()) {
+//                totalKunjungan++;
+//                model.addRow(new Object[]{
+//                    rs.getTimestamp("tanggal_kunjungan"),
+//                    rs.getString("nama_pasien"),
+//                    rs.getString("nama_dokter"),
+//                    rs.getString("status_kunjungan")
+//                });
+//            }
+//            
+//            tblLaporan.setModel(model);
+//            lblTotalPendapatan.setText("Total Kunjungan: " + totalKunjungan + " Pasien");
+//            
+//        } catch (SQLException e) {
+//            JOptionPane.showMessageDialog(this, "Gagal memuat laporan kunjungan: " + e.getMessage());
+//            e.printStackTrace();
+//        }
+//    }
     
-    private void loadLaporanObat(java.sql.Date dari, java.sql.Date sampai) {
-        DefaultTableModel model = new DefaultTableModel();
-        model.setColumnIdentifiers(new Object[]{"Nama Obat", "Satuan", "Total Terjual (Qty)", "Sisa Stok"});
-        
-        int totalItemTerjual = 0;
-
-        // Query Agregasi (SUM) dengan JOIN
-        // Detail_Resep -> Resep (untuk filter tanggal) -> Obat (untuk nama & stok)
-        String sql = "SELECT o.nama_obat, o.satuan, SUM(dr.jumlah) as total_qty, o.stok " +
-                     "FROM detail_resep dr " +
-                     "JOIN obat o ON dr.obat_id = o.obat_id " +
-                     "JOIN resep r ON dr.resep_id = r.resep_id " +
-                     "WHERE DATE(r.tanggal_resep) BETWEEN ? AND ? " +
-                     "GROUP BY o.obat_id, o.nama_obat, o.satuan, o.stok " +
-                     "ORDER BY total_qty DESC";
-
-        try (Connection conn = new KoneksiDatabase().getConnection();
-            PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            
-            pstmt.setDate(1, dari);
-            pstmt.setDate(2, sampai);
-            
-            ResultSet rs = pstmt.executeQuery();
-            while (rs.next()) {
-                int qty = rs.getInt("total_qty");
-                totalItemTerjual += qty;
-                
-                model.addRow(new Object[]{
-                    rs.getString("nama_obat"),
-                    rs.getString("satuan"),
-                    qty,
-                    rs.getInt("stok")
-                });
-            }
-            
-            tblLaporan.setModel(model);
-            lblTotalPendapatan.setText("Total Item Obat Terjual: " + totalItemTerjual);
-            
-        } catch (SQLException e) {
-            JOptionPane.showMessageDialog(this, "Gagal memuat laporan obat: " + e.getMessage());
-            e.printStackTrace();
-        }
-    }
+//    private void loadLaporanObat(java.sql.Date dari, java.sql.Date sampai) {
+//        DefaultTableModel model = new DefaultTableModel();
+//        model.setColumnIdentifiers(new Object[]{"Nama Obat", "Satuan", "Total Terjual (Qty)", "Sisa Stok"});
+//        
+//        int totalItemTerjual = 0;
+//
+//        // Query Agregasi (SUM) dengan JOIN
+//        // Detail_Resep -> Resep (untuk filter tanggal) -> Obat (untuk nama & stok)
+//        String sql = "SELECT o.nama_obat, o.satuan, SUM(dr.jumlah) as total_qty, o.stok " +
+//                     "FROM detail_resep dr " +
+//                     "JOIN obat o ON dr.obat_id = o.obat_id " +
+//                     "JOIN resep r ON dr.resep_id = r.resep_id " +
+//                     "WHERE DATE(r.tanggal_resep) BETWEEN ? AND ? " +
+//                     "GROUP BY o.obat_id, o.nama_obat, o.satuan, o.stok " +
+//                     "ORDER BY total_qty DESC";
+//
+//        try (Connection conn = new KoneksiDatabase().getConnection();
+//            PreparedStatement pstmt = conn.prepareStatement(sql)) {
+//            
+//            pstmt.setDate(1, dari);
+//            pstmt.setDate(2, sampai);
+//            
+//            ResultSet rs = pstmt.executeQuery();
+//            while (rs.next()) {
+//                int qty = rs.getInt("total_qty");
+//                totalItemTerjual += qty;
+//                
+//                model.addRow(new Object[]{
+//                    rs.getString("nama_obat"),
+//                    rs.getString("satuan"),
+//                    qty,
+//                    rs.getInt("stok")
+//                });
+//            }
+//            
+//            tblLaporan.setModel(model);
+//            lblTotalPendapatan.setText("Total Item Obat Terjual: " + totalItemTerjual);
+//            
+//        } catch (SQLException e) {
+//            JOptionPane.showMessageDialog(this, "Gagal memuat laporan obat: " + e.getMessage());
+//            e.printStackTrace();
+//        }
+//    }
     
     // Test
     

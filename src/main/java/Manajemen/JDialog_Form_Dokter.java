@@ -13,9 +13,6 @@ import java.sql.Statement;
 import javax.swing.JOptionPane;
 
 public class JDialog_Form_Dokter extends javax.swing.JDialog {
-    
-    private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(JDialog_Form_Dokter.class.getName());
-    
     // Atribut
     private Integer idDokterToEdit = null;
     String pesanError = "";

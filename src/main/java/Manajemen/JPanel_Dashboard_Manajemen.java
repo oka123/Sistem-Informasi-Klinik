@@ -19,8 +19,7 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
 public class JPanel_Dashboard_Manajemen extends javax.swing.JPanel {
-    
-    // Deklarasitribut
+    // Atribut
     KoneksiDatabase koneksi;
     Connection conn;
     
