@@ -235,6 +235,7 @@ private void prosesPenyerahanObat() {
         btnSelesaiSerahkan = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setTitle("Detail Resep");
 
         lblInfoPasien.setText("Info pasien");
 

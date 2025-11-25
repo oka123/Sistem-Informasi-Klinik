@@ -28,6 +28,16 @@ public class JPanel_Manajemen_Obat extends javax.swing.JPanel implements ObatUpd
         tableModel = new DefaultTableModel(null, columnNames);
         tblDataObat.setModel(tableModel);
     }
+    
+private void setupListeners() {
+        // Logika untuk tombol "Tambah Obat"
+        btnTambahObat.addActionListener(e -> {
+            // Tampilkan JDialog_Form_Obat
+            // Perhatikan: Pastikan JDialog_Form_Obat ada dan diimpor
+            JDialog_Form_Obat dialog = new JDialog_Form_Obat(parentFrame, true); // true: modal
+            dialog.setTitle("Tambah Obat Baru"); // Beri judul yang relevan
+            dialog.setVisible(true);
+        });
 
     public void loadDataObat(String keyword) {
         tableModel.setRowCount(0);
@@ -202,11 +212,15 @@ private void setupListeners() {
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
 <<<<<<< HEAD
+<<<<<<< HEAD
         txtCariObat = new javax.swing.JTextField();
         btnCari = new javax.swing.JButton();
         jSeparator1 = new javax.swing.JSeparator();
 =======
         txtCari = new javax.swing.JTextField();
+=======
+        jTextField1 = new javax.swing.JTextField();
+>>>>>>> 4a77825 ()
         btnCari = new javax.swing.JButton();
 >>>>>>> 0a4dd43 ()
         btnTambahObat = new javax.swing.JButton();
@@ -225,6 +239,7 @@ private void setupListeners() {
 
         jLabel1.setText("Cari Obat");
         jPanel1.add(jLabel1);
+<<<<<<< HEAD
 <<<<<<< HEAD
 
         txtCariObat.setPreferredSize(new java.awt.Dimension(140, 22));
@@ -245,17 +260,34 @@ private void setupListeners() {
 
 =======
         jPanel1.add(txtCari);
+=======
+        jPanel1.add(jTextField1);
+>>>>>>> 4a77825 ()
 
         btnCari.setText("Cari");
+        btnCari.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCariActionPerformed(evt);
+            }
+        });
         jPanel1.add(btnCari);
 
+<<<<<<< HEAD
 >>>>>>> 0a4dd43 ()
+=======
+        btnTambahObat.setBackground(new java.awt.Color(0, 255, 0));
+        btnTambahObat.setForeground(new java.awt.Color(255, 255, 255));
+>>>>>>> 4a77825 ()
         btnTambahObat.setText("Tambah Obat");
         jPanel1.add(btnTambahObat);
 
+        btnEditObat.setBackground(new java.awt.Color(0, 0, 255));
+        btnEditObat.setForeground(new java.awt.Color(255, 255, 255));
         btnEditObat.setText("Edit Obat");
         jPanel1.add(btnEditObat);
 
+        btnHapusObat.setBackground(new java.awt.Color(255, 0, 0));
+        btnHapusObat.setForeground(new java.awt.Color(255, 255, 255));
         btnHapusObat.setText("Hapus Obat");
         jPanel1.add(btnHapusObat);
 
@@ -269,6 +301,7 @@ private void setupListeners() {
                 {null, null, null, null, null}
             },
             new String [] {
+<<<<<<< HEAD
 <<<<<<< HEAD
                 "ID Obat", "Nama Obat", "Satuan", "Harga", "Stok"
             }
@@ -309,14 +342,25 @@ private void setupListeners() {
 
 =======
                 "ID Obat", "Nama Obat", "Satuan", "Harga Jual", "Stok"
+=======
+                "ID Obat", "Nama Obat", "Satuan", "Harga", "Stok"
+>>>>>>> 4a77825 ()
             }
         ));
+        tblDataObat.getTableHeader().setReorderingAllowed(false);
         jScrollPane1.setViewportView(tblDataObat);
 
         add(jScrollPane1, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
 
+<<<<<<< HEAD
 >>>>>>> 0a4dd43 ()
+=======
+    private void btnCariActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCariActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnCariActionPerformed
+
+>>>>>>> 4a77825 ()
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCari;
@@ -336,8 +380,13 @@ private void setupListeners() {
 }
 =======
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JTextField jTextField1;
     private javax.swing.JTable tblDataObat;
-    private javax.swing.JTextField txtCari;
     // End of variables declaration//GEN-END:variables
+<<<<<<< HEAD
 }
 >>>>>>> 0a4dd43 ()
+=======
+
+}
+>>>>>>> 4a77825 ()

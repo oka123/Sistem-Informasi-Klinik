@@ -11,7 +11,6 @@ public class JFrame_Main_Apoteker extends javax.swing.JFrame {
 
     private JPanel_Antrean_Resep panelAntreanResep;
     private JPanel_Manajemen_Obat panelManajemenObat;
-<<<<<<< HEAD
   
     public JFrame_Main_Apoteker() {
         initComponents();
@@ -23,23 +22,6 @@ public class JFrame_Main_Apoteker extends javax.swing.JFrame {
         panelAntreanResep = new JPanel_Antrean_Resep(this);
         panelManajemenObat = new JPanel_Manajemen_Obat(this);
         
-=======
-    /**
-     * Creates new form JFrame_Main_Apoteker
-     */
-    
-    public JFrame_Main_Apoteker() {
-        initComponents();
-        setupMainFrame();
-    }
-
-    private void setupMainFrame() {
-        // Inisialisasi Panel
-        panelAntreanResep = new JPanel_Antrean_Resep(this); // Mengirim reference frame
-        panelManajemenObat = new JPanel_Manajemen_Obat(this); // Mengirim reference frame
-        
-        // Dapatkan CardLayout dari panelKonten
->>>>>>> 0a4dd43 ()
         CardLayout cardLayout = (CardLayout) panelKonten.getLayout();
         
         panelKonten.add(panelAntreanResep, "AntreanResep");
@@ -50,16 +32,8 @@ public class JFrame_Main_Apoteker extends javax.swing.JFrame {
         btnAntreanResep.addActionListener(e -> cardLayout.show(panelKonten, "AntreanResep"));
         btnManajemenObat.addActionListener(e -> cardLayout.show(panelKonten, "ManajemenObat"));
         
-<<<<<<< HEAD
     
     }
-=======
-        // Mengubah teks btnAntreanResep agar tidak terpotong
-        btnAntreanResep.setText("Antrean Resep");
-    }
-    
-    
->>>>>>> 0a4dd43 ()
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -93,17 +67,26 @@ public class JFrame_Main_Apoteker extends javax.swing.JFrame {
         panelKonten = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Menu Apoteker");
+        setName("Form"); // NOI18N
 
         jPanel1.setBackground(new java.awt.Color(34, 40, 49));
+        jPanel1.setName("jPanel1"); // NOI18N
 
         btnAntreanResep.setText("Antrean Resep");
+        btnAntreanResep.setName("btnAntreanResep"); // NOI18N
 
         btnManajemenObat.setText("Manajemen Obat");
+<<<<<<< HEAD
 >>>>>>> 0a4dd43 ()
+=======
+        btnManajemenObat.setName("btnManajemenObat"); // NOI18N
+>>>>>>> 4a77825 ()
 
         jLabel1.setForeground(new java.awt.Color(255, 255, 255));
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel1.setText("Menu Apoteker");
+<<<<<<< HEAD
 <<<<<<< HEAD
         jLabel1.setName("jLabel1"); // NOI18N
 
@@ -121,12 +104,16 @@ public class JFrame_Main_Apoteker extends javax.swing.JFrame {
         });
 =======
 >>>>>>> 0a4dd43 ()
+=======
+        jLabel1.setName("jLabel1"); // NOI18N
+>>>>>>> 4a77825 ()
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
+<<<<<<< HEAD
 <<<<<<< HEAD
                 .addGap(22, 22, 22)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -144,6 +131,14 @@ public class JFrame_Main_Apoteker extends javax.swing.JFrame {
                     .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
 >>>>>>> 0a4dd43 ()
+=======
+                .addGap(22, 22, 22)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnManajemenObat)
+                    .addComponent(btnAntreanResep, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(23, Short.MAX_VALUE))
+>>>>>>> 4a77825 ()
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -166,9 +161,13 @@ public class JFrame_Main_Apoteker extends javax.swing.JFrame {
         getContentPane().add(jPanel1, java.awt.BorderLayout.LINE_START);
 
 <<<<<<< HEAD
+<<<<<<< HEAD
         panelKonten.setName("panelKonten"); // NOI18N
 =======
 >>>>>>> 0a4dd43 ()
+=======
+        panelKonten.setName("panelKonten"); // NOI18N
+>>>>>>> 4a77825 ()
         panelKonten.setLayout(new java.awt.CardLayout());
         getContentPane().add(panelKonten, java.awt.BorderLayout.CENTER);
 

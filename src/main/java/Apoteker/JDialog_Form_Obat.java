@@ -178,6 +178,9 @@ public class JDialog_Form_Obat extends javax.swing.JDialog {
 
         jLabel4.setText("Harga Jual");
 
+        spinnerHargaJual.setToolTipText("");
+        spinnerHargaJual.setName(""); // NOI18N
+
         jLabel5.setText("Stok");
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
