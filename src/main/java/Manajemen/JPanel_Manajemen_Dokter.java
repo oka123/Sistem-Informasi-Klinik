@@ -4,99 +4,198 @@
  */
 package Manajemen;
 import Database.KoneksiDatabase;
+import java.awt.Cursor;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-//import java.sql.ResultSet;
-//import javax.swing.table.DefaultTableModel;
+import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.List;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
-import java.awt.Frame;
-import java.awt.Image;
-import javax.swing.ImageIcon;
+import javax.swing.table.DefaultTableModel;
 
-/**
- *
- * @author USER
- */
 public final class JPanel_Manajemen_Dokter extends javax.swing.JPanel {
     
-    private final ImageIcon searchIcon = new ImageIcon(getClass().getResource("/search.png"));
-
-    /**
-     * Creates new form JPanel_Manajemen_Dokter
-     */
+    // Constructor
     public JPanel_Manajemen_Dokter() {
         initComponents();
-        
-        // Menjadwalkan update gambar setelah ukuran tombol tersedia
-        SwingUtilities.invokeLater(() -> {
-            // Sesuaikan ukuran gambar
-            btnCari.setIcon(new ImageIcon(searchIcon.getImage().getScaledInstance(btnCari.getWidth(), btnCari.getHeight(), Image.SCALE_SMOOTH)));
-        });
-        
-        tblDokter.getTableHeader().setFont(new java.awt.Font("Segoe UI", java.awt.Font.BOLD, 12));
-        tblDokter.getTableHeader().setOpaque(false);
-        tblDokter.getTableHeader().setBackground(new java.awt.Color(32, 136, 203)); // Warna biru
-        tblDokter.getTableHeader().setForeground(new java.awt.Color(255,255,255)); // Teks putih
+        loadDataDokter(""); // Muat data awal
+    }
+    
+    public void loadDataDokter(String key) {
+        // 1. UBAH KURSOR JADI LOADING
+        this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+        btnCari.setEnabled(false);
 
-//        loadDataToTable(null);
-    }
-    public void loadDataDokter() {
-        
-    }
-    public void loadDataDokter(String searchTerm) {
-//        // 1. Dapatkan model tabel
+        // 2. PROSES BACKGROUND
+        new Thread(() -> {
+            List<Object[]> dataList = new ArrayList<>();
+            String errorMsg = null;
+
+            // Query JOIN: Mengambil data spesifik dokter dan data umum dari tabel user
+            String sql = "SELECT d.dokter_id, u.nama_lengkap, u.username, d.spesialisasi, u.no_telepon, u.alamat " +
+                         "FROM dokter d " +
+                         "JOIN user u ON d.user_id = u.user_id";
+
+            boolean isSearch = (key != null && !key.trim().isEmpty());
+            
+            // Logika Pencarian (Sekarang bisa cari by Username juga)
+            if (isSearch) {
+                sql += " WHERE u.nama_lengkap LIKE ? OR u.username LIKE ? OR d.spesialisasi LIKE ?";
+            }
+            
+            sql += " ORDER BY u.nama_lengkap ASC"; // Urutkan abjad nama
+
+            try (Connection conn = new KoneksiDatabase().getConnection();
+                 PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+                if (isSearch) {
+                    String pola = "%" + key + "%";
+                    pstmt.setString(1, pola);
+                    pstmt.setString(2, pola);
+                    pstmt.setString(3, pola);
+                }
+
+                try (ResultSet rs = pstmt.executeQuery()) {
+                    while (rs.next()) {
+                        // Simpan ke list sementara (Thread Safe)
+                        dataList.add(new Object[]{
+                            rs.getInt("dokter_id"),
+                            rs.getString("nama_lengkap"),
+                            rs.getString("username"),
+                            rs.getString("spesialisasi"),
+                            rs.getString("no_telepon"),
+                            rs.getString("alamat")
+                        });
+                    }
+                }
+            } catch (Exception e) {
+                errorMsg = e.getMessage();
+                e.printStackTrace();
+            }
+
+            // 3. UPDATE UI (KEMBALI KE UI THREAD)
+            final String finalError = errorMsg;
+            
+            SwingUtilities.invokeLater(() -> {
+                if (finalError != null) {
+                    JOptionPane.showMessageDialog(this, "Gagal memuat data dokter: " + finalError, "Error", JOptionPane.ERROR_MESSAGE);
+                } else {
+                    DefaultTableModel model = (DefaultTableModel) tblDokter.getModel();
+                    
+                    // Set Header Kolom secara Programmatic
+                    String[] judulKolom = {"ID Dokter", "Nama Lengkap", "Username", "Spesialisasi", "No. Telepon", "Alamat"};
+                    model.setColumnIdentifiers(judulKolom);
+                    
+                    // Bersihkan & Isi Data
+                    model.setRowCount(0);
+                    for (Object[] row : dataList) {
+                        model.addRow(row);
+                    }
+                }
+                
+                // BALIKIN KURSOR KE NORMAL
+                this.setCursor(Cursor.getDefaultCursor());
+                btnCari.setEnabled(true);
+            });
+
+        }).start();
 //        DefaultTableModel model = (DefaultTableModel) tblDokter.getModel();
-//
-//        // 2. Kosongkan tabel (hapus baris lama)
 //        model.setRowCount(0);
+//        
+//        // Set Header Kolom secara Programmatic (Agar sesuai urutan yang diminta)
+//        String[] judulKolom = {"ID Dokter", "Nama Lengkap", "Username", "Spesialisasi", "No. Telepon", "Alamat"};
+//        model.setColumnIdentifiers(judulKolom);
 //
-//        // 3. Buat query SQL dasar
-//        String sql = "SELECT id_dokter, nama_dokter, spesialisasi, no_telepon FROM dokter";
+//        // Query JOIN: Mengambil data spesifik dokter dan data umum dari tabel user
+//        String sql = "SELECT d.dokter_id, u.nama_lengkap, u.username, d.spesialisasi, u.no_telepon, u.alamat " +
+//                     "FROM dokter d " +
+//                     "JOIN user u ON d.user_id = u.user_id";
 //
-//        // 4. Tambahkan kondisi WHERE jika ada searchTerm
-//        if (searchTerm != null && !searchTerm.trim().isEmpty()) {
-//            sql += " WHERE nama_dokter LIKE ? OR dokter_id LIKE ?";
+//        boolean isSearch = (key != null && !key.trim().isEmpty());
+//        
+//        // Logika Pencarian (Sekarang bisa cari by Username juga)
+//        if (isSearch) {
+//            sql += " WHERE u.nama_lengkap LIKE ? OR u.username LIKE ? OR d.spesialisasi LIKE ?";
 //        }
+//        
+//        sql += " ORDER BY u.nama_lengkap ASC"; // Urutkan abjad nama
 //
-//        // 5. Gunakan try-with-resources untuk koneksi
-//        try (Connection conn = Koneksi.getConnection(); // Asumsi Anda punya kelas Koneksi
+//        try (Connection conn = new KoneksiDatabase().getConnection();
 //             PreparedStatement pstmt = conn.prepareStatement(sql)) {
 //
-//            // 6. Set parameter pencarian jika ada
-//            if (searchTerm != null && !searchTerm.trim().isEmpty()) {
-//                String likeTerm = "%" + searchTerm + "%";
-//                pstmt.setString(1, likeTerm);
-//                pstmt.setString(2, likeTerm);
+//            if (isSearch) {
+//                String pola = "%" + key + "%";
+//                pstmt.setString(1, pola);
+//                pstmt.setString(2, pola);
+//                pstmt.setString(3, pola);
 //            }
 //
-//            // 7. Eksekusi query
 //            try (ResultSet rs = pstmt.executeQuery()) {
-//                // 8. Looping hasil dan tambahkan ke model tabel
 //                while (rs.next()) {
-//                        model.addRow(new Object[]{
-//                            rs.getString("id_dokter"),
-//                            rs.getString("nama_dokter"),
-//                            rs.getString("spesialisasi"),
-//                            rs.getString("no_telepon")
-//                        });
-//                    }
+//                    model.addRow(new Object[]{
+//                        rs.getInt("dokter_id"),
+//                        rs.getString("nama_lengkap"),
+//                        rs.getString("username"),
+//                        rs.getString("spesialisasi"),
+//                        rs.getString("no_telepon"),
+//                        rs.getString("alamat")
+//                    });
+//                }
 //            }
-//
 //        } catch (Exception e) {
-//            JOptionPane.showMessageDialog(this, 
-//                    "Gagal memuat data dokter: " + e.getMessage(), 
-//                    "Error Database", 
-//                    JOptionPane.ERROR_MESSAGE);
-//            e.printStackTrace(); // Tampilkan error di console untuk debug
+//            JOptionPane.showMessageDialog(this, "Gagal memuat data dokter: " + e.getMessage());
+//            e.printStackTrace();
 //        }
     }
+    
+    // Method Hapus dengan Transaksi (Hapus Dokter dulu, baru User)
+    private void hapusDokterDanUser(int idDokter) {
+        Connection conn = null;
+        try {
+            conn = new KoneksiDatabase().getConnection();
+            conn.setAutoCommit(false); 
 
-    /**
-     * This method is called from within the constructor to initialize the form.
-     * WARNING: Do NOT modify this code. The content of this method is always
-     * regenerated by the Form Editor.
-     */
+            // Ambil user_id (Query pakai int)
+            String sqlGetUserId = "SELECT user_id FROM dokter WHERE dokter_id = ?";
+            int userId = -1;
+            try (PreparedStatement pstmtGet = conn.prepareStatement(sqlGetUserId)) {
+                pstmtGet.setInt(1, idDokter); // SET INT
+                ResultSet rs = pstmtGet.executeQuery();
+                if (rs.next()) {
+                    userId = rs.getInt("user_id");
+                }
+            }
+
+            // Hapus dokter (Query pakai int)
+            String sqlDelDokter = "DELETE FROM dokter WHERE dokter_id = ?";
+            try (PreparedStatement pstmtDelD = conn.prepareStatement(sqlDelDokter)) {
+                pstmtDelD.setInt(1, idDokter); // SET INT
+                pstmtDelD.executeUpdate();
+            }
+
+            // Hapus user
+            if (userId != -1) {
+                String sqlDelUser = "DELETE FROM user WHERE user_id = ?";
+                try (PreparedStatement pstmtDelU = conn.prepareStatement(sqlDelUser)) {
+                    pstmtDelU.setInt(1, userId);
+                    pstmtDelU.executeUpdate();
+                }
+            }
+
+            conn.commit(); 
+            JOptionPane.showMessageDialog(this, "Data dokter berhasil dihapus.");
+            loadDataDokter("");
+
+        } catch (Exception e) {
+            try { if (conn != null) conn.rollback(); } catch(Exception ex){} 
+            JOptionPane.showMessageDialog(this, "Gagal menghapus: " + e.getMessage());
+        } finally {
+            try { if (conn != null) { conn.setAutoCommit(true); conn.close(); } } catch(Exception ex){}
+        }
+    }
+        
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -125,7 +224,7 @@ public final class JPanel_Manajemen_Dokter extends javax.swing.JPanel {
         btnTambah.setBackground(new java.awt.Color(50, 120, 220));
         btnTambah.setFont(new java.awt.Font("sansserif", 1, 14)); // NOI18N
         btnTambah.setForeground(new java.awt.Color(255, 255, 255));
-        btnTambah.setText("Tambah Dokter");
+        btnTambah.setText("➕ Tambah Data");
         btnTambah.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         btnTambah.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -136,7 +235,7 @@ public final class JPanel_Manajemen_Dokter extends javax.swing.JPanel {
         btnEdit.setBackground(new java.awt.Color(255, 130, 0));
         btnEdit.setFont(new java.awt.Font("sansserif", 1, 14)); // NOI18N
         btnEdit.setForeground(new java.awt.Color(255, 255, 255));
-        btnEdit.setText("Edit Dokter");
+        btnEdit.setText("📝 Edit Data");
         btnEdit.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         btnEdit.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -147,7 +246,7 @@ public final class JPanel_Manajemen_Dokter extends javax.swing.JPanel {
         btnHapus.setBackground(new java.awt.Color(220, 53, 69));
         btnHapus.setFont(new java.awt.Font("sansserif", 1, 14)); // NOI18N
         btnHapus.setForeground(new java.awt.Color(255, 255, 255));
-        btnHapus.setText("Hapus Dokter");
+        btnHapus.setText("❌  Hapus Data");
         btnHapus.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         btnHapus.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -155,10 +254,12 @@ public final class JPanel_Manajemen_Dokter extends javax.swing.JPanel {
             }
         });
 
-        btnCari.setBackground(new java.awt.Color(75, 167, 87));
-        btnCari.setFont(new java.awt.Font("sansserif", 1, 14)); // NOI18N
-        btnCari.setForeground(new java.awt.Color(255, 255, 255));
-        btnCari.setIcon(new javax.swing.ImageIcon(getClass().getResource("/search.png"))); // NOI18N
+        btnCari.setBackground(new java.awt.Color(255, 255, 255));
+        btnCari.setFont(new java.awt.Font("SansSerif", 1, 20)); // NOI18N
+        btnCari.setForeground(new java.awt.Color(0, 0, 0));
+        btnCari.setText("🔍");
+        btnCari.setBorder(null);
+        btnCari.setBorderPainted(false);
         btnCari.setContentAreaFilled(false);
         btnCari.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         btnCari.addActionListener(new java.awt.event.ActionListener() {
@@ -167,32 +268,18 @@ public final class JPanel_Manajemen_Dokter extends javax.swing.JPanel {
             }
         });
 
-        tblDokter.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
+        tblDokter.setFont(new java.awt.Font("SansSerif", 0, 14)); // NOI18N
         tblDokter.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {"D001", "dr. ABCD", "THT", "Laki-laki"},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+                {"1", "Dokter Klinik", "Dokter", "Anak", "08123456789", "Jl. Abcd"},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null}
             },
             new String [] {
-                "ID Dokter", "Nama Lengkap", "Spesialisasi", "No. Telepon"
+                "ID Dokter", "Nama Lengkap", "Username", "Spesialisasi", "No. Telepon", "Alamat"
             }
         ));
         tblDokter.setGridColor(new java.awt.Color(224, 224, 224));
@@ -209,9 +296,7 @@ public final class JPanel_Manajemen_Dokter extends javax.swing.JPanel {
             .addGroup(panelKontrolLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(panelKontrolLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(panelKontrolLayout.createSequentialGroup()
-                        .addComponent(scrollPaneTabel, javax.swing.GroupLayout.DEFAULT_SIZE, 842, Short.MAX_VALUE)
-                        .addContainerGap())
+                    .addComponent(scrollPaneTabel, javax.swing.GroupLayout.DEFAULT_SIZE, 842, Short.MAX_VALUE)
                     .addGroup(panelKontrolLayout.createSequentialGroup()
                         .addComponent(btnTambah)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -219,25 +304,28 @@ public final class JPanel_Manajemen_Dokter extends javax.swing.JPanel {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnHapus)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(txtCari, javax.swing.GroupLayout.PREFERRED_SIZE, 250, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(txtCari, javax.swing.GroupLayout.PREFERRED_SIZE, 258, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnCari, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(14, 14, 14))))
+                        .addComponent(btnCari, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap())
         );
         panelKontrolLayout.setVerticalGroup(
             panelKontrolLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panelKontrolLayout.createSequentialGroup()
                 .addGroup(panelKontrolLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(panelKontrolLayout.createSequentialGroup()
-                        .addGroup(panelKontrolLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
-                            .addComponent(btnCari, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txtCari, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(panelKontrolLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(txtCari, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(btnCari, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(18, 18, 18)
-                        .addComponent(scrollPaneTabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(btnHapus, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnEdit, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnTambah, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(31, Short.MAX_VALUE))
+                        .addComponent(scrollPaneTabel, javax.swing.GroupLayout.DEFAULT_SIZE, 650, Short.MAX_VALUE))
+                    .addGroup(panelKontrolLayout.createSequentialGroup()
+                        .addGroup(panelKontrolLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(btnHapus, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(btnEdit, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(btnTambah, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(0, 0, Short.MAX_VALUE)))
+                .addContainerGap())
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
@@ -272,114 +360,57 @@ public final class JPanel_Manajemen_Dokter extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnCariActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCariActionPerformed
-        // TODO add your handling code here:
-        // 1. Ambil kata kunci dari JTextField
-        String searchTerm = txtCari.getText();
-
-        // 2. Panggil method loadDataToTable dengan kata kunci tersebut
-        loadDataDokter(searchTerm);
+        loadDataDokter(txtCari.getText());
     }//GEN-LAST:event_btnCariActionPerformed
 
     private void btnTambahActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTambahActionPerformed
-        // TODO add your handling code here:
-        JDialog_Form_Dokter formDokter = new JDialog_Form_Dokter(null, true, this); // 'this' adalah referensi ke panel ini
+        JFrame parentFrame = (JFrame) SwingUtilities.getWindowAncestor(this);
+        
+        // Mode TAMBAH (id null)
+        JDialog_Form_Dokter formDokter = new JDialog_Form_Dokter(parentFrame, true, null);
         formDokter.setVisible(true);
 
-        loadDataDokter(); // Panggil method yang sudah di-rename
+        loadDataDokter(""); // Refresh setelah tambah
     }//GEN-LAST:event_btnTambahActionPerformed
 
     private void btnEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditActionPerformed
-        // TODO add your handling code here:
-        // 1. Dapatkan baris yang dipilih
         int selectedRow = tblDokter.getSelectedRow();
-
-        // 2. Cek apakah ada baris yang dipilih
         if (selectedRow == -1) {
-            JOptionPane.showMessageDialog(this,
-                "Pilih data dokter yang ingin Anda edit terlebih dahulu.",
-                "Peringatan",
-                JOptionPane.WARNING_MESSAGE);
-            //            return; // Hentikan eksekusi
+            JOptionPane.showMessageDialog(this, "Pilih data dokter yang ingin diedit.", "Peringatan", JOptionPane.WARNING_MESSAGE);
+            return;
         }
 
-        // 3. Ambil ID Pasien dari kolom pertama (index 0)
-        String idDokter = tblDokter.getValueAt(selectedRow, 0).toString();
+        // Ambil ID sebagai String dulu dari tabel, lalu parse ke Integer
+        String idStr = tblDokter.getValueAt(selectedRow, 0).toString();
+        int idDokter = Integer.parseInt(idStr); // KONVERSI KE INT
 
-        // 4. Dapatkan frame induk (cara paling aman)
-        Frame parentFrame = (Frame) SwingUtilities.getWindowAncestor(this);
+        JFrame parentFrame = (JFrame) SwingUtilities.getWindowAncestor(this);
 
-        // 5. Buat dan tampilkan JDialog_Form_Pasien dalam mode EDIT
-        //    (Asumsi Anda punya constructor ini)
-        JDialog_Form_Dokter formDokter = new JDialog_Form_Dokter(null, true, this, idDokter);
+        // Kirim ID dalam bentuk Integer
+        JDialog_Form_Dokter formDokter = new JDialog_Form_Dokter(parentFrame, true, idDokter);
         formDokter.setVisible(true);
-
-        // 6. Setelah form ditutup, muat ulang data di tabel
-        //    Kita kirim txtCari.getText() agar pencarian tetap aktif jika ada
+        
         loadDataDokter(txtCari.getText());
     }//GEN-LAST:event_btnEditActionPerformed
 
     private void btnHapusActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnHapusActionPerformed
-        // TODO add your handling code here:
-        // 1. Dapatkan baris yang dipilih
         int selectedRow = tblDokter.getSelectedRow();
-
-        // 2. Cek apakah ada baris yang dipilih
         if (selectedRow == -1) {
-            JOptionPane.showMessageDialog(this,
-                "Pilih data dokter yang ingin Anda hapus.",
-                "Peringatan",
-                JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Pilih data dokter yang ingin dihapus.", "Peringatan", JOptionPane.WARNING_MESSAGE);
             return;
         }
 
-        // 3. Ambil ID dan Nama untuk konfirmasi
-        String idDokter = tblDokter.getValueAt(selectedRow, 0).toString();
+        String idStr = tblDokter.getValueAt(selectedRow, 0).toString();
+        int idDokter = Integer.parseInt(idStr); // KONVERSI KE INT
+        
         String namaDokter = tblDokter.getValueAt(selectedRow, 1).toString();
 
-        // 4. Tampilkan dialog konfirmasi
         int pilihan = JOptionPane.showConfirmDialog(this,
-            "Apakah Anda yakin ingin menghapus data dokter:\n" + namaDokter + " (ID: " + idDokter + ")?",
-            "Konfirmasi Hapus Data",
-            JOptionPane.YES_NO_OPTION,
-            JOptionPane.WARNING_MESSAGE
-        );
+            "Menghapus Dokter '" + namaDokter + "' akan menghapus akun User-nya juga.\nLanjutkan?",
+            "Konfirmasi Hapus", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
 
-        // 5. Cek jika pengguna menekan "Ya"
         if (pilihan == JOptionPane.YES_OPTION) {
-            // 6. Lakukan operasi database
-            String sql = "DELETE FROM dokter WHERE dokter_id = ?";
-
-//            try (Connection conn = KoneksiDatabase.connect();
-//                PreparedStatement pstmt = conn.prepareStatement(sql)) {
-//
-//                pstmt.setString(1, idDokter);
-//
-//                // 7. Eksekusi delete
-//                int rowsAffected = pstmt.executeUpdate();
-//
-//                if (rowsAffected > 0) {
-//                    JOptionPane.showMessageDialog(this,
-//                        "Data dokter berhasil dihapus.",
-//                        "Sukses",
-//                        JOptionPane.INFORMATION_MESSAGE);
-//
-//                    // 8. Muat ulang data (dan bersihkan pencarian)
-//                    txtCari.setText(""); // Bersihkan field pencarian
-//                    //                    loadDataToTable(null); // Muat ulang semua data
-//                } else {
-//                    JOptionPane.showMessageDialog(this,
-//                        "Data dokter tidak ditemukan (mungkin sudah dihapus).",
-//                        "Info",
-//                        JOptionPane.INFORMATION_MESSAGE);
-//                }
-//                loadDataDokter();
-//            } catch (Exception e) {
-//                JOptionPane.showMessageDialog(this,
-//                    "Gagal menghapus data: " + e.getMessage(),
-//                    "Error Database",
-//                    JOptionPane.ERROR_MESSAGE);
-//                //                e.printStackTrace();
-//            }
+            hapusDokterDanUser(idDokter); // Kirim int
         }
     }//GEN-LAST:event_btnHapusActionPerformed
 
