@@ -107,6 +107,7 @@ public class JDialog_Proses_Resep extends javax.swing.JDialog {
         btnSelesaiSerahkan = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setTitle("Detail Resep");
 
         lblInfoPasien.setText("Info pasien");
 
