@@ -46,14 +46,7 @@ public class JFrame_Login extends javax.swing.JFrame {
         this.setLocationRelativeTo(null); 
         
         koneksi = new KoneksiDatabase();
-        try {
-            conn = koneksi.getConnection();
-            if (conn != null) {
-//                JOptionPane.showMessageDialog(this, "Koneksi ke Database Berhasil, Silahkan Login!");
-            }
-        } catch (SQLException e) {
-            JOptionPane.showMessageDialog(this, "Terjadi kesalahan saat koneksi: " + e.getMessage());
-        }
+        conn = koneksi.getConnection();
         // Menambahkan placeholder text
         txt_username.putClientProperty("JTextField.placeholderText", "Masukkan username...");
         txt_password.putClientProperty("JTextField.placeholderText", "Masukkan password...");
