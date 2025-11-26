@@ -5,6 +5,7 @@
 package Manajemen;
 
 import Database.KoneksiDatabase;
+import Main.ThreadPoolManager;
 import java.awt.CardLayout;
 import java.awt.Container;
 import java.awt.Image;
@@ -20,8 +21,6 @@ import javax.swing.SwingUtilities;
 
 public class JPanel_Dashboard_Manajemen extends javax.swing.JPanel {
     // Atribut
-    KoneksiDatabase koneksi;
-    Connection conn;
     
     // Icon
     private final ImageIcon kunjunganIcon = new ImageIcon(getClass().getResource("/Kunjungan.png"));
@@ -67,62 +66,62 @@ public class JPanel_Dashboard_Manajemen extends javax.swing.JPanel {
         
         // 2. PROSES BACKGROUND (Thread Sederhana)
         // Kita pakai "new Thread" agar UI bisa update teks "..." tadi dulu
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                // --- KODE DATABASE (Sama seperti sebelumnya) ---
-                KoneksiDatabase koneksi = new KoneksiDatabase();
-                try (Connection conn = koneksi.getConnection()) {
-                    if (conn != null) {
-                        // Variabel penampung hasil
-                        String txtKunjungan = "0";
-                        String txtPendapatan = "Rp 0";
-                        String txtPasien = "0";
+        ThreadPoolManager.getInstance().submit(() -> {
+            // --- KODE DATABASE ---
+            KoneksiDatabase koneksi = new KoneksiDatabase();
+            try (Connection conn = koneksi.getConnection()) {
+                if (conn != null) {
+                    // Variabel penampung hasil
+                    String txtKunjungan = "0";
+                    String txtPendapatan = "Rp 0";
+                    String txtPasien = "0";
 
-                        // A. Hitung Kunjungan
-                        String sqlKunjungan = "SELECT COUNT(*) AS total FROM kunjungan WHERE DATE(tanggal_kunjungan) = CURDATE()";
-                        try (PreparedStatement ps = conn.prepareStatement(sqlKunjungan); ResultSet rs = ps.executeQuery()) {
-                            if (rs.next()) txtKunjungan = String.valueOf(rs.getLong("total"));
-                        }
-
-                        // B. Hitung Pendapatan
-                        String sqlPendapatan = "SELECT SUM(total_bayar) AS total FROM pembayaran WHERE DATE(tanggal_bayar) = CURDATE()";
-                        try (PreparedStatement ps = conn.prepareStatement(sqlPendapatan); ResultSet rs = ps.executeQuery()) {
-                            if (rs.next()) txtPendapatan = formatRupiah(rs.getDouble("total"));
-                        }
-
-                        // C. Hitung Pasien
-                        String sqlPasien = "SELECT COUNT(*) AS total FROM pasien";
-                        try (PreparedStatement ps = conn.prepareStatement(sqlPasien); ResultSet rs = ps.executeQuery()) {
-                            if (rs.next()) txtPasien = String.valueOf(rs.getLong("total"));
-                        }
-                        
-                        // --- 3. UPDATE UI (SELESAI) ---
-                        // Karena kita di dalam Thread, kita harus pakai SwingUtilities untuk update GUI
-                        String finalKunjungan = txtKunjungan;
-                        String finalPendapatan = txtPendapatan;
-                        String finalPasien = txtPasien;
-                        
-                        SwingUtilities.invokeLater(() -> {
-                            lblJumlahKunjungan.setText(finalKunjungan);
-                            lblTotalPendapatan.setText(finalPendapatan);
-                            lblJumlahPasien.setText(finalPasien);
-                            
-                            // Balikin Kursor ke Normal
-                            setCursor(java.awt.Cursor.getDefaultCursor());
-                            refreshButton.setEnabled(true);
-                        });
+                    // A. Hitung Kunjungan
+                    String sqlKunjungan = "SELECT COUNT(*) AS total FROM kunjungan WHERE DATE(tanggal_kunjungan) = CURDATE()";
+                    try (PreparedStatement ps = conn.prepareStatement(sqlKunjungan); 
+                            ResultSet rs = ps.executeQuery()) {
+                        if (rs.next()) txtKunjungan = String.valueOf(rs.getLong("total"));
                     }
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                    // Jika error, balikin kursor juga
-                    SwingUtilities.invokeLater(() -> { 
+
+                    // B. Hitung Pendapatan
+                    String sqlPendapatan = "SELECT SUM(total_bayar) AS total FROM pembayaran WHERE DATE(tanggal_bayar) = CURDATE()";
+                    try (PreparedStatement ps = conn.prepareStatement(sqlPendapatan); 
+                            ResultSet rs = ps.executeQuery()) {
+                        if (rs.next()) txtPendapatan = formatRupiah(rs.getDouble("total"));
+                    }
+
+                    // C. Hitung Pasien
+                    String sqlPasien = "SELECT COUNT(*) AS total FROM pasien";
+                    try (PreparedStatement ps = conn.prepareStatement(sqlPasien); 
+                            ResultSet rs = ps.executeQuery()) {
+                        if (rs.next()) txtPasien = String.valueOf(rs.getLong("total"));
+                    }
+
+                    // --- 3. UPDATE UI (SELESAI) ---
+                    // Karena kita di dalam Thread, kita harus pakai SwingUtilities untuk update GUI
+                    String finalKunjungan = txtKunjungan;
+                    String finalPendapatan = txtPendapatan;
+                    String finalPasien = txtPasien;
+
+                    SwingUtilities.invokeLater(() -> {
+                        lblJumlahKunjungan.setText(finalKunjungan);
+                        lblTotalPendapatan.setText(finalPendapatan);
+                        lblJumlahPasien.setText(finalPasien);
+
+                        // Balikin Kursor ke Normal
                         setCursor(java.awt.Cursor.getDefaultCursor());
-                        JOptionPane.showMessageDialog(null, "Gagal memuat data dashboard: " + e.getMessage());
+                        refreshButton.setEnabled(true);
                     });
                 }
+            } catch (SQLException e) {
+                e.printStackTrace();
+                // Jika error, balikin kursor juga
+                SwingUtilities.invokeLater(() -> { 
+                    setCursor(java.awt.Cursor.getDefaultCursor());
+                    JOptionPane.showMessageDialog(null, "Gagal memuat data dashboard: " + e.getMessage());
+                });
             }
-        }).start();
+        });
 //        koneksi = new KoneksiDatabase();
 //        
 //        try {
@@ -150,29 +149,29 @@ public class JPanel_Dashboard_Manajemen extends javax.swing.JPanel {
     }
     
     // Method bantuan untuk menjalankan query dan set text ke label
-    private void setLabelFromQuery(Connection conn, String sql, javax.swing.JLabel label, boolean isCurrency) {
-        try (PreparedStatement pstmt = conn.prepareStatement(sql);
-             ResultSet rs = pstmt.executeQuery()) {
-            
-            if (rs.next()) {
-                double nilai = rs.getDouble("total");
-                
-                if (isCurrency) {
-                    // Format ke Rupiah (Rp 1.000.000)
-                    label.setText(formatRupiah(nilai));
-                } else {
-                    // Format angka biasa (tanpa koma desimal untuk count)
-                    label.setText(String.valueOf((int)nilai));
-                }
-            } else {
-                label.setText("0");
-            }
-            
-        } catch (SQLException e) {
-            System.err.println("Error query: " + sql);
-            label.setText("Error");
-        }
-    }
+//    private void setLabelFromQuery(Connection conn, String sql, javax.swing.JLabel label, boolean isCurrency) {
+//        try (PreparedStatement pstmt = conn.prepareStatement(sql);
+//             ResultSet rs = pstmt.executeQuery()) {
+//            
+//            if (rs.next()) {
+//                double nilai = rs.getDouble("total");
+//                
+//                if (isCurrency) {
+//                    // Format ke Rupiah (Rp 1.000.000)
+//                    label.setText(formatRupiah(nilai));
+//                } else {
+//                    // Format angka biasa (tanpa koma desimal untuk count)
+//                    label.setText(String.valueOf((int)nilai));
+//                }
+//            } else {
+//                label.setText("0");
+//            }
+//            
+//        } catch (SQLException e) {
+//            System.err.println("Error query: " + sql);
+//            label.setText("Error");
+//        }
+//    }
     
     // Format angka ke Rupiah Indonesia
     private String formatRupiah(double number) {
@@ -210,7 +209,6 @@ public class JPanel_Dashboard_Manajemen extends javax.swing.JPanel {
         lblJudul.setFont(new java.awt.Font("sansserif", 1, 24)); // NOI18N
         lblJudul.setForeground(new java.awt.Color(51, 51, 51));
         lblJudul.setText("Dashboard");
-        lblJudul.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
 
         lblWelcome.setFont(new java.awt.Font("sansserif", 0, 14)); // NOI18N
         lblWelcome.setForeground(new java.awt.Color(153, 153, 153));

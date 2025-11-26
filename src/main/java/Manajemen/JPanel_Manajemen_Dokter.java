@@ -4,6 +4,7 @@
  */
 package Manajemen;
 import Database.KoneksiDatabase;
+import Main.ThreadPoolManager;
 import java.awt.Cursor;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -16,6 +17,9 @@ import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableModel;
 
 public final class JPanel_Manajemen_Dokter extends javax.swing.JPanel {
+    
+    // Atribut
+    
     // Constructor
     public JPanel_Manajemen_Dokter() {
         initComponents();
@@ -28,7 +32,7 @@ public final class JPanel_Manajemen_Dokter extends javax.swing.JPanel {
         btnCari.setEnabled(false);
 
         // 2. PROSES BACKGROUND
-        new Thread(() -> {
+        ThreadPoolManager.getInstance().submit(() -> {
             List<Object[]> dataList = new ArrayList<>();
             String errorMsg = null;
 
@@ -99,7 +103,7 @@ public final class JPanel_Manajemen_Dokter extends javax.swing.JPanel {
                 btnCari.setEnabled(true);
             });
 
-        }).start();
+        });
 //        DefaultTableModel model = (DefaultTableModel) tblDokter.getModel();
 //        model.setRowCount(0);
 //        
@@ -220,7 +224,7 @@ public final class JPanel_Manajemen_Dokter extends javax.swing.JPanel {
 
         panelKontrol.setBackground(new java.awt.Color(255, 255, 255));
 
-        btnTambah.setBackground(new java.awt.Color(50, 120, 220));
+        btnTambah.setBackground(new java.awt.Color(0, 123, 255));
         btnTambah.setFont(new java.awt.Font("sansserif", 1, 14)); // NOI18N
         btnTambah.setForeground(new java.awt.Color(255, 255, 255));
         btnTambah.setText("➕ Tambah Data");
@@ -254,7 +258,7 @@ public final class JPanel_Manajemen_Dokter extends javax.swing.JPanel {
         });
 
         btnCari.setBackground(new java.awt.Color(255, 255, 255));
-        btnCari.setFont(new java.awt.Font("SansSerif", 1, 20)); // NOI18N
+        btnCari.setFont(new java.awt.Font("SansSerif", 1, 24)); // NOI18N
         btnCari.setForeground(new java.awt.Color(0, 0, 0));
         btnCari.setText("🔍");
         btnCari.setBorder(null);
@@ -314,11 +318,11 @@ public final class JPanel_Manajemen_Dokter extends javax.swing.JPanel {
             .addGroup(panelKontrolLayout.createSequentialGroup()
                 .addGroup(panelKontrolLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(panelKontrolLayout.createSequentialGroup()
-                        .addGroup(panelKontrolLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addGroup(panelKontrolLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(txtCari, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(btnCari, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(18, 18, 18)
-                        .addComponent(scrollPaneTabel, javax.swing.GroupLayout.DEFAULT_SIZE, 650, Short.MAX_VALUE))
+                        .addComponent(scrollPaneTabel, javax.swing.GroupLayout.DEFAULT_SIZE, 653, Short.MAX_VALUE))
                     .addGroup(panelKontrolLayout.createSequentialGroup()
                         .addGroup(panelKontrolLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(btnHapus, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)

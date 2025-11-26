@@ -5,6 +5,7 @@
 package Manajemen;
 
 import Main.JFrame_Login;
+import Main.ThreadPoolManager;
 import java.awt.CardLayout;
 import java.awt.Image;
 import javax.swing.ImageIcon;
@@ -18,7 +19,7 @@ public class JFrame_Main_Manajemen extends javax.swing.JFrame {
     
     // Atribut
     private String namaLengkapManajemen = "Nama Default Manajemen"; // Default value
-    
+        
     // Icon
     private final ImageIcon clinicIcon = new ImageIcon(getClass().getResource("/gambarKlinik.png"));
     
@@ -78,6 +79,7 @@ public class JFrame_Main_Manajemen extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jScrollPane1 = new javax.swing.JScrollPane();
         panelSidebar = new javax.swing.JPanel();
         labelJudulKlinik = new javax.swing.JLabel();
         labelIconKlinik = new javax.swing.JLabel();
@@ -87,10 +89,13 @@ public class JFrame_Main_Manajemen extends javax.swing.JFrame {
         btnManajemenUser = new javax.swing.JButton();
         btnManajemenDokter = new javax.swing.JButton();
         btn_logout = new javax.swing.JButton();
+        jScrollPane2 = new javax.swing.JScrollPane();
         panelContent = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Admin Dashboard - Sistem Informasi Klinik");
+
+        jScrollPane1.setBorder(null);
 
         panelSidebar.setBackground(new java.awt.Color(34, 40, 49));
         panelSidebar.setPreferredSize(new java.awt.Dimension(250, 389));
@@ -248,27 +253,32 @@ public class JFrame_Main_Manajemen extends javax.swing.JFrame {
                 .addComponent(btnManajemenUser, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(btnManajemenDokter, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 198, Short.MAX_VALUE)
                 .addComponent(btn_logout, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(24, 24, 24))
         );
 
+        jScrollPane1.setViewportView(panelSidebar);
+
+        jScrollPane2.setBorder(null);
+
         panelContent.setBackground(new java.awt.Color(255, 255, 255));
         panelContent.setLayout(new java.awt.CardLayout());
+        jScrollPane2.setViewportView(panelContent);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(panelSidebar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(panelContent, javax.swing.GroupLayout.DEFAULT_SIZE, 9, Short.MAX_VALUE))
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, 0)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 24, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(panelContent, javax.swing.GroupLayout.DEFAULT_SIZE, 591, Short.MAX_VALUE)
-            .addComponent(panelSidebar, javax.swing.GroupLayout.DEFAULT_SIZE, 591, Short.MAX_VALUE)
+            .addComponent(jScrollPane2)
+            .addComponent(jScrollPane1)
         );
 
         pack();
@@ -305,6 +315,7 @@ public class JFrame_Main_Manajemen extends javax.swing.JFrame {
                 JOptionPane.WARNING_MESSAGE);
 
         if (pilihan == JOptionPane.YES_OPTION) {
+            ThreadPoolManager.getInstance().shutdown();
             new JFrame_Login().setVisible(true);
             this.dispose(); 
         }
@@ -370,6 +381,8 @@ public class JFrame_Main_Manajemen extends javax.swing.JFrame {
     private javax.swing.JButton btnManajemenDokter;
     private javax.swing.JButton btnManajemenUser;
     private javax.swing.JButton btn_logout;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JLabel labelIconKlinik;
     private javax.swing.JLabel labelJudulKlinik;

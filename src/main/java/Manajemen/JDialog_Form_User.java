@@ -102,8 +102,12 @@ public class JDialog_Form_User extends javax.swing.JDialog {
         jLabel2.setFont(new java.awt.Font("SansSerif", 0, 14)); // NOI18N
         jLabel2.setText("User ID");
 
+        txt_user_id.setFont(new java.awt.Font("SansSerif", 0, 14)); // NOI18N
+
         jLabel3.setFont(new java.awt.Font("SansSerif", 0, 14)); // NOI18N
         jLabel3.setText("Username");
+
+        txt_username.setFont(new java.awt.Font("SansSerif", 0, 14)); // NOI18N
 
         jLabel4.setFont(new java.awt.Font("SansSerif", 0, 14)); // NOI18N
         jLabel4.setText("Password");
@@ -111,14 +115,17 @@ public class JDialog_Form_User extends javax.swing.JDialog {
         jLabel5.setFont(new java.awt.Font("SansSerif", 0, 14)); // NOI18N
         jLabel5.setText("Nama Lengkap");
 
+        txt_nama_lengkap.setFont(new java.awt.Font("SansSerif", 0, 14)); // NOI18N
+
         jLabel6.setFont(new java.awt.Font("SansSerif", 0, 14)); // NOI18N
         jLabel6.setText("Role");
 
+        comboRole.setFont(new java.awt.Font("SansSerif", 0, 14)); // NOI18N
         comboRole.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Resepsionis", "Kasir", "Apoteker", "Manajemen" }));
         comboRole.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
 
-        btnSimpanUser.setBackground(new java.awt.Color(50, 120, 220));
-        btnSimpanUser.setFont(new java.awt.Font("SansSerif", 0, 14)); // NOI18N
+        btnSimpanUser.setBackground(new java.awt.Color(0, 123, 255));
+        btnSimpanUser.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
         btnSimpanUser.setForeground(new java.awt.Color(255, 255, 255));
         btnSimpanUser.setText("Simpan");
         btnSimpanUser.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
@@ -129,7 +136,7 @@ public class JDialog_Form_User extends javax.swing.JDialog {
         });
 
         btnBatal.setBackground(new java.awt.Color(220, 53, 69));
-        btnBatal.setFont(new java.awt.Font("SansSerif", 0, 14)); // NOI18N
+        btnBatal.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
         btnBatal.setForeground(new java.awt.Color(255, 255, 255));
         btnBatal.setText("Batal");
         btnBatal.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
@@ -139,6 +146,7 @@ public class JDialog_Form_User extends javax.swing.JDialog {
             }
         });
 
+        txt_password.setFont(new java.awt.Font("SansSerif", 0, 14)); // NOI18N
         txt_password.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusGained(java.awt.event.FocusEvent evt) {
                 txt_passwordFocusGained(evt);
@@ -154,10 +162,13 @@ public class JDialog_Form_User extends javax.swing.JDialog {
         jLabel7.setFont(new java.awt.Font("SansSerif", 0, 14)); // NOI18N
         jLabel7.setText("No. Telepon");
 
+        txtNoTelepon.setFont(new java.awt.Font("SansSerif", 0, 14)); // NOI18N
+
         jLabel8.setFont(new java.awt.Font("SansSerif", 0, 14)); // NOI18N
         jLabel8.setText("Alamat");
 
         txtAlamat.setColumns(20);
+        txtAlamat.setFont(new java.awt.Font("SansSerif", 0, 14)); // NOI18N
         txtAlamat.setRows(5);
         jScrollPane1.setViewportView(txtAlamat);
 
@@ -256,7 +267,9 @@ public class JDialog_Form_User extends javax.swing.JDialog {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 500, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
 
         pack();
