@@ -8,20 +8,47 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import javax.swing.JOptionPane;
-//import java.sql.*;
  
 public class KoneksiDatabase {
 
-    Connection conn;
-    public KoneksiDatabase(){
-        try{
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            conn = DriverManager.getConnection("jdbc:mysql://klinik-klinik.c.aivencloud.com:12241/klinik?useCompression=true", "avnadmin", "AVNS_5e6NcoUQA0Q-vk_YdAs");
+    private static Connection koneksi;
+    
+    public static Connection getConnection() {
+        // Cek apakah koneksi belum ada ATAU sudah terputus/closed
+        try {
+            if (koneksi == null || koneksi.isClosed()) {
+                try {
+                    // Load Driver (Opsional untuk Java terbaru, tapi bagus untuk kompatibilitas)
+                    Class.forName("com.mysql.cj.jdbc.Driver");
+                    
+                    // Buat Koneksi Baru
+                    // Ganti url, user, password sesuai database Anda
+                    koneksi = DriverManager.getConnection("jdbc:mysql://klinik-klinik.c.aivencloud.com:12241/klinik?useCompression=true", "avnadmin", "AVNS_5e6NcoUQA0Q-vk_YdAs");
+                    // System.out.println("Koneksi Berhasil Dibuat"); // Untuk debug
+                    
+                } catch (ClassNotFoundException | SQLException e) {
+                    JOptionPane.showMessageDialog(null, "Gagal Koneksi Database: " + e.getMessage());
+                    // Return null atau lempar exception agar program tahu koneksi gagal
+                    return null;
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
-        catch(ClassNotFoundException | SQLException e){
-            JOptionPane.showMessageDialog(null, e);
-        }
+        
+        // Kembalikan koneksi yang SUDAH ADA (Reuse)
+        return koneksi;
     }
+    
+//    public KoneksiDatabase(){
+//        try{
+//            Class.forName("com.mysql.cj.jdbc.Driver");
+//            koneksi = DriverManager.getConnection("jdbc:mysql://klinik-klinik.c.aivencloud.com:12241/klinik?useCompression=true", "avnadmin", "AVNS_5e6NcoUQA0Q-vk_YdAs");
+//        }
+//        catch(ClassNotFoundException | SQLException e){
+//            JOptionPane.showMessageDialog(null, e);
+//        }
+//    }
     // Atribut untuk koneksi database
     //private final String hostname;
 //    private final String database;
@@ -45,8 +72,8 @@ public class KoneksiDatabase {
 //        return DriverManager.getConnection(url, username, password);
 //    }
     
-    public Connection getConnection() throws SQLException{
-        return conn;
-    }
+//    public Connection getConnection() throws SQLException{
+//        return koneksi;
+//    }
     
 }
