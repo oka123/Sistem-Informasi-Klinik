@@ -83,6 +83,7 @@ public class JDialog_Form_Dokter extends javax.swing.JDialog {
     private void initComponents() {
 
         buttonGroup1 = new javax.swing.ButtonGroup();
+        jScrollPane2 = new javax.swing.JScrollPane();
         panelForm = new javax.swing.JPanel();
         lblJudul = new javax.swing.JLabel();
         jSeparator1 = new javax.swing.JSeparator();
@@ -108,7 +109,6 @@ public class JDialog_Form_Dokter extends javax.swing.JDialog {
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Form Data Dokter");
         setModal(true);
-        setResizable(false);
 
         panelForm.setBackground(new java.awt.Color(255, 255, 255));
         panelForm.setBorder(javax.swing.BorderFactory.createEmptyBorder(15, 15, 15, 15));
@@ -154,8 +154,8 @@ public class JDialog_Form_Dokter extends javax.swing.JDialog {
         txtNoTelepon.setFont(new java.awt.Font("SansSerif", 0, 14)); // NOI18N
         txtNoTelepon.setForeground(new java.awt.Color(0, 0, 0));
 
-        btnSimpan.setBackground(new java.awt.Color(50, 120, 220));
-        btnSimpan.setFont(new java.awt.Font("SansSerif", 0, 14)); // NOI18N
+        btnSimpan.setBackground(new java.awt.Color(0, 123, 255));
+        btnSimpan.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
         btnSimpan.setForeground(new java.awt.Color(255, 255, 255));
         btnSimpan.setText("Simpan");
         btnSimpan.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
@@ -166,7 +166,7 @@ public class JDialog_Form_Dokter extends javax.swing.JDialog {
         });
 
         btnBatal.setBackground(new java.awt.Color(220, 53, 69));
-        btnBatal.setFont(new java.awt.Font("SansSerif", 0, 14)); // NOI18N
+        btnBatal.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
         btnBatal.setForeground(new java.awt.Color(255, 255, 255));
         btnBatal.setText("Batal");
         btnBatal.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
@@ -273,26 +273,28 @@ public class JDialog_Form_Dokter extends javax.swing.JDialog {
                 .addGroup(panelFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jLabel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(txtNoTelepon, javax.swing.GroupLayout.DEFAULT_SIZE, 40, Short.MAX_VALUE))
-                .addGap(64, 64, 64)
+                .addGap(18, 18, 18)
                 .addGroup(panelFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnSimpan, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnBatal, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(22, Short.MAX_VALUE))
+                .addGap(0, 0, Short.MAX_VALUE))
         );
+
+        jScrollPane2.setViewportView(panelForm);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(panelForm, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(panelForm, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         pack();
@@ -447,6 +449,7 @@ public class JDialog_Form_Dokter extends javax.swing.JDialog {
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JLabel lblJudul;
     private javax.swing.JPanel panelForm;

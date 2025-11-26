@@ -48,4 +48,5 @@ public class KoneksiDatabase {
     public Connection getConnection() throws SQLException{
         return conn;
     }
+    
 }

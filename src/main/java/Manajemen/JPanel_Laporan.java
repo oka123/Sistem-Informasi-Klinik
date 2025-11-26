@@ -5,12 +5,13 @@
 package Manajemen;
 
 import Database.KoneksiDatabase;
-import java.awt.Cursor;
+import Main.ThreadPoolManager;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import java.awt.Cursor;
 import java.text.NumberFormat;
 import java.util.Locale;
 
@@ -24,11 +25,20 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartPanel;
+import org.jfree.chart.JFreeChart;
+import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.data.category.DefaultCategoryDataset;
+import javax.swing.JDialog;
+import java.awt.BorderLayout;
+import javax.swing.SwingUtilities;
+
 public class JPanel_Laporan extends javax.swing.JPanel {
-//    Deklarasi Atribut
+    // Atribut
     private final NumberFormat formatRupiah;
     private String tempTotalText = "";
-    
+        
     // Constructor
     public JPanel_Laporan() {
         initComponents();
@@ -56,198 +66,6 @@ public class JPanel_Laporan extends javax.swing.JPanel {
          dcSampaiTanggal.setDate(null);
     }
     
-    @SuppressWarnings("unchecked")
-    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
-    private void initComponents() {
-
-        lbl_PilihLaporan = new javax.swing.JLabel();
-        comboJenisLaporan = new javax.swing.JComboBox<>();
-        dcDariTanggal = new com.toedter.calendar.JDateChooser();
-        dcSampaiTanggal = new com.toedter.calendar.JDateChooser();
-        lbl_dariTanggal = new javax.swing.JLabel();
-        jLabel1 = new javax.swing.JLabel();
-        btnTampilkan = new javax.swing.JButton();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        tblLaporan = new javax.swing.JTable();
-        lblTotalPendapatan = new javax.swing.JLabel();
-        btnExportData = new javax.swing.JButton();
-
-        setBackground(new java.awt.Color(255, 255, 255));
-        setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
-        setPreferredSize(new java.awt.Dimension(952, 800));
-
-        lbl_PilihLaporan.setFont(new java.awt.Font("SansSerif", 1, 24)); // NOI18N
-        lbl_PilihLaporan.setForeground(new java.awt.Color(0, 0, 0));
-        lbl_PilihLaporan.setText("Pilih Laporan");
-
-        comboJenisLaporan.setBackground(new java.awt.Color(50, 120, 220));
-        comboJenisLaporan.setFont(new java.awt.Font("SansSerif", 0, 18)); // NOI18N
-        comboJenisLaporan.setForeground(new java.awt.Color(255, 255, 255));
-        comboJenisLaporan.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Laporan Pendapatan", "Laporan Kunjungan Pasien", "Laporan Penjualan Obat" }));
-        comboJenisLaporan.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        comboJenisLaporan.setOpaque(true);
-        comboJenisLaporan.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                comboJenisLaporanActionPerformed(evt);
-            }
-        });
-
-        dcDariTanggal.setBackground(new java.awt.Color(255, 255, 255));
-        dcDariTanggal.setForeground(new java.awt.Color(0, 0, 0));
-
-        dcSampaiTanggal.setBackground(new java.awt.Color(255, 255, 255));
-        dcSampaiTanggal.setForeground(new java.awt.Color(0, 0, 0));
-
-        lbl_dariTanggal.setFont(new java.awt.Font("SansSerif", 0, 14)); // NOI18N
-        lbl_dariTanggal.setForeground(new java.awt.Color(0, 0, 0));
-        lbl_dariTanggal.setText("Dari Tanggal");
-
-        jLabel1.setFont(new java.awt.Font("SansSerif", 0, 14)); // NOI18N
-        jLabel1.setForeground(new java.awt.Color(0, 0, 0));
-        jLabel1.setText("Sampai Tanggal");
-
-        btnTampilkan.setBackground(new java.awt.Color(50, 120, 220));
-        btnTampilkan.setFont(new java.awt.Font("SansSerif", 0, 14)); // NOI18N
-        btnTampilkan.setForeground(new java.awt.Color(255, 255, 255));
-        btnTampilkan.setText("Tampilkan Laporan");
-        btnTampilkan.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        btnTampilkan.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnTampilkanActionPerformed(evt);
-            }
-        });
-
-        tblLaporan.setAutoCreateRowSorter(true);
-        tblLaporan.setFont(new java.awt.Font("SansSerif", 0, 14)); // NOI18N
-        tblLaporan.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null}
-            },
-            new String [] {
-                "ID Pembayaran", "Tanggal Bayar", "Kasir", "Metode", "Biaya Jasa", "Biaya Obat", "Total Bayar"
-            }
-        ));
-        tblLaporan.setGridColor(new java.awt.Color(224, 224, 224));
-        tblLaporan.setSelectionBackground(new java.awt.Color(50, 120, 220));
-        tblLaporan.setSelectionForeground(new java.awt.Color(255, 255, 255));
-        tblLaporan.setShowGrid(true);
-        jScrollPane1.setViewportView(tblLaporan);
-
-        lblTotalPendapatan.setFont(new java.awt.Font("SansSerif", 0, 20)); // NOI18N
-        lblTotalPendapatan.setForeground(new java.awt.Color(0, 0, 0));
-        lblTotalPendapatan.setText("Total Pendapatan: Rp. 120.000.000");
-
-        btnExportData.setBackground(new java.awt.Color(25, 135, 84));
-        btnExportData.setFont(new java.awt.Font("SansSerif", 0, 18)); // NOI18N
-        btnExportData.setForeground(new java.awt.Color(255, 255, 255));
-        btnExportData.setText("Export Data");
-        btnExportData.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        btnExportData.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnExportDataActionPerformed(evt);
-            }
-        });
-
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
-        this.setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(20, 20, 20)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(lblTotalPendapatan)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(btnExportData))
-                    .addComponent(jScrollPane1)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(lbl_PilihLaporan)
-                        .addGap(18, 18, 18)
-                        .addComponent(comboJenisLaporan, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(dcDariTanggal, javax.swing.GroupLayout.DEFAULT_SIZE, 139, Short.MAX_VALUE)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(lbl_dariTanggal)
-                                .addGap(0, 0, Short.MAX_VALUE)))
-                        .addGap(18, 18, 18)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(dcSampaiTanggal, javax.swing.GroupLayout.DEFAULT_SIZE, 146, Short.MAX_VALUE)
-                                .addGap(19, 19, 19)
-                                .addComponent(btnTampilkan))
-                            .addComponent(jLabel1))))
-                .addGap(19, 19, 19))
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(lbl_dariTanggal)
-                    .addComponent(jLabel1))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
-                    .addComponent(lbl_PilihLaporan, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(comboJenisLaporan, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(dcDariTanggal, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(dcSampaiTanggal, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(btnTampilkan, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(18, 18, 18)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 609, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
-                    .addComponent(lblTotalPendapatan, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnExportData, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(47, 47, 47))
-        );
-    }// </editor-fold>//GEN-END:initComponents
-
-    private void btnTampilkanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTampilkanActionPerformed
-        tampilkanLaporan();
-    }//GEN-LAST:event_btnTampilkanActionPerformed
-
-    private void comboJenisLaporanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboJenisLaporanActionPerformed
-        // Reset tabel saat jenis laporan diganti agar user tidak bingung
-        DefaultTableModel modelKosong = new DefaultTableModel();
-        String jenis = (String) comboJenisLaporan.getSelectedItem();
-        
-        // Set header preview tabel saja
-        if (jenis.equals("Laporan Pendapatan")) {
-            modelKosong.setColumnIdentifiers(new Object[]{"ID Bayar", "Tgl Bayar", "Kasir", "Metode", "Jasa", "Obat", "Total"});
-        } else if (jenis.equals("Laporan Kunjungan Pasien")) {
-            modelKosong.setColumnIdentifiers(new Object[]{"Tgl Kunjungan", "No Antrean", "Pasien", "Dokter", "Status"});
-        } else {
-            modelKosong.setColumnIdentifiers(new Object[]{"Nama Obat", "Satuan", "Total Terjual", "Sisa Stok"});
-        }
-        
-        tblLaporan.setModel(modelKosong);
-        lblTotalPendapatan.setText("Total: [Silahkan Pilih Tanggal & Klik Tampilkan]");
-    }//GEN-LAST:event_comboJenisLaporanActionPerformed
-
-    private void btnExportDataActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExportDataActionPerformed
-        exportKeExcel();
-    }//GEN-LAST:event_btnExportDataActionPerformed
-    
     private void tampilkanLaporan() {
         // 1. Validasi Input Tanggal (Tetap di UI Thread)
         if (dcDariTanggal.getDate() == null || dcSampaiTanggal.getDate() == null) {
@@ -265,7 +83,7 @@ public class JPanel_Laporan extends javax.swing.JPanel {
         btnTampilkan.setEnabled(false); // Nonaktifkan tombol agar user tidak spam klik
 
         // 4. PROSES BACKGROUND
-        new Thread(() -> {
+        ThreadPoolManager.getInstance().submit(() -> {
             DefaultTableModel resultModel = null;
             String errorMsg = null;
 
@@ -273,9 +91,9 @@ public class JPanel_Laporan extends javax.swing.JPanel {
                 // Panggil method load yang sudah kita modifikasi
                 // Method ini akan mengisi 'this.tempTotalText' juga
                 switch (jenisLaporan) {
-                    case "Laporan Pendapatan" -> resultModel = loadLaporanPendapatans(sqlDari, sqlSampai);
-                    case "Laporan Kunjungan Pasien" -> resultModel = loadLaporanKunjungans(sqlDari, sqlSampai);
-                    case "Laporan Penjualan Obat" -> resultModel = loadLaporanObats(sqlDari, sqlSampai);
+                    case "Laporan Pendapatan" -> resultModel = loadLaporanPendapatan(sqlDari, sqlSampai);
+                    case "Laporan Kunjungan Pasien" -> resultModel = loadLaporanKunjungan(sqlDari, sqlSampai);
+                    case "Laporan Penjualan Obat" -> resultModel = loadLaporanObat(sqlDari, sqlSampai);
                     default -> JOptionPane.showMessageDialog(this, "Jenis laporan tidak valid.");
                 }
             } catch (Exception e) {
@@ -305,7 +123,7 @@ public class JPanel_Laporan extends javax.swing.JPanel {
                 btnTampilkan.setEnabled(true);
             });
 
-        }).start();
+        });
 //        
 //        // Validasi Input Tanggal
 //        if (dcDariTanggal.getDate() == null || dcSampaiTanggal.getDate() == null) {
@@ -467,7 +285,7 @@ public class JPanel_Laporan extends javax.swing.JPanel {
     // Test
     
     // 1. Laporan Pendapatan
-    private DefaultTableModel loadLaporanPendapatans(java.sql.Date dari, java.sql.Date sampai) throws SQLException {
+    private DefaultTableModel loadLaporanPendapatan(java.sql.Date dari, java.sql.Date sampai) throws SQLException {
         DefaultTableModel model = new DefaultTableModel();
         model.setColumnIdentifiers(new Object[]{"ID Pembayaran", "Tanggal Bayar", "Kasir", "Metode", "Biaya Jasa", "Biaya Obat", "Total Bayar"});
         
@@ -509,7 +327,7 @@ public class JPanel_Laporan extends javax.swing.JPanel {
     }
 
     // 2. Laporan Kunjungan
-    private DefaultTableModel loadLaporanKunjungans(java.sql.Date dari, java.sql.Date sampai) throws SQLException {
+    private DefaultTableModel loadLaporanKunjungan(java.sql.Date dari, java.sql.Date sampai) throws SQLException {
         DefaultTableModel model = new DefaultTableModel();
         model.setColumnIdentifiers(new Object[]{"Tanggal", "Pasien", "Dokter", "Status"});
         int totalKunjungan = 0;
@@ -543,7 +361,7 @@ public class JPanel_Laporan extends javax.swing.JPanel {
     }
 
     // 3. Laporan Obat
-    private DefaultTableModel loadLaporanObats(java.sql.Date dari, java.sql.Date sampai) throws SQLException {
+    private DefaultTableModel loadLaporanObat(java.sql.Date dari, java.sql.Date sampai) throws SQLException {
         DefaultTableModel model = new DefaultTableModel();
         model.setColumnIdentifiers(new Object[]{"Nama Obat", "Satuan", "Total Terjual (Qty)", "Sisa Stok"});
         int totalItemTerjual = 0;
@@ -581,18 +399,15 @@ public class JPanel_Laporan extends javax.swing.JPanel {
     // Akhir Test
     
     private void exportKeExcel() {
-        // Cek apakah ada data di tabel
         if (tblLaporan.getRowCount() == 0) {
             JOptionPane.showMessageDialog(this, "Tidak ada data untuk diexport.", "Info", JOptionPane.INFORMATION_MESSAGE);
             return;
         }
 
-        // Pilih Lokasi Penyimpanan File
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setDialogTitle("Simpan Laporan ke Excel");
         fileChooser.setFileFilter(new FileNameExtensionFilter("Excel File (*.xlsx)", "xlsx"));
-
-        // Set nama file default (berdasarkan jenis laporan + timestamp sederhana)
+        
         String jenis = comboJenisLaporan.getSelectedItem().toString().replace(" ", "_");
         String namaFileDefault = jenis + "_" + System.currentTimeMillis() + ".xlsx";
         fileChooser.setSelectedFile(new File(namaFileDefault));
@@ -600,91 +415,552 @@ public class JPanel_Laporan extends javax.swing.JPanel {
         int userSelection = fileChooser.showSaveDialog(this);
 
         if (userSelection == JFileChooser.APPROVE_OPTION) {
-            File fileToSave = fileChooser.getSelectedFile();
-
-            // Pastikan ekstensi .xlsx
-            if (!fileToSave.getAbsolutePath().endsWith(".xlsx")) {
-                fileToSave = new File(fileToSave.getAbsolutePath() + ".xlsx");
+            // --- PERBAIKAN DI SINI ---
+            
+            // 1. Ambil file mentah dari chooser
+            File rawFile = fileChooser.getSelectedFile();
+            
+            // 2. Cek ekstensi .xlsx SEBELUM masuk thread (di UI Thread)
+            // Jika tidak ada .xlsx, kita buat file baru dengan nama yang benar
+            if (!rawFile.getAbsolutePath().endsWith(".xlsx")) {
+                rawFile = new File(rawFile.getAbsolutePath() + ".xlsx");
             }
-
-            // roses Penulisan Excel (Apache POI)
-            try (Workbook workbook = new XSSFWorkbook()) {
-                Sheet sheet = workbook.createSheet("Laporan");
-
-                // --- HEADER STYLE ---
-                CellStyle headerStyle = workbook.createCellStyle();
-                Font headerFont = workbook.createFont();
-                headerFont.setBold(true);
-                headerStyle.setFont(headerFont);
-                headerStyle.setBorderBottom(BorderStyle.THIN);
-                headerStyle.setBorderTop(BorderStyle.THIN);
-                headerStyle.setBorderRight(BorderStyle.THIN);
-                headerStyle.setBorderLeft(BorderStyle.THIN);
-                headerStyle.setFillForegroundColor(IndexedColors.GREY_25_PERCENT.getIndex());
-                headerStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-
-                // --- MEMBUAT ROW HEADER ---
-                Row headerRow = sheet.createRow(0);
-                for (int i = 0; i < tblLaporan.getColumnCount(); i++) {
-                    Cell cell = headerRow.createCell(i);
-                    cell.setCellValue(tblLaporan.getColumnName(i));
-                    cell.setCellStyle(headerStyle);
-                }
-
-                // --- MENGISI DATA BARIS ---
-                CellStyle dataStyle = workbook.createCellStyle();
-                dataStyle.setBorderBottom(BorderStyle.THIN);
-                dataStyle.setBorderRight(BorderStyle.THIN);
-                dataStyle.setBorderLeft(BorderStyle.THIN);
-
-                for (int r = 0; r < tblLaporan.getRowCount(); r++) {
-                    Row row = sheet.createRow(r + 1); // +1 karena baris 0 dipakai header
-                    for (int c = 0; c < tblLaporan.getColumnCount(); c++) {
-                        Cell cell = row.createCell(c);
-                        Object value = tblLaporan.getValueAt(r, c);
-
-                        if (value != null) {
-                            // Cek tipe data agar di Excel bisa dihitung (Sum/Avg)
-                            String strValue = value.toString();
-
-                            // Coba parsing angka (menghapus "Rp " dan "." agar jadi angka murni di Excel)
-                            // Logika ini opsional, tergantung apakah Anda ingin format "Rp" tetap ada atau jadi angka
-                            if (strValue.startsWith("Rp")) {
-                                // Jika ingin disimpan sebagai teks apa adanya:
-                                cell.setCellValue(strValue);
-                            } else if (value instanceof Number) {
-                                cell.setCellValue(((Number) value).doubleValue());
-                            } else {
-                                cell.setCellValue(strValue);
-                            }
-                        } else {
-                            cell.setCellValue("");
-                        }
-                        cell.setCellStyle(dataStyle);
+            
+            // 3. Buat variabel FINAL untuk diserahkan ke dalam Thread
+            // Variabel ini tidak boleh diubah lagi nilainya di bawah sana
+            final File finalFileToSave = rawFile;
+            
+            this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+            btnExportData.setEnabled(false);
+            
+            // Gunakan Thread Pool untuk proses penulisan file (I/O operation)
+            ThreadPoolManager.getInstance().submit(() -> {
+                try {
+                    File fileToSave = fileChooser.getSelectedFile();
+                    if (!fileToSave.getAbsolutePath().endsWith(".xlsx")) {
+                        fileToSave = new File(fileToSave.getAbsolutePath() + ".xlsx");
                     }
-                }
 
-                // Auto Size Kolom (agar lebar kolom pas)
-                for (int i = 0; i < tblLaporan.getColumnCount(); i++) {
-                    sheet.autoSizeColumn(i);
-                }
+                    try (Workbook workbook = new XSSFWorkbook()) {
+                        Sheet sheet = workbook.createSheet("Laporan");
+                        
+                        // ... (Styling code sama seperti sebelumnya) ...
+                        CellStyle headerStyle = workbook.createCellStyle();
+                        Font headerFont = workbook.createFont();
+                        headerFont.setBold(true);
+                        headerStyle.setFont(headerFont);
+                        headerStyle.setBorderBottom(BorderStyle.THIN);
+                        headerStyle.setFillForegroundColor(IndexedColors.GREY_25_PERCENT.getIndex());
+                        headerStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
 
-                // Simpan ke File
-                try (FileOutputStream out = new FileOutputStream(fileToSave)) {
-                    workbook.write(out);
-                }
+                        CellStyle dataStyle = workbook.createCellStyle();
+                        dataStyle.setBorderBottom(BorderStyle.THIN);
+                        dataStyle.setBorderRight(BorderStyle.THIN);
+                        dataStyle.setBorderLeft(BorderStyle.THIN);
 
-                JOptionPane.showMessageDialog(this, "Data berhasil diexport ke:\n" + fileToSave.getAbsolutePath());
+                        // Write Header (UI Access harus hati-hati di thread lain, tapi baca JTable biasanya aman jika read-only)
+                        // Untuk thread-safety yang 100% benar, data tabel harus dicopy dulu di UI thread.
+                        // Namun untuk simplifikasi di sini kita akses langsung dengan asumsi user tidak mengubah tabel saat export.
+                        
+                        Row headerRow = sheet.createRow(0);
+                        for (int i = 0; i < tblLaporan.getColumnCount(); i++) {
+                            Cell cell = headerRow.createCell(i);
+                            cell.setCellValue(tblLaporan.getColumnName(i));
+                            cell.setCellStyle(headerStyle);
+                        }
+
+                        for (int r = 0; r < tblLaporan.getRowCount(); r++) {
+                            Row row = sheet.createRow(r + 1);
+                            for (int c = 0; c < tblLaporan.getColumnCount(); c++) {
+                                Cell cell = row.createCell(c);
+                                Object value = tblLaporan.getValueAt(r, c);
+                                if (value != null) {
+                                    String strValue = value.toString();
+                                    if (strValue.startsWith("Rp")) cell.setCellValue(strValue);
+                                    else if (value instanceof Number) cell.setCellValue(((Number) value).doubleValue());
+                                    else cell.setCellValue(strValue);
+                                } else {
+                                    cell.setCellValue("");
+                                }
+                                cell.setCellStyle(dataStyle);
+                            }
+                        }
+
+                        for (int i = 0; i < tblLaporan.getColumnCount(); i++) sheet.autoSizeColumn(i);
+
+                        try (FileOutputStream out = new FileOutputStream(fileToSave)) {
+                            workbook.write(out);
+                        }
+                    }
+                    
+                    SwingUtilities.invokeLater(() -> {
+                        this.setCursor(Cursor.getDefaultCursor());
+                        btnExportData.setEnabled(true);
+                        JOptionPane.showMessageDialog(this, "Data berhasil diexport ke:\n" + finalFileToSave.getAbsolutePath());
+                    });
+
+                } catch (Exception e) {
+                    SwingUtilities.invokeLater(() -> {
+                        this.setCursor(Cursor.getDefaultCursor());
+                        JOptionPane.showMessageDialog(this, "Gagal mengexport data: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                    });
+                    e.printStackTrace();
+                }
+            });
+        }
+//        // Cek apakah ada data di tabel
+//        if (tblLaporan.getRowCount() == 0) {
+//            JOptionPane.showMessageDialog(this, "Tidak ada data untuk diexport.", "Info", JOptionPane.INFORMATION_MESSAGE);
+//            return;
+//        }
+//
+//        // Pilih Lokasi Penyimpanan File
+//        JFileChooser fileChooser = new JFileChooser();
+//        fileChooser.setDialogTitle("Simpan Laporan ke Excel");
+//        fileChooser.setFileFilter(new FileNameExtensionFilter("Excel File (*.xlsx)", "xlsx"));
+//
+//        // Set nama file default (berdasarkan jenis laporan + timestamp sederhana)
+//        String jenis = comboJenisLaporan.getSelectedItem().toString().replace(" ", "_");
+//        String namaFileDefault = jenis + "_" + System.currentTimeMillis() + ".xlsx";
+//        fileChooser.setSelectedFile(new File(namaFileDefault));
+//
+//        int userSelection = fileChooser.showSaveDialog(this);
+//
+//        if (userSelection == JFileChooser.APPROVE_OPTION) {
+//            File fileToSave = fileChooser.getSelectedFile();
+//
+//            // Pastikan ekstensi .xlsx
+//            if (!fileToSave.getAbsolutePath().endsWith(".xlsx")) {
+//                fileToSave = new File(fileToSave.getAbsolutePath() + ".xlsx");
+//            }
+//
+//            // roses Penulisan Excel (Apache POI)
+//            try (Workbook workbook = new XSSFWorkbook()) {
+//                Sheet sheet = workbook.createSheet("Laporan");
+//
+//                // --- HEADER STYLE ---
+//                CellStyle headerStyle = workbook.createCellStyle();
+//                Font headerFont = workbook.createFont();
+//                headerFont.setBold(true);
+//                headerStyle.setFont(headerFont);
+//                headerStyle.setBorderBottom(BorderStyle.THIN);
+//                headerStyle.setBorderTop(BorderStyle.THIN);
+//                headerStyle.setBorderRight(BorderStyle.THIN);
+//                headerStyle.setBorderLeft(BorderStyle.THIN);
+//                headerStyle.setFillForegroundColor(IndexedColors.GREY_25_PERCENT.getIndex());
+//                headerStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+//
+//                // --- MEMBUAT ROW HEADER ---
+//                Row headerRow = sheet.createRow(0);
+//                for (int i = 0; i < tblLaporan.getColumnCount(); i++) {
+//                    Cell cell = headerRow.createCell(i);
+//                    cell.setCellValue(tblLaporan.getColumnName(i));
+//                    cell.setCellStyle(headerStyle);
+//                }
+//
+//                // --- MENGISI DATA BARIS ---
+//                CellStyle dataStyle = workbook.createCellStyle();
+//                dataStyle.setBorderBottom(BorderStyle.THIN);
+//                dataStyle.setBorderRight(BorderStyle.THIN);
+//                dataStyle.setBorderLeft(BorderStyle.THIN);
+//
+//                for (int r = 0; r < tblLaporan.getRowCount(); r++) {
+//                    Row row = sheet.createRow(r + 1); // +1 karena baris 0 dipakai header
+//                    for (int c = 0; c < tblLaporan.getColumnCount(); c++) {
+//                        Cell cell = row.createCell(c);
+//                        Object value = tblLaporan.getValueAt(r, c);
+//
+//                        if (value != null) {
+//                            // Cek tipe data agar di Excel bisa dihitung (Sum/Avg)
+//                            String strValue = value.toString();
+//
+//                            // Coba parsing angka (menghapus "Rp " dan "." agar jadi angka murni di Excel)
+//                            // Logika ini opsional, tergantung apakah Anda ingin format "Rp" tetap ada atau jadi angka
+//                            if (strValue.startsWith("Rp")) {
+//                                // Jika ingin disimpan sebagai teks apa adanya:
+//                                cell.setCellValue(strValue);
+//                            } else if (value instanceof Number) {
+//                                cell.setCellValue(((Number) value).doubleValue());
+//                            } else {
+//                                cell.setCellValue(strValue);
+//                            }
+//                        } else {
+//                            cell.setCellValue("");
+//                        }
+//                        cell.setCellStyle(dataStyle);
+//                    }
+//                }
+//
+//                // Auto Size Kolom (agar lebar kolom pas)
+//                for (int i = 0; i < tblLaporan.getColumnCount(); i++) {
+//                    sheet.autoSizeColumn(i);
+//                }
+//
+//                // Simpan ke File
+//                try (FileOutputStream out = new FileOutputStream(fileToSave)) {
+//                    workbook.write(out);
+//                }
+//
+//                JOptionPane.showMessageDialog(this, "Data berhasil diexport ke:\n" + fileToSave.getAbsolutePath());
+//
+//            } catch (Exception e) {
+//                JOptionPane.showMessageDialog(this, "Gagal mengexport data: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+//                e.printStackTrace();
+//            }
+//        }
+
+    }
+    
+    private void tampilkanGrafikPendapatan() {
+        if (dcDariTanggal.getDate() == null || dcSampaiTanggal.getDate() == null) {
+            JOptionPane.showMessageDialog(this, "Pilih rentang tanggal terlebih dahulu!");
+            return;
+        }
+
+        final java.sql.Date sqlDari = new java.sql.Date(dcDariTanggal.getDate().getTime());
+        final java.sql.Date sqlSampai = new java.sql.Date(dcSampaiTanggal.getDate().getTime());
+        
+        this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+        btnGrafik.setEnabled(false);
+
+        // Menggunakan Thread Pool juga untuk Grafik agar konsisten
+        ThreadPoolManager.getInstance().submit(() -> {
+            DefaultCategoryDataset dataset = new DefaultCategoryDataset();
+            boolean success = false;
+            String errorMsg = null;
+
+            String sql = "SELECT DATE(tanggal_bayar) as tgl, SUM(total_bayar) as total " +
+                         "FROM pembayaran " +
+                         "WHERE DATE(tanggal_bayar) BETWEEN ? AND ? " +
+                         "GROUP BY DATE(tanggal_bayar) " +
+                         "ORDER BY tgl ASC";
+
+            try (Connection conn = new Database.KoneksiDatabase().getConnection();
+                 PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+                pstmt.setDate(1, sqlDari);
+                pstmt.setDate(2, sqlSampai);
+                ResultSet rs = pstmt.executeQuery();
+                
+                while (rs.next()) {
+                    String tanggal = rs.getString("tgl");
+                    double total = rs.getDouble("total");
+                    dataset.addValue(total, "Pendapatan", tanggal);
+                }
+                success = true;
 
             } catch (Exception e) {
-                JOptionPane.showMessageDialog(this, "Gagal mengexport data: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-                e.printStackTrace();
+                errorMsg = e.getMessage();
             }
-        }
+
+            // Update UI
+            final boolean finalSuccess = success;
+            final String finalError = errorMsg;
+            
+            SwingUtilities.invokeLater(() -> {
+                this.setCursor(Cursor.getDefaultCursor());
+                btnGrafik.setEnabled(true);
+                
+                if (finalSuccess) {
+                    JFreeChart barChart = ChartFactory.createBarChart(
+                            "Grafik Pendapatan Klinik", 
+                            "Tanggal", 
+                            "Total Pendapatan (Rp)", 
+                            dataset, 
+                            PlotOrientation.VERTICAL, 
+                            true, true, false);
+
+                    JDialog chartDialog = new JDialog((java.awt.Frame) SwingUtilities.getWindowAncestor(this), "Grafik Pendapatan", true);
+                    chartDialog.setSize(900, 600);
+                    chartDialog.setLocationRelativeTo(null);
+                    ChartPanel chartPanel = new ChartPanel(barChart);
+                    chartDialog.add(chartPanel, BorderLayout.CENTER);
+                    chartDialog.setVisible(true);
+                } else {
+                    JOptionPane.showMessageDialog(this, "Gagal mengambil data grafik: " + finalError);
+                }
+            });
+        });
+//        // 1. Validasi Tanggal dulu
+//        if (dcDariTanggal.getDate() == null || dcSampaiTanggal.getDate() == null) {
+//            JOptionPane.showMessageDialog(this, "Pilih rentang tanggal terlebih dahulu!");
+//            return;
+//        }
+//
+//        java.sql.Date sqlDari = new java.sql.Date(dcDariTanggal.getDate().getTime());
+//        java.sql.Date sqlSampai = new java.sql.Date(dcSampaiTanggal.getDate().getTime());
+//
+//        // 2. Siapkan Dataset (Wadah Data untuk Grafik)
+//        DefaultCategoryDataset dataset = new DefaultCategoryDataset();
+//
+//        // 3. Query Data (Group by Tanggal)
+//        String sql = "SELECT DATE(tanggal_bayar) as tgl, SUM(total_bayar) as total " +
+//                     "FROM pembayaran " +
+//                     "WHERE DATE(tanggal_bayar) BETWEEN ? AND ? " +
+//                     "GROUP BY DATE(tanggal_bayar) " +
+//                     "ORDER BY tgl ASC";
+//
+//        try (Connection conn = new Database.KoneksiDatabase().getConnection();
+//             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+//
+//            pstmt.setDate(1, sqlDari);
+//            pstmt.setDate(2, sqlSampai);
+//
+//            ResultSet rs = pstmt.executeQuery();
+//
+//            // Masukkan hasil query ke Dataset JFreeChart
+//            while (rs.next()) {
+//                String tanggal = rs.getString("tgl"); // Sumbu X
+//                double total = rs.getDouble("total"); // Sumbu Y
+//                dataset.addValue(total, "Pendapatan", tanggal);
+//            }
+//
+//        } catch (Exception e) {
+//            JOptionPane.showMessageDialog(this, "Gagal mengambil data grafik: " + e.getMessage());
+//            return;
+//        }
+//
+//        // 4. Buat Objek Chart
+//        JFreeChart barChart = ChartFactory.createBarChart(
+//                "Grafik Pendapatan Klinik",  // Judul Grafik
+//                "Tanggal",                   // Label Sumbu X
+//                "Total Pendapatan (Rp)",     // Label Sumbu Y
+//                dataset,                     // Data
+//                PlotOrientation.VERTICAL,    // Orientasi
+//                true, true, false);
+//
+//        // 5. Tampilkan dalam Dialog Pop-up
+//        JDialog chartDialog = new JDialog((java.awt.Frame) javax.swing.SwingUtilities.getWindowAncestor(this), "Grafik", true);
+//        chartDialog.setSize(800, 600);
+//        chartDialog.setLocationRelativeTo(null);
+//
+//        // Bungkus chart ke dalam Panel
+//        ChartPanel chartPanel = new ChartPanel(barChart);
+//        chartDialog.add(chartPanel, BorderLayout.CENTER);
+//
+//        chartDialog.setVisible(true);
+
     }
 
+    @SuppressWarnings("unchecked")
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    private void initComponents() {
+
+        lbl_PilihLaporan = new javax.swing.JLabel();
+        comboJenisLaporan = new javax.swing.JComboBox<>();
+        dcDariTanggal = new com.toedter.calendar.JDateChooser();
+        dcSampaiTanggal = new com.toedter.calendar.JDateChooser();
+        lbl_dariTanggal = new javax.swing.JLabel();
+        jLabel1 = new javax.swing.JLabel();
+        btnTampilkan = new javax.swing.JButton();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        tblLaporan = new javax.swing.JTable();
+        lblTotalPendapatan = new javax.swing.JLabel();
+        btnExportData = new javax.swing.JButton();
+        btnGrafik = new javax.swing.JButton();
+
+        setBackground(new java.awt.Color(255, 255, 255));
+        setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
+        setPreferredSize(new java.awt.Dimension(952, 800));
+
+        lbl_PilihLaporan.setFont(new java.awt.Font("SansSerif", 1, 24)); // NOI18N
+        lbl_PilihLaporan.setForeground(new java.awt.Color(0, 0, 0));
+        lbl_PilihLaporan.setText("Pilih Laporan");
+
+        comboJenisLaporan.setBackground(new java.awt.Color(0, 123, 255));
+        comboJenisLaporan.setFont(new java.awt.Font("SansSerif", 0, 16)); // NOI18N
+        comboJenisLaporan.setForeground(new java.awt.Color(255, 255, 255));
+        comboJenisLaporan.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Laporan Pendapatan", "Laporan Kunjungan Pasien", "Laporan Penjualan Obat" }));
+        comboJenisLaporan.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        comboJenisLaporan.setOpaque(true);
+        comboJenisLaporan.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                comboJenisLaporanActionPerformed(evt);
+            }
+        });
+
+        dcDariTanggal.setBackground(new java.awt.Color(255, 255, 255));
+        dcDariTanggal.setForeground(new java.awt.Color(0, 0, 0));
+
+        dcSampaiTanggal.setBackground(new java.awt.Color(255, 255, 255));
+        dcSampaiTanggal.setForeground(new java.awt.Color(0, 0, 0));
+
+        lbl_dariTanggal.setFont(new java.awt.Font("SansSerif", 0, 14)); // NOI18N
+        lbl_dariTanggal.setForeground(new java.awt.Color(0, 0, 0));
+        lbl_dariTanggal.setText("Dari Tanggal");
+
+        jLabel1.setFont(new java.awt.Font("SansSerif", 0, 14)); // NOI18N
+        jLabel1.setForeground(new java.awt.Color(0, 0, 0));
+        jLabel1.setText("Sampai Tanggal");
+
+        btnTampilkan.setBackground(new java.awt.Color(0, 123, 255));
+        btnTampilkan.setFont(new java.awt.Font("SansSerif", 0, 16)); // NOI18N
+        btnTampilkan.setForeground(new java.awt.Color(255, 255, 255));
+        btnTampilkan.setText("Tampilkan Laporan");
+        btnTampilkan.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnTampilkan.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnTampilkanActionPerformed(evt);
+            }
+        });
+
+        tblLaporan.setAutoCreateRowSorter(true);
+        tblLaporan.setFont(new java.awt.Font("SansSerif", 0, 14)); // NOI18N
+        tblLaporan.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null}
+            },
+            new String [] {
+                "ID Pembayaran", "Tanggal Bayar", "Kasir", "Metode", "Biaya Jasa", "Biaya Obat", "Total Bayar"
+            }
+        ));
+        tblLaporan.setGridColor(new java.awt.Color(224, 224, 224));
+        tblLaporan.setSelectionBackground(new java.awt.Color(0, 123, 255));
+        tblLaporan.setSelectionForeground(new java.awt.Color(255, 255, 255));
+        tblLaporan.setShowGrid(true);
+        jScrollPane1.setViewportView(tblLaporan);
+
+        lblTotalPendapatan.setFont(new java.awt.Font("SansSerif", 0, 20)); // NOI18N
+        lblTotalPendapatan.setForeground(new java.awt.Color(0, 0, 0));
+        lblTotalPendapatan.setText("Total Pendapatan: Rp. 120.000.000");
+
+        btnExportData.setBackground(new java.awt.Color(40, 167, 69));
+        btnExportData.setFont(new java.awt.Font("SansSerif", 0, 16)); // NOI18N
+        btnExportData.setForeground(new java.awt.Color(255, 255, 255));
+        btnExportData.setText("Export Data");
+        btnExportData.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnExportData.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnExportDataActionPerformed(evt);
+            }
+        });
+
+        btnGrafik.setBackground(new java.awt.Color(0, 123, 255));
+        btnGrafik.setFont(new java.awt.Font("SansSerif", 0, 16)); // NOI18N
+        btnGrafik.setForeground(new java.awt.Color(255, 255, 255));
+        btnGrafik.setText("Lihat Grafik");
+        btnGrafik.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnGrafik.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnGrafikActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
+        this.setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(20, 20, 20)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(lblTotalPendapatan)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(btnGrafik)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(btnExportData))
+                    .addComponent(jScrollPane1)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(lbl_PilihLaporan)
+                        .addGap(18, 18, 18)
+                        .addComponent(comboJenisLaporan, 0, 253, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(dcDariTanggal, javax.swing.GroupLayout.DEFAULT_SIZE, 136, Short.MAX_VALUE)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(lbl_dariTanggal)
+                                .addGap(0, 0, Short.MAX_VALUE)))
+                        .addGap(18, 18, 18)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(dcSampaiTanggal, javax.swing.GroupLayout.DEFAULT_SIZE, 143, Short.MAX_VALUE)
+                                .addGap(19, 19, 19)
+                                .addComponent(btnTampilkan))
+                            .addComponent(jLabel1))))
+                .addGap(19, 19, 19))
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lbl_dariTanggal)
+                    .addComponent(jLabel1))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                    .addComponent(lbl_PilihLaporan, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(comboJenisLaporan, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(dcDariTanggal, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(dcSampaiTanggal, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btnTampilkan, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 609, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                    .addComponent(lblTotalPendapatan, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnExportData, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnGrafik, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(47, 47, 47))
+        );
+    }// </editor-fold>//GEN-END:initComponents
+
+    private void btnTampilkanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTampilkanActionPerformed
+        tampilkanLaporan();
+    }//GEN-LAST:event_btnTampilkanActionPerformed
+
+    private void comboJenisLaporanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboJenisLaporanActionPerformed
+        // Reset tabel saat jenis laporan diganti agar user tidak bingung
+        DefaultTableModel modelKosong = new DefaultTableModel();
+        String jenis = (String) comboJenisLaporan.getSelectedItem();
+        
+        // Set header preview tabel saja
+        if (jenis.equals("Laporan Pendapatan")) {
+            modelKosong.setColumnIdentifiers(new Object[]{"ID Bayar", "Tgl Bayar", "Kasir", "Metode", "Jasa", "Obat", "Total"});
+        } else if (jenis.equals("Laporan Kunjungan Pasien")) {
+            modelKosong.setColumnIdentifiers(new Object[]{"Tgl Kunjungan", "No Antrean", "Pasien", "Dokter", "Status"});
+        } else {
+            modelKosong.setColumnIdentifiers(new Object[]{"Nama Obat", "Satuan", "Total Terjual", "Sisa Stok"});
+        }
+        
+        tblLaporan.setModel(modelKosong);
+        lblTotalPendapatan.setText("Total: [Silahkan Pilih Tanggal & Klik Tampilkan]");
+    }//GEN-LAST:event_comboJenisLaporanActionPerformed
+
+    private void btnExportDataActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExportDataActionPerformed
+        exportKeExcel();
+    }//GEN-LAST:event_btnExportDataActionPerformed
+
+    private void btnGrafikActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGrafikActionPerformed
+        if (comboJenisLaporan.getSelectedItem().equals("Laporan Pendapatan")) {
+        tampilkanGrafikPendapatan();
+    } else {
+        JOptionPane.showMessageDialog(this, "Fitur grafik saat ini hanya tersedia untuk Laporan Pendapatan.");
+    }
+    }//GEN-LAST:event_btnGrafikActionPerformed
+    
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnExportData;
+    private javax.swing.JButton btnGrafik;
     private javax.swing.JButton btnTampilkan;
     private javax.swing.JComboBox<String> comboJenisLaporan;
     private com.toedter.calendar.JDateChooser dcDariTanggal;

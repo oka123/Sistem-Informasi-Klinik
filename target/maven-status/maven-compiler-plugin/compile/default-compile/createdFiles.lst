@@ -20,6 +20,7 @@ Resepsionis\JFrame_Main_Resepsionis$2.class
 Resepsionis\JPanel_Manajemen_Pasien$5.class
 Dokter\JPanel_Riwayat_Rekam_Medis$PasienItem.class
 Manajemen\JDialog_Form_Dokter.class
+Main\ThreadPoolManager.class
 Manajemen\JDialog_Form_User$1.class
 Resepsionis\JPanel_Manajemen_Pasien$2.class
 Dokter\JFrame_Main_Dokter$1.class
@@ -79,7 +80,6 @@ Resepsionis\JFrame_Main_Resepsionis$1.class
 Dokter\JPanel_Riwayat_Rekam_Medis$2.class
 Dokter\JPanel_Riwayat_Rekam_Medis.class
 Manajemen\JPanel_Manajemen_Dokter.class
-Manajemen\JPanel_Dashboard_Manajemen$3.class
 Manajemen\JPanel_Manajemen_Dokter$3.class
 Dokter\JDialog_Rekam_Medis$2.class
 Manajemen\JPanel_Laporan.class
@@ -103,6 +103,7 @@ Resepsionis\JPanel_Informasi_Dokter$1.class
 Kasir\Dialog_Pembayaran.class
 Manajemen\JPanel_Dashboard_Manajemen$1.class
 Resepsionis\JFrame_Main_Resepsionis$9.class
+Manajemen\JPanel_Laporan$4.class
 Manajemen\JPanel_Manajemen_Dokter$1.class
 Resepsionis\JFrame_Main_Resepsionis$11.class
 Apoteker\JFrameMainApoteker$1.class

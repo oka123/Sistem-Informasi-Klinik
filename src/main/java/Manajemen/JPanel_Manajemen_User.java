@@ -5,6 +5,7 @@
 package Manajemen;
 
 import Database.KoneksiDatabase;
+import Main.ThreadPoolManager;
 import java.awt.Cursor;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -17,6 +18,8 @@ import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableModel;
 
 public class JPanel_Manajemen_User extends javax.swing.JPanel {
+    
+    // Atribut
 
     // Constructor
     public JPanel_Manajemen_User() {
@@ -32,7 +35,7 @@ public class JPanel_Manajemen_User extends javax.swing.JPanel {
         btnCariUser.setEnabled(false);
 
         // 2. JALANKAN PROSES DATABASE DI BACKGROUND THREAD
-        new Thread(() -> {
+        ThreadPoolManager.getInstance().submit(() -> {
             // Siapkan penampung data sementara (List)
             // Kita tidak boleh mengubah JTable langsung dari thread ini
             List<Object[]> dataList = new ArrayList<>();
@@ -104,7 +107,7 @@ public class JPanel_Manajemen_User extends javax.swing.JPanel {
                 btnCariUser.setEnabled(true);
             });
 
-        }).start();
+        });
 //        DefaultTableModel model = (DefaultTableModel) tblUser.getModel();
 //        model.setRowCount(0); // Bersihkan tabel lama
 //        
@@ -174,7 +177,7 @@ public class JPanel_Manajemen_User extends javax.swing.JPanel {
         txtCariUser.setForeground(new java.awt.Color(0, 0, 0));
 
         btnCariUser.setBackground(new java.awt.Color(255, 255, 255));
-        btnCariUser.setFont(new java.awt.Font("SansSerif", 1, 20)); // NOI18N
+        btnCariUser.setFont(new java.awt.Font("SansSerif", 1, 24)); // NOI18N
         btnCariUser.setForeground(new java.awt.Color(0, 0, 0));
         btnCariUser.setText("🔍");
         btnCariUser.setBorder(null);
@@ -223,7 +226,7 @@ public class JPanel_Manajemen_User extends javax.swing.JPanel {
         tblUser.setShowGrid(true);
         jScrollPane1.setViewportView(tblUser);
 
-        btnTambahUser.setBackground(new java.awt.Color(50, 120, 220));
+        btnTambahUser.setBackground(new java.awt.Color(0, 123, 255));
         btnTambahUser.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
         btnTambahUser.setForeground(new java.awt.Color(255, 255, 255));
         btnTambahUser.setText("➕ Tambah Data");
@@ -256,8 +259,8 @@ public class JPanel_Manajemen_User extends javax.swing.JPanel {
             }
         });
 
-        btnRefresh.setBackground(new java.awt.Color(50, 120, 220));
-        btnRefresh.setFont(new java.awt.Font("SansSerif", 0, 14)); // NOI18N
+        btnRefresh.setBackground(new java.awt.Color(0, 123, 255));
+        btnRefresh.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
         btnRefresh.setForeground(new java.awt.Color(255, 255, 255));
         btnRefresh.setText("🔄 Refresh");
         btnRefresh.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
@@ -289,7 +292,7 @@ public class JPanel_Manajemen_User extends javax.swing.JPanel {
                                 .addComponent(txtCariUser, javax.swing.GroupLayout.PREFERRED_SIZE, 276, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(btnCariUser, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 384, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 379, Short.MAX_VALUE)
                         .addComponent(btnRefresh)))
                 .addGap(27, 27, 27))
         );
