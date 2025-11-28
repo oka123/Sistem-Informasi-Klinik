@@ -27,7 +27,7 @@ import at.favre.lib.crypto.bcrypt.BCrypt;
 public class JFrame_Login extends javax.swing.JFrame {
     
 //    Deklarasi atribut
-    KoneksiDatabase koneksi;
+//    KoneksiDatabase koneksi;
     Connection conn;
     private boolean isPasswordVisible = false;
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(JFrame_Login.class.getName());
@@ -45,8 +45,7 @@ public class JFrame_Login extends javax.swing.JFrame {
         initComponents();
         this.setLocationRelativeTo(null); 
         
-        koneksi = new KoneksiDatabase();
-        conn = koneksi.getConnection();
+        this.conn = Database.KoneksiDatabase.getConnection();
         // Menambahkan placeholder text
         txt_username.putClientProperty("JTextField.placeholderText", "Masukkan username...");
         txt_password.putClientProperty("JTextField.placeholderText", "Masukkan password...");

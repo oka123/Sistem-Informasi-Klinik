@@ -302,7 +302,7 @@
                       <Component id="lblTitlePasien" max="32767" attributes="0"/>
                       <Component id="lblJumlahPasien" max="32767" attributes="0"/>
                   </Group>
-                  <EmptySpace pref="77" max="32767" attributes="0"/>
+                  <EmptySpace pref="95" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -349,7 +349,7 @@
             <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
               <Color blue="66" green="66" red="66" type="rgb"/>
             </Property>
-            <Property name="text" type="java.lang.String" value="Pasien Baru"/>
+            <Property name="text" type="java.lang.String" value="Pasien"/>
           </Properties>
         </Component>
       </SubComponents>

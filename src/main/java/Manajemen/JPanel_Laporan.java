@@ -297,9 +297,9 @@ public class JPanel_Laporan extends javax.swing.JPanel {
                      "LEFT JOIN user u ON p.user_kasir_id = u.user_id " +
                      "WHERE DATE(p.tanggal_bayar) BETWEEN ? AND ?";
 
-        try (Connection conn = new KoneksiDatabase().getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            
+        try {
+            Connection conn = Database.KoneksiDatabase.getConnection();
+            PreparedStatement pstmt = conn.prepareStatement(sql);
             pstmt.setDate(1, dari);
             pstmt.setDate(2, sampai);
             ResultSet rs = pstmt.executeQuery();
@@ -320,6 +320,8 @@ public class JPanel_Laporan extends javax.swing.JPanel {
                     formatRupiah.format(total)
                 });
             }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
         // Simpan ringkasan ke variabel sementara
         this.tempTotalText = "Total Pendapatan: " + formatRupiah.format(grandTotal);
@@ -339,9 +341,9 @@ public class JPanel_Laporan extends javax.swing.JPanel {
                      "JOIN user u ON d.user_id = u.user_id " + 
                      "WHERE DATE(k.tanggal_kunjungan) BETWEEN ? AND ?";
 
-        try (Connection conn = new KoneksiDatabase().getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            
+        try {
+            Connection conn = Database.KoneksiDatabase.getConnection();
+            PreparedStatement pstmt = conn.prepareStatement(sql);
             pstmt.setDate(1, dari);
             pstmt.setDate(2, sampai);
             ResultSet rs = pstmt.executeQuery();
@@ -355,6 +357,8 @@ public class JPanel_Laporan extends javax.swing.JPanel {
                     rs.getString("status_kunjungan")
                 });
             }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
         this.tempTotalText = "Total Kunjungan: " + totalKunjungan + " Pasien";
         return model;
@@ -374,9 +378,9 @@ public class JPanel_Laporan extends javax.swing.JPanel {
                      "GROUP BY o.obat_id, o.nama_obat, o.satuan, o.stok " +
                      "ORDER BY total_qty DESC";
 
-        try (Connection conn = new KoneksiDatabase().getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            
+        try {
+            Connection conn = Database.KoneksiDatabase.getConnection();
+            PreparedStatement pstmt = conn.prepareStatement(sql);
             pstmt.setDate(1, dari);
             pstmt.setDate(2, sampai);
             ResultSet rs = pstmt.executeQuery();
@@ -391,6 +395,8 @@ public class JPanel_Laporan extends javax.swing.JPanel {
                     rs.getInt("stok")
                 });
             }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
         this.tempTotalText = "Total Item Obat Terjual: " + totalItemTerjual;
         return model;

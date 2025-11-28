@@ -50,8 +50,9 @@ public final class JPanel_Manajemen_Dokter extends javax.swing.JPanel {
             
             sql += " ORDER BY u.nama_lengkap ASC"; // Urutkan abjad nama
 
-            try (Connection conn = new KoneksiDatabase().getConnection();
-                 PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            try {
+                Connection conn = Database.KoneksiDatabase.getConnection();
+                PreparedStatement pstmt = conn.prepareStatement(sql);
 
                 if (isSearch) {
                     String pola = "%" + key + "%";
@@ -157,7 +158,7 @@ public final class JPanel_Manajemen_Dokter extends javax.swing.JPanel {
     private void hapusDokterDanUser(int idDokter) {
         Connection conn = null;
         try {
-            conn = new KoneksiDatabase().getConnection();
+            conn = Database.KoneksiDatabase.getConnection();
             conn.setAutoCommit(false); 
 
             // Ambil user_id (Query pakai int)
