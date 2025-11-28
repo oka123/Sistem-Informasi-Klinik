@@ -39,9 +39,8 @@ public class Main {
         UIManager.put("Table.font", globalFont);     // Untuk tabel
         
 //      Uji Coba Koneksi ke DB
-        KoneksiDatabase koneksiDB = new KoneksiDatabase();
         try {
-            Connection conn = koneksiDB.getConnection();
+            Connection conn = Database.KoneksiDatabase.getConnection();
             if (conn != null) {
                 JOptionPane.showMessageDialog(null, "Koneksi ke Database Berhasil, Silahkan Login!");
             }

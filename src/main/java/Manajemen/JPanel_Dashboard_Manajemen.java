@@ -68,8 +68,9 @@ public class JPanel_Dashboard_Manajemen extends javax.swing.JPanel {
         // Kita pakai "new Thread" agar UI bisa update teks "..." tadi dulu
         ThreadPoolManager.getInstance().submit(() -> {
             // --- KODE DATABASE ---
-            KoneksiDatabase koneksi = new KoneksiDatabase();
-            try (Connection conn = koneksi.getConnection()) {
+//            KoneksiDatabase koneksi = new KoneksiDatabase();
+            try {
+                Connection conn = Database.KoneksiDatabase.getConnection();
                 if (conn != null) {
                     // Variabel penampung hasil
                     String txtKunjungan = "0";
@@ -310,7 +311,7 @@ public class JPanel_Dashboard_Manajemen extends javax.swing.JPanel {
 
         lblTitlePasien.setFont(new java.awt.Font("sansserif", 0, 14)); // NOI18N
         lblTitlePasien.setForeground(new java.awt.Color(102, 102, 102));
-        lblTitlePasien.setText("Pasien Baru");
+        lblTitlePasien.setText("Pasien");
 
         javax.swing.GroupLayout cardPasienLayout = new javax.swing.GroupLayout(cardPasien);
         cardPasien.setLayout(cardPasienLayout);
@@ -323,7 +324,7 @@ public class JPanel_Dashboard_Manajemen extends javax.swing.JPanel {
                 .addGroup(cardPasienLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(lblTitlePasien, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(lblJumlahPasien, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap(77, Short.MAX_VALUE))
+                .addContainerGap(95, Short.MAX_VALUE))
         );
         cardPasienLayout.setVerticalGroup(
             cardPasienLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)

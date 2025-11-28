@@ -51,8 +51,9 @@ public class JPanel_Manajemen_User extends javax.swing.JPanel {
                 sql += " AND (username LIKE ? OR nama_lengkap LIKE ?)";
             }
 
-            try (Connection conn = new KoneksiDatabase().getConnection();
-                 PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            try {
+                Connection conn = Database.KoneksiDatabase.getConnection();
+                PreparedStatement pstmt = conn.prepareStatement(sql);
 
                 if (isSearch) {
                     String pattern = "%" + key + "%";

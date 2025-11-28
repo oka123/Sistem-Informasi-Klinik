@@ -12,6 +12,11 @@ import javax.swing.JOptionPane;
 public class KoneksiDatabase {
 
     private static Connection koneksi;
+    private static final String hostname = "klinik-klinik.c.aivencloud.com";
+    private static final String database = "klinik";
+    private static final String port= "12241";
+    private static final String username = "avnadmin";
+    private static final String password = "AVNS_5e6NcoUQA0Q-vk_YdAs";
     
     public static Connection getConnection() {
         // Cek apakah koneksi belum ada ATAU sudah terputus/closed
@@ -20,10 +25,10 @@ public class KoneksiDatabase {
                 try {
                     // Load Driver (Opsional untuk Java terbaru, tapi bagus untuk kompatibilitas)
                     Class.forName("com.mysql.cj.jdbc.Driver");
-                    
+                    // Buat URL koneksi dengan menggunakan atribut
+                    String url = String.format("jdbc:mysql://%s:%s/%s?useCompression=true", hostname, port, database);
                     // Buat Koneksi Baru
-                    // Ganti url, user, password sesuai database Anda
-                    koneksi = DriverManager.getConnection("jdbc:mysql://klinik-klinik.c.aivencloud.com:12241/klinik?useCompression=true", "avnadmin", "AVNS_5e6NcoUQA0Q-vk_YdAs");
+                    koneksi = DriverManager.getConnection(url, username, password);
                     // System.out.println("Koneksi Berhasil Dibuat"); // Untuk debug
                     
                 } catch (ClassNotFoundException | SQLException e) {
