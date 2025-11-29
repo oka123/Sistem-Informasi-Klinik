@@ -4,7 +4,6 @@
  */
 package Manajemen;
 
-import Database.KoneksiDatabase;
 import Main.ThreadPoolManager;
 import java.awt.CardLayout;
 import java.awt.Container;
@@ -19,7 +18,9 @@ import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
-public class JPanel_Dashboard_Manajemen extends javax.swing.JPanel {
+// Inheritance (extends)
+// Abstraction (implements)
+public class JPanel_Dashboard_Manajemen extends javax.swing.JPanel implements Manajemen {
     // Atribut
     
     // Icon
@@ -35,7 +36,7 @@ public class JPanel_Dashboard_Manajemen extends javax.swing.JPanel {
         if (namaManajemen != null && !namaManajemen.isEmpty()) {
             lblWelcome.setText("Selamat datang kembali, " + namaManajemen + "! Ini adalah ringkasan klinik Anda hari ini.");
         } else {
-            lblWelcome.setText("Selamat datang kembali, Super Admin! Ini adalah ringkasan klinik Anda hari ini.");
+            lblWelcome.setText("Selamat datang kembali, Nama Default Manajemen! Ini adalah ringkasan klinik Anda hari ini.");
         }
         
         // Kode Icon (Tetap sama)
@@ -47,7 +48,7 @@ public class JPanel_Dashboard_Manajemen extends javax.swing.JPanel {
         
         loadDashboardData();
     }
-          
+    
     // Helper method untuk resize icon agar kode lebih rapi
     private void setResizedIcon(javax.swing.JLabel label, ImageIcon icon) {
         if (label.getWidth() > 0 && label.getHeight() > 0) {
@@ -56,6 +57,7 @@ public class JPanel_Dashboard_Manajemen extends javax.swing.JPanel {
         }
     }
     
+    @Override
     public void loadDashboardData() {
         this.setCursor(java.awt.Cursor.getPredefinedCursor(java.awt.Cursor.WAIT_CURSOR));
         refreshButton.setEnabled(false);

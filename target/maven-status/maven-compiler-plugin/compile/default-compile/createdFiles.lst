@@ -86,6 +86,7 @@ Manajemen\JPanel_Laporan.class
 Resepsionis\JPanel_Dashboard_Resepsionis$2.class
 Main\Main.class
 Resepsionis\JDialog_Form_Pasien$1.class
+Manajemen\Manajemen.class
 Database\KoneksiDatabase.class
 Resepsionis\JFrame_Main_Resepsionis$3.class
 Apoteker\SistemFarmasiApotekerLogic.class

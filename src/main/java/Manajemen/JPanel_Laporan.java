@@ -4,7 +4,6 @@
  */
 package Manajemen;
 
-import Database.KoneksiDatabase;
 import Main.ThreadPoolManager;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -34,11 +33,12 @@ import javax.swing.JDialog;
 import java.awt.BorderLayout;
 import javax.swing.SwingUtilities;
 
-public class JPanel_Laporan extends javax.swing.JPanel {
+public class JPanel_Laporan extends javax.swing.JPanel implements Manajemen {
+    
     // Atribut
     private final NumberFormat formatRupiah;
     private String tempTotalText = "";
-        
+           
     // Constructor
     public JPanel_Laporan() {
         initComponents();
@@ -47,10 +47,20 @@ public class JPanel_Laporan extends javax.swing.JPanel {
         Locale localeID = new Locale("id", "ID");
         formatRupiah = NumberFormat.getCurrencyInstance(localeID);
         
-        initTampilanAwal();
+        initTampilanAwalLaporan();
     }
     
-    private void initTampilanAwal() {
+    // Konsep Enkapsulasi (Getter dan Setter)
+    public String getTempTotalText() {
+        return this.tempTotalText;
+    }
+
+    public void setTempTotalText(String tempTotalText) {
+        this.tempTotalText = tempTotalText;
+    }
+    
+    @Override
+    public void initTampilanAwalLaporan() {
         // Atur model tabel default
         DefaultTableModel modelAwal = new DefaultTableModel(new Object[]{"Data Laporan Belum Dimuat..."}, 0);
         tblLaporan.setModel(modelAwal);
@@ -66,7 +76,8 @@ public class JPanel_Laporan extends javax.swing.JPanel {
          dcSampaiTanggal.setDate(null);
     }
     
-    private void tampilkanLaporan() {
+    @Override
+    public void tampilkanLaporan() {
         // 1. Validasi Input Tanggal (Tetap di UI Thread)
         if (dcDariTanggal.getDate() == null || dcSampaiTanggal.getDate() == null) {
             JOptionPane.showMessageDialog(this, "Harap pilih rentang tanggal 'Dari' dan 'Sampai'!", "Peringatan", JOptionPane.WARNING_MESSAGE);
@@ -285,7 +296,8 @@ public class JPanel_Laporan extends javax.swing.JPanel {
     // Test
     
     // 1. Laporan Pendapatan
-    private DefaultTableModel loadLaporanPendapatan(java.sql.Date dari, java.sql.Date sampai) throws SQLException {
+    @Override
+    public DefaultTableModel loadLaporanPendapatan(java.sql.Date dari, java.sql.Date sampai) throws SQLException {
         DefaultTableModel model = new DefaultTableModel();
         model.setColumnIdentifiers(new Object[]{"ID Pembayaran", "Tanggal Bayar", "Kasir", "Metode", "Biaya Jasa", "Biaya Obat", "Total Bayar"});
         
@@ -329,7 +341,8 @@ public class JPanel_Laporan extends javax.swing.JPanel {
     }
 
     // 2. Laporan Kunjungan
-    private DefaultTableModel loadLaporanKunjungan(java.sql.Date dari, java.sql.Date sampai) throws SQLException {
+    @Override
+    public DefaultTableModel loadLaporanKunjungan(java.sql.Date dari, java.sql.Date sampai) throws SQLException {
         DefaultTableModel model = new DefaultTableModel();
         model.setColumnIdentifiers(new Object[]{"Tanggal", "Pasien", "Dokter", "Status"});
         int totalKunjungan = 0;
@@ -365,7 +378,8 @@ public class JPanel_Laporan extends javax.swing.JPanel {
     }
 
     // 3. Laporan Obat
-    private DefaultTableModel loadLaporanObat(java.sql.Date dari, java.sql.Date sampai) throws SQLException {
+    @Override
+    public DefaultTableModel loadLaporanObat(java.sql.Date dari, java.sql.Date sampai) throws SQLException {
         DefaultTableModel model = new DefaultTableModel();
         model.setColumnIdentifiers(new Object[]{"Nama Obat", "Satuan", "Total Terjual (Qty)", "Sisa Stok"});
         int totalItemTerjual = 0;
@@ -404,7 +418,8 @@ public class JPanel_Laporan extends javax.swing.JPanel {
     
     // Akhir Test
     
-    private void exportKeExcel() {
+    @Override
+    public void exportLaporanToExcel() {
         if (tblLaporan.getRowCount() == 0) {
             JOptionPane.showMessageDialog(this, "Tidak ada data untuk diexport.", "Info", JOptionPane.INFORMATION_MESSAGE);
             return;
@@ -617,7 +632,8 @@ public class JPanel_Laporan extends javax.swing.JPanel {
 
     }
     
-    private void tampilkanGrafikPendapatan() {
+    @Override
+    public void tampilkanGrafikPendapatan() {
         if (dcDariTanggal.getDate() == null || dcSampaiTanggal.getDate() == null) {
             JOptionPane.showMessageDialog(this, "Pilih rentang tanggal terlebih dahulu!");
             return;
@@ -952,7 +968,7 @@ public class JPanel_Laporan extends javax.swing.JPanel {
     }//GEN-LAST:event_comboJenisLaporanActionPerformed
 
     private void btnExportDataActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExportDataActionPerformed
-        exportKeExcel();
+        exportLaporanToExcel();
     }//GEN-LAST:event_btnExportDataActionPerformed
 
     private void btnGrafikActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGrafikActionPerformed
