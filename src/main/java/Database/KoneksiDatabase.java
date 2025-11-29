@@ -3,10 +3,12 @@ package Database;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.sql.Statement;
 import javax.swing.JOptionPane;
  
 public class KoneksiDatabase {
-
+    
+    // Atribut
     private static Connection koneksi;
     private static final String hostname = "klinik-klinik.c.aivencloud.com";
     private static final String database = "klinik";
@@ -26,6 +28,10 @@ public class KoneksiDatabase {
                     // Buat Koneksi Baru
                     koneksi = DriverManager.getConnection(url, username, password);
                     // System.out.println("Koneksi Berhasil Dibuat"); // Untuk debug
+                    
+                    String sqlWaktu = "SET time_zone = 'Asia/Singapore'";
+                    Statement stmt = koneksi.createStatement();
+                    stmt.executeUpdate(sqlWaktu);
                     
                 } catch (ClassNotFoundException | SQLException e) {
                     JOptionPane.showMessageDialog(null, "Gagal Koneksi Database: " + e.getMessage());

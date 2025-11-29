@@ -3,7 +3,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JPanel.java to edit this template
  */
 package Manajemen;
-import Database.KoneksiDatabase;
+
 import Main.ThreadPoolManager;
 import java.awt.Cursor;
 import java.sql.Connection;
@@ -16,7 +16,7 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableModel;
 
-public final class JPanel_Manajemen_Dokter extends javax.swing.JPanel {
+public final class JPanel_Manajemen_Dokter extends javax.swing.JPanel implements Manajemen {
     
     // Atribut
     
@@ -26,6 +26,7 @@ public final class JPanel_Manajemen_Dokter extends javax.swing.JPanel {
         loadDataDokter(""); // Muat data awal
     }
     
+    @Override
     public void loadDataDokter(String key) {
         // 1. UBAH KURSOR JADI LOADING
         this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
@@ -155,7 +156,8 @@ public final class JPanel_Manajemen_Dokter extends javax.swing.JPanel {
     }
     
     // Method Hapus dengan Transaksi (Hapus Dokter dulu, baru User)
-    private void hapusDokterDanUser(int idDokter) {
+    @Override
+    public void hapusDokterDanUser(int idDokter) {
         Connection conn = null;
         try {
             conn = Database.KoneksiDatabase.getConnection();

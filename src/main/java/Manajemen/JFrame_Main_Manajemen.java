@@ -19,7 +19,7 @@ public class JFrame_Main_Manajemen extends javax.swing.JFrame {
     
     // Atribut
     private String namaLengkapManajemen = "Nama Default Manajemen"; // Default value
-        
+   
     // Icon
     private final ImageIcon clinicIcon = new ImageIcon(getClass().getResource("/gambarKlinik.png"));
     
@@ -74,7 +74,16 @@ public class JFrame_Main_Manajemen extends javax.swing.JFrame {
         CardLayout cl = (CardLayout) panelContent.getLayout();
         cl.show(panelContent, "cardDashboard");
     }
+    
+    // Konsep Enkapsulasi (Getter dan Setter)
+    public String getNamaLengkapManajemen() {
+        return namaLengkapManajemen;
+    }
 
+    public void setNamaLengkapManajemen(String namaLengkapManajemen) {
+        this.namaLengkapManajemen = namaLengkapManajemen;
+    }
+    
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {

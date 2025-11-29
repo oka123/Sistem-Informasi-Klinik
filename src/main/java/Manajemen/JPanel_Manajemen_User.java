@@ -17,17 +17,18 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableModel;
 
-public class JPanel_Manajemen_User extends javax.swing.JPanel {
+public class JPanel_Manajemen_User extends javax.swing.JPanel implements Manajemen {
     
     // Atribut
 
     // Constructor
     public JPanel_Manajemen_User() {
         initComponents();
-        loadUserData("");
+        loadDataUser("");
     }
     
-    public void loadUserData(String key) {
+    @Override
+    public void loadDataUser(String key) {
         // 1. UBAH KURSOR JADI LOADING (WAIT)
         // Ini memberi sinyal visual ke user bahwa sistem sedang bekerja
         this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
@@ -327,7 +328,7 @@ public class JPanel_Manajemen_User extends javax.swing.JPanel {
         form.setVisible(true);
 
         // Refresh tabel setelah dialog ditutup
-        loadUserData("");
+        loadDataUser("");
     }//GEN-LAST:event_btnTambahUserActionPerformed
 
     private void btnEditUserActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditUserActionPerformed
@@ -350,7 +351,7 @@ public class JPanel_Manajemen_User extends javax.swing.JPanel {
         form.setTitle("Edit User");
         form.setVisible(true);
 
-        loadUserData(""); // Refresh setelah edit
+        loadDataUser(""); // Refresh setelah edit
     }//GEN-LAST:event_btnEditUserActionPerformed
 
     private void btnHapusUserActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnHapusUserActionPerformed
@@ -381,7 +382,7 @@ public class JPanel_Manajemen_User extends javax.swing.JPanel {
                 pstmt.executeUpdate();
                 
                 JOptionPane.showMessageDialog(this, "User berhasil dihapus.");
-                loadUserData(""); // Refresh tabel
+                loadDataUser(""); // Refresh tabel
                 
             } catch (Exception e) {
                 JOptionPane.showMessageDialog(this, "Gagal menghapus: " + e.getMessage());
@@ -390,14 +391,14 @@ public class JPanel_Manajemen_User extends javax.swing.JPanel {
     }//GEN-LAST:event_btnHapusUserActionPerformed
 
     private void btnRefreshActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRefreshActionPerformed
-        loadUserData("");
+        loadDataUser("");
     }//GEN-LAST:event_btnRefreshActionPerformed
 
     private void btnCariUserActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCariUserActionPerformed
         // Ambil teks dari text field
         String kataKunci = txtCariUser.getText();
         // Panggil method load dengan kata kunci tersebut
-        loadUserData(kataKunci);
+        loadDataUser(kataKunci);
     }//GEN-LAST:event_btnCariUserActionPerformed
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
