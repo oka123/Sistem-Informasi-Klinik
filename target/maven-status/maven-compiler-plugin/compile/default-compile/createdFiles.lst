@@ -6,7 +6,6 @@ Kasir\JPanel_Antrean_Pembayaran.class
 Resepsionis\JDialog_Form_Pasien$3.class
 Resepsionis\JFrame_Main_Resepsionis$8.class
 Resepsionis\JDialog_Form_Jadwal.class
-Dokter\JDialog_Rekam_Medis$ObatItem.class
 Dokter\JPanel_Antrean_Pasien.class
 Dokter\JPanel_Riwayat_Rekam_Medis$1.class
 Resepsionis\JPanel_Dashboard_Resepsionis$1.class
@@ -50,6 +49,7 @@ Manajemen\JPanel_Manajemen_User$3.class
 Resepsionis\JPanel_Manajemen_Pasien$4.class
 Resepsionis\JPanel_Registrasi_Kunjungan.class
 Resepsionis\JPanel_Manajemen_Jadwal$4.class
+Dokter\ObatItem.class
 Manajemen\JDialog_Form_Dokter$1.class
 Manajemen\JPanel_Laporan$1.class
 Main\JFrame_Login$3.class
