@@ -90,7 +90,7 @@ public class JFrame_Login extends javax.swing.JFrame {
             if (conn != null) {
 //                JOptionPane.showMessageDialog(this, "Koneksi ke Database Berhasil, Silahkan Login!");
             }
-        } catch (SQLException e) {
+        } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Terjadi kesalahan saat koneksi: " + e.getMessage());
         }
 =======

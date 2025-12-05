@@ -5,15 +5,15 @@
 package Dokter;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-//import java.sql.ResultSet;
-//import javax.swing.table.DefaultTableModel;
+import java.sql.ResultSet;
+import javax.swing.table.DefaultTableModel;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import java.awt.Frame;
 import java.awt.Image;
 import javax.swing.ImageIcon;
 import javax.swing.table.DefaultTableModel;
-
+import Database.KoneksiDatabase;
 /**
  *
  * @author USER
@@ -67,35 +67,45 @@ public final class JPanel_Riwayat_Rekam_Medis extends javax.swing.JPanel {
     }
     
     private void loadRiwayat(String idPasien, String namaPasien) {
-        // 1. Set judul TitledBorder di panel kiri
-        javax.swing.border.TitledBorder border = (javax.swing.border.TitledBorder) panelMaster.getBorder();
-        border.setTitle("Riwayat Kunjungan: " + namaPasien);
-        panelMaster.repaint(); // Refresh border
+    // 1. Set judul TitledBorder di panel kiri
+    javax.swing.border.TitledBorder border = (javax.swing.border.TitledBorder) panelMaster.getBorder();
+    border.setTitle("Riwayat Kunjungan: " + namaPasien);
+    panelMaster.repaint(); // Refresh border
 
-        // 2. Bersihkan detail panel (kanan)
-        clearDetailPanel();
+    // 2. Bersihkan detail panel (kanan)
+    clearDetailPanel();
 
-        // 3. Muat data ke tblRiwayat
-        DefaultTableModel model = (DefaultTableModel) tblRiwayat.getModel();
-        model.setRowCount(0);
+    // 3. Muat data ke tblRiwayat
+    DefaultTableModel model = (DefaultTableModel) tblRiwayat.getModel();
+    model.setRowCount(0);
 
-        // SQL: Query JOIN kunjungan, rekam_medis, dan dokter
-        // "SELECT r.id_rekam_medis, k.tanggal_kunjungan, d.nama_dokter, r.diagnosa " +
-        // "FROM kunjungan k " +
-        // "JOIN rekam_medis r ON k.id_kunjungan = r.id_kunjungan " +
-        // "JOIN dokter d ON k.dokter_id = d.id_dokter " +
-        // "WHERE k.pasien_id = ? ORDER BY k.tanggal_kunjungan DESC"
+    // --- INI BAGIAN YANG HARUS DIUBAH ---
+    // SQL: Query JOIN kunjungan, rekam_medis, dan dokter
+    String sql = "SELECT r.rekam_medis_id, k.tanggal_kunjungan, d.nama_dokter, r.diagnosa " +
+                 "FROM kunjungan k " +
+                 "JOIN rekam_medis r ON k.id_kunjungan = r.id_kunjungan " +
+                 "JOIN dokter d ON k.dokter_id = d.id_dokter " +
+                 "WHERE k.pasien_id = ? ORDER BY k.tanggal_kunjungan DESC";
 
-        // ... (Eksekusi query dengan idPasien) ...
-        // while (rs.next()) {
-        //    model.addRow(new Object[]{
-        //        rs.getString("id_rekam_medis"),
-        //        rs.getDate("tanggal_kunjungan"),
-        //        rs.getString("nama_dokter"),
-        //        rs.getString("diagnosa")
-        //    });
-        // }
+    try {
+        Connection conn = KoneksiDatabase.getConnection(); // Pastikan ini sudah ada
+        PreparedStatement pst = conn.prepareStatement(sql);
+        pst.setString(1, idPasien); // Menggunakan parameter idPasien
+
+        ResultSet rs = pst.executeQuery();
+        while (rs.next()) {
+            model.addRow(new Object[]{
+                rs.getString("rekam_medis_id"), // <-- Nama kolom diperbaiki!
+                rs.getDate("tanggal_kunjungan"),
+                rs.getString("nama_dokter"),
+                rs.getString("diagnosa")
+            });
+        }
+    } catch (Exception e) {
+        JOptionPane.showMessageDialog(this, "Gagal memuat riwayat: " + e.getMessage());
     }
+    // --- AKHIR BAGIAN YANG DIUBAH ---
+}
     
     private void loadDetail(String idRekamMedis) {
         try {

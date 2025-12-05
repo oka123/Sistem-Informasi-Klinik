@@ -12,17 +12,23 @@ import javax.swing.JOptionPane;
 //import java.sql.*;
  
 public class KoneksiDatabase {
-//test123
-    Connection conn;
+
+    private static Connection conn;
+
     public KoneksiDatabase(){
         try{
             Class.forName("com.mysql.cj.jdbc.Driver");
-            conn = DriverManager.getConnection("jdbc:mysql://klinik-klinik.c.aivencloud.com:12241/klinik?useCompression=true", "avnadmin", "AVNS_5e6NcoUQA0Q-vk_YdAs");
+            conn = DriverManager.getConnection(
+                "jdbc:mysql://klinik-klinik.c.aivencloud.com:12241/klinik",
+                "avnadmin",
+                "AVNS_5e6NcoUQA0Q-vk_YdAs"
+            );
         }
         catch(ClassNotFoundException | SQLException e){
             JOptionPane.showMessageDialog(null, e);
         }
     }
+
     // Atribut untuk koneksi database
     //private final String hostname;
 //    private final String database;
@@ -46,7 +52,7 @@ public class KoneksiDatabase {
 //        return DriverManager.getConnection(url, username, password);
 //    }
     
-    public Connection getConnection() throws SQLException{
+    public static Connection getConnection() {
         return conn;
     }
 
