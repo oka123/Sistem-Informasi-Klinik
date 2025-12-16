@@ -2,66 +2,75 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JDialog.java to edit this template
  */
-package Resepsionis;
+    package Resepsionis;
 
-import java.awt.HeadlessException;
-import javax.swing.JOptionPane;
-
-/**
- *
- * @author USER
- */
-public class JDialog_Form_Pasien extends javax.swing.JDialog {
-    
-    private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(JDialog_Form_Pasien.class.getName());
+    import java.awt.HeadlessException;
+    import javax.swing.JOptionPane;
+    import Database.KoneksiDatabase;
+    import java.sql.Connection;
+    import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+    import java.sql.SQLException;
 
     /**
-     * Creates new form JDialog_Form_Pasien
+     *
+     * @author USER
      */
-    private String idPasienToEdit = null;
-    // Tambahkan juga referensi ke panel tabel (opsional tapi berguna)
-    private JPanel_Manajemen_Pasien panelManajemen;
+    public class JDialog_Form_Pasien extends javax.swing.JDialog {
+
+
+        private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(JDialog_Form_Pasien.class.getName());
+
+
+        private KoneksiDatabase db;
+        /**
+         * Creates new form JDialog_Form_Pasien
+         */
+        private String idPasienToEdit = null;
+        // Tambahkan juga referensi ke panel tabel (opsional tapi berguna)
+        private JPanel_Manajemen_Pasien panelManajemen;
+
+        public JDialog_Form_Pasien(java.awt.Frame parent, boolean modal, JPanel_Manajemen_Pasien panelManajemen) {
+            super(parent, modal);
+            initComponents();
+            this.panelManajemen = panelManajemen; // Simpan referensi panel
+            this.db = new KoneksiDatabase();
+            // Panggil method kustomisasi
+            
+            txtIDPasien.setText("auto");
+            txtIDPasien.setEnabled(false);
+            
+            initCustomComponents();
+
+            // Set ID Pasien (misal: auto-generate)
+
+        }
+
+        public JDialog_Form_Pasien(java.awt.Frame parent, boolean modal, JPanel_Manajemen_Pasien panelManajemen, String idPasien) {
+            this(parent, modal, panelManajemen); // Panggil constructor pertama
+
+            this.idPasienToEdit = idPasien; // Simpan ID untuk diedit
+
+            if (this.idPasienToEdit != null) {
+                lblJudul.setText("Edit Data Pasien");
+                txtIDPasien.setText(idPasien); // Menindih tulisan "auto"
+                txtIDPasien.setEnabled(false);
+                loadDataForEdit(); 
+            }
+
+
+        }
+
+        private void initCustomComponents() {
+            // Memusatkan dialog
+            setLocationRelativeTo(null);
+
+            // Set placeholder (seperti yang kita pelajari)
+            txtNamaPasien.putClientProperty("JTextField.placeholderText", "Masukkan nama lengkap pasien...");
+            txtNoTelepon.putClientProperty("JTextField.placeholderText", "Contoh: 08123456789...");
+        }
+
     
-    public JDialog_Form_Pasien(java.awt.Frame parent, boolean modal, JPanel_Manajemen_Pasien panelManajemen) {
-        super(parent, modal);
-        initComponents();
-        this.panelManajemen = panelManajemen; // Simpan referensi panel
-
-        // Panggil method kustomisasi
-        initCustomComponents();
-
-        // Set ID Pasien (misal: auto-generate)
-        txtIDPasien.setText(generateNewPasienID());
-    }
-    
-    public JDialog_Form_Pasien(java.awt.Frame parent, boolean modal, JPanel_Manajemen_Pasien panelManajemen, String idPasien) {
-        this(parent, modal, panelManajemen); // Panggil constructor pertama
-
-        this.idPasienToEdit = idPasien; // Simpan ID untuk diedit
-
-        // Ubah tampilan form untuk mode Edit
-        lblJudul.setText("Edit Data Pasien");
-        txtIDPasien.setText(idPasien);
-        txtIDPasien.setEnabled(false); // ID tidak bisa diubah
-
-        // Panggil method untuk memuat data lama
-        loadDataForEdit();
-    }
-    
-    private void initCustomComponents() {
-        // Memusatkan dialog
-        setLocationRelativeTo(null);
-
-        // Set placeholder (seperti yang kita pelajari)
-        txtNamaPasien.putClientProperty("JTextField.placeholderText", "Masukkan nama lengkap pasien...");
-        txtNoTelepon.putClientProperty("JTextField.placeholderText", "Contoh: 08123456789...");
-    }
-
-    private String generateNewPasienID() {
-        // Buat logika Anda di sini, misal query ke DB untuk ID terakhir + 1
-        // atau format P-TahunBulan-001
-        return "P202510-001"; // Contoh
-    }
 
     private void loadDataForEdit() {
         // 1. Buat koneksi ke database
@@ -77,6 +86,39 @@ public class JDialog_Form_Pasien extends javax.swing.JDialog {
         //        rbPerempuan.setSelected(true);
         //    }
         //    ... dan seterusnya
+        
+        // SQL untuk mengambil data spesifik berdasarkan ID
+    String sql = "SELECT * FROM pasien WHERE pasien_id = ?";
+    
+    try (Connection conn = db.getConnection();
+         PreparedStatement stmt = conn.prepareStatement(sql)) {
+        
+        stmt.setString(1, idPasienToEdit);
+        ResultSet rs = stmt.executeQuery();
+        
+        if (rs.next()) {
+            // Set setiap komponen sesuai kolom di database
+            txtNamaPasien.setText(rs.getString("nama_pasien"));
+            txtAlamat.setText(rs.getString("alamat"));
+            txtNoTelepon.setText(rs.getString("no_telepon"));
+            
+            // Set Tanggal Lahir (JDateChooser)
+            dcTanggalLahir.setDate(rs.getDate("tanggal_lahir"));
+            
+            // Set Jenis Kelamin (RadioButton)
+            String jk = rs.getString("jenis_kelamin");
+            if ("Laki-laki".equals(jk)) {
+                rbLakiLaki.setSelected(true);
+            } else {
+                rbPerempuan.setSelected(true);
+            }
+        }
+    } catch (SQLException e) {
+        JOptionPane.showMessageDialog(this, "Gagal memuat data lama: " + e.getMessage());
+    }
+        
+        
+        
     }
 
     /**
@@ -305,42 +347,84 @@ public class JDialog_Form_Pasien extends javax.swing.JDialog {
 
     private void btnSimpanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSimpanActionPerformed
         // TODO add your handling code here:
-        this.dispose();
+        //this.dispose();
+        
         // 1. Ambil semua data dari form
-//        String id = txtIDPasien.getText();
-//        String nama = txtNamaPasien.getText();
-        // Ambil tanggal dari JDateChooser
-//        java.util.Date tglLahirUtil = dcTanggalLahir.getDate();
-//        java.sql.Date tglLahirSql = new java.sql.Date(tglLahirUtil.getTime());
+            //String id = txtIDPasien.getText();
+            String nama = txtNamaPasien.getText();
+            String alamat = txtAlamat.getText();
+            String telp = txtNoTelepon.getText();
+        
+        // Ambil Gender dari Radio Button
+        String gender = rbLakiLaki.isSelected() ? "Laki-laki" : "Perempuan";
+           // Ambil Tanggal dari JDateChooser
+        java.sql.Date tglLahirSql = null;
+        if (dcTanggalLahir.getDate() != null) {
+        tglLahirSql = new java.sql.Date(dcTanggalLahir.getDate().getTime());
+        }
 
-//        String gender = rbLakiLaki.isSelected() ? "Laki-laki" : "Perempuan";
-//        String alamat = txtAlamat.getText();
-//        String telp = txtNoTelepon.getText();
+        // 2. Validasi Input
+        if (nama.trim().isEmpty() || tglLahirSql == null) {
+        JOptionPane.showMessageDialog(this, "Nama dan Tanggal Lahir wajib diisi!", "Peringatan", JOptionPane.WARNING_MESSAGE);
+        return;
+        }
+        
 
-        // 2. Validasi data (pastikan nama tidak kosong, dll.)
-
-        try {
-            // 3. Cek apakah ini mode TAMBAH atau EDIT
+        //3. Eksekusi Database
+        
+        
+        
+        try(Connection conn = db.getConnection()) {
+            String sql;
+            PreparedStatement stmt;
+            
+             
+            // 3. Cek apakah ini mode TAMBAH atau EDIT            
             if (idPasienToEdit == null) {
                 // Mode TAMBAH: Jalankan query INSERT
-                // SQL: INSERT INTO pasien (id_pasien, nama_pasien, ...) VALUES (?, ?, ...);
-                JOptionPane.showMessageDialog(this, "Data pasien baru berhasil disimpan!");
+                // MODE TAMBAH (INSERT)
+                // Sesuai struktur tabel: nama_pasien, tanggal_lahir, jenis_kelamin, alamat, no_telepon
+                sql = "INSERT INTO pasien (nama_pasien, tanggal_lahir, jenis_kelamin, alamat, no_telepon) VALUES (?, ?, ?, ?, ?)";
+                stmt = conn.prepareStatement(sql);
+                
+                //stmt = conn.prepareStatement(sql);
+                stmt.setString(1, nama);
+                stmt.setDate(2, tglLahirSql);
+                stmt.setString(3, gender);
+                stmt.setString(4, alamat);
+                stmt.setString(5, telp);
+                
+                
 
             } else {
                 // Mode EDIT: Jalankan query UPDATE
-                // SQL: UPDATE pasien SET nama_pasien = ?, ... WHERE id_pasien = ?
-                JOptionPane.showMessageDialog(this, "Data pasien berhasil diperbarui!");
+                
+                sql = "UPDATE pasien SET nama_pasien=?, tanggal_lahir=?, jenis_kelamin=?, alamat=?, no_telepon=? WHERE pasien_id=?";
+                stmt = conn.prepareStatement(sql);
+                stmt.setString(1, nama);
+                stmt.setDate(2, tglLahirSql);
+                stmt.setString(3, gender);
+                stmt.setString(4, alamat);
+                stmt.setString(5, telp);
+                stmt.setString(6, idPasienToEdit); // Primary Key dari variabel penanda
+                stmt.executeUpdate();
+                
             }
-
-            // 4. Muat ulang data di tabel (jika panelManajemen tidak null)
+            
+            int success = stmt.executeUpdate();
+            if (success > 0) {
+            JOptionPane.showMessageDialog(this, idPasienToEdit == null ? "Data Pasien Berhasil Ditambah" : "Data Pasien Berhasil Diperbarui");
+            
+            // 4. Refresh Tabel di Panel Utama
             if (panelManajemen != null) {
-                panelManajemen.loadDataToTable(); // Panggil method di panel manajemen
+                panelManajemen.loadDataToTable();
             }
+            this.dispose(); // Tutup Dialog
+            }
+            
 
-            // 5. Tutup form
-            this.dispose();
 
-        } catch (HeadlessException e) {
+        } catch (SQLException e) {
             JOptionPane.showMessageDialog(this, "Gagal menyimpan data: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_btnSimpanActionPerformed
