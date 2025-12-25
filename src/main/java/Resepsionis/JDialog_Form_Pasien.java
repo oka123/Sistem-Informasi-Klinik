@@ -387,7 +387,7 @@ import java.sql.ResultSet;
                 sql = "INSERT INTO pasien (nama_pasien, tanggal_lahir, jenis_kelamin, alamat, no_telepon) VALUES (?, ?, ?, ?, ?)";
                 stmt = conn.prepareStatement(sql);
                 
-                //stmt = conn.prepareStatement(sql);
+                
                 stmt.setString(1, nama);
                 stmt.setDate(2, tglLahirSql);
                 stmt.setString(3, gender);
@@ -407,7 +407,7 @@ import java.sql.ResultSet;
                 stmt.setString(4, alamat);
                 stmt.setString(5, telp);
                 stmt.setString(6, idPasienToEdit); // Primary Key dari variabel penanda
-                stmt.executeUpdate();
+                
                 
             }
             

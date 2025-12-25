@@ -1,35 +1,35 @@
-D:\BELAJAR\CODING\Java\KlinikGUI\src\main\java\Apoteker\DetailResep.java
-D:\BELAJAR\CODING\Java\KlinikGUI\src\main\java\Apoteker\JDialogFormObat.java
-D:\BELAJAR\CODING\Java\KlinikGUI\src\main\java\Apoteker\JDialogProsesResep.java
-D:\BELAJAR\CODING\Java\KlinikGUI\src\main\java\Apoteker\JFrameMainApoteker.java
-D:\BELAJAR\CODING\Java\KlinikGUI\src\main\java\Apoteker\JPanelAntreanResep.java
-D:\BELAJAR\CODING\Java\KlinikGUI\src\main\java\Apoteker\JPanelManajemenObat.java
-D:\BELAJAR\CODING\Java\KlinikGUI\src\main\java\Apoteker\Obat.java
-D:\BELAJAR\CODING\Java\KlinikGUI\src\main\java\Apoteker\SistemFarmasiApoteker.java
-D:\BELAJAR\CODING\Java\KlinikGUI\src\main\java\Apoteker\SistemFarmasiApotekerLogic.java
-D:\BELAJAR\CODING\Java\KlinikGUI\src\main\java\Database\KoneksiDatabase.java
-D:\BELAJAR\CODING\Java\KlinikGUI\src\main\java\Dokter\JDialog_Rekam_Medis.java
-D:\BELAJAR\CODING\Java\KlinikGUI\src\main\java\Dokter\JFrame_Main_Dokter.java
-D:\BELAJAR\CODING\Java\KlinikGUI\src\main\java\Dokter\JPanel_Antrean_Pasien.java
-D:\BELAJAR\CODING\Java\KlinikGUI\src\main\java\Dokter\JPanel_Riwayat_Rekam_Medis.java
-D:\BELAJAR\CODING\Java\KlinikGUI\src\main\java\Kasir\Dialog_Pembayaran.java
-D:\BELAJAR\CODING\Java\KlinikGUI\src\main\java\Kasir\Dummy_Data.java
-D:\BELAJAR\CODING\Java\KlinikGUI\src\main\java\Kasir\JFrame_Main_Kasir.java
-D:\BELAJAR\CODING\Java\KlinikGUI\src\main\java\Kasir\JPanel_Antrean_Pembayaran.java
-D:\BELAJAR\CODING\Java\KlinikGUI\src\main\java\Main\JFrame_Login.java
-D:\BELAJAR\CODING\Java\KlinikGUI\src\main\java\Main\Main.java
-D:\BELAJAR\CODING\Java\KlinikGUI\src\main\java\Manajemen\JDialog_Form_Dokter.java
-D:\BELAJAR\CODING\Java\KlinikGUI\src\main\java\Manajemen\JDialog_Form_User.java
-D:\BELAJAR\CODING\Java\KlinikGUI\src\main\java\Manajemen\JFrame_Main_Manajemen.java
-D:\BELAJAR\CODING\Java\KlinikGUI\src\main\java\Manajemen\JPanel_Dashboard_Manajemen.java
-D:\BELAJAR\CODING\Java\KlinikGUI\src\main\java\Manajemen\JPanel_Laporan.java
-D:\BELAJAR\CODING\Java\KlinikGUI\src\main\java\Manajemen\JPanel_Manajemen_Dokter.java
-D:\BELAJAR\CODING\Java\KlinikGUI\src\main\java\Manajemen\JPanel_Manajemen_User.java
-D:\BELAJAR\CODING\Java\KlinikGUI\src\main\java\Resepsionis\JDialog_Form_Jadwal.java
-D:\BELAJAR\CODING\Java\KlinikGUI\src\main\java\Resepsionis\JDialog_Form_Pasien.java
-D:\BELAJAR\CODING\Java\KlinikGUI\src\main\java\Resepsionis\JFrame_Main_Resepsionis.java
-D:\BELAJAR\CODING\Java\KlinikGUI\src\main\java\Resepsionis\JPanel_Dashboard_Resepsionis.java
-D:\BELAJAR\CODING\Java\KlinikGUI\src\main\java\Resepsionis\JPanel_Informasi_Dokter.java
-D:\BELAJAR\CODING\Java\KlinikGUI\src\main\java\Resepsionis\JPanel_Manajemen_Jadwal.java
-D:\BELAJAR\CODING\Java\KlinikGUI\src\main\java\Resepsionis\JPanel_Manajemen_Pasien.java
-D:\BELAJAR\CODING\Java\KlinikGUI\src\main\java\Resepsionis\JPanel_Registrasi_Kunjungan.java
+C:\Users\Kusuma\Documents\PBO\Sistem-Informasi-Klinik 1\src\main\java\Apoteker\DetailResep.java
+C:\Users\Kusuma\Documents\PBO\Sistem-Informasi-Klinik 1\src\main\java\Apoteker\JDialogFormObat.java
+C:\Users\Kusuma\Documents\PBO\Sistem-Informasi-Klinik 1\src\main\java\Apoteker\JDialogProsesResep.java
+C:\Users\Kusuma\Documents\PBO\Sistem-Informasi-Klinik 1\src\main\java\Apoteker\JFrameMainApoteker.java
+C:\Users\Kusuma\Documents\PBO\Sistem-Informasi-Klinik 1\src\main\java\Apoteker\JPanelAntreanResep.java
+C:\Users\Kusuma\Documents\PBO\Sistem-Informasi-Klinik 1\src\main\java\Apoteker\JPanelManajemenObat.java
+C:\Users\Kusuma\Documents\PBO\Sistem-Informasi-Klinik 1\src\main\java\Apoteker\Obat.java
+C:\Users\Kusuma\Documents\PBO\Sistem-Informasi-Klinik 1\src\main\java\Apoteker\SistemFarmasiApoteker.java
+C:\Users\Kusuma\Documents\PBO\Sistem-Informasi-Klinik 1\src\main\java\Apoteker\SistemFarmasiApotekerLogic.java
+C:\Users\Kusuma\Documents\PBO\Sistem-Informasi-Klinik 1\src\main\java\Database\KoneksiDatabase.java
+C:\Users\Kusuma\Documents\PBO\Sistem-Informasi-Klinik 1\src\main\java\Dokter\JDialog_Rekam_Medis.java
+C:\Users\Kusuma\Documents\PBO\Sistem-Informasi-Klinik 1\src\main\java\Dokter\JFrame_Main_Dokter.java
+C:\Users\Kusuma\Documents\PBO\Sistem-Informasi-Klinik 1\src\main\java\Dokter\JPanel_Antrean_Pasien.java
+C:\Users\Kusuma\Documents\PBO\Sistem-Informasi-Klinik 1\src\main\java\Dokter\JPanel_Riwayat_Rekam_Medis.java
+C:\Users\Kusuma\Documents\PBO\Sistem-Informasi-Klinik 1\src\main\java\Kasir\Dialog_Pembayaran.java
+C:\Users\Kusuma\Documents\PBO\Sistem-Informasi-Klinik 1\src\main\java\Kasir\Dummy_Data.java
+C:\Users\Kusuma\Documents\PBO\Sistem-Informasi-Klinik 1\src\main\java\Kasir\JFrame_Main_Kasir.java
+C:\Users\Kusuma\Documents\PBO\Sistem-Informasi-Klinik 1\src\main\java\Kasir\JPanel_Antrean_Pembayaran.java
+C:\Users\Kusuma\Documents\PBO\Sistem-Informasi-Klinik 1\src\main\java\Main\JFrame_Login.java
+C:\Users\Kusuma\Documents\PBO\Sistem-Informasi-Klinik 1\src\main\java\Main\Main.java
+C:\Users\Kusuma\Documents\PBO\Sistem-Informasi-Klinik 1\src\main\java\Manajemen\JDialog_Form_Dokter.java
+C:\Users\Kusuma\Documents\PBO\Sistem-Informasi-Klinik 1\src\main\java\Manajemen\JDialog_Form_User.java
+C:\Users\Kusuma\Documents\PBO\Sistem-Informasi-Klinik 1\src\main\java\Manajemen\JFrame_Main_Manajemen.java
+C:\Users\Kusuma\Documents\PBO\Sistem-Informasi-Klinik 1\src\main\java\Manajemen\JPanel_Dashboard_Manajemen.java
+C:\Users\Kusuma\Documents\PBO\Sistem-Informasi-Klinik 1\src\main\java\Manajemen\JPanel_Laporan.java
+C:\Users\Kusuma\Documents\PBO\Sistem-Informasi-Klinik 1\src\main\java\Manajemen\JPanel_Manajemen_Dokter.java
+C:\Users\Kusuma\Documents\PBO\Sistem-Informasi-Klinik 1\src\main\java\Manajemen\JPanel_Manajemen_User.java
+C:\Users\Kusuma\Documents\PBO\Sistem-Informasi-Klinik 1\src\main\java\Resepsionis\JDialog_Form_Jadwal.java
+C:\Users\Kusuma\Documents\PBO\Sistem-Informasi-Klinik 1\src\main\java\Resepsionis\JDialog_Form_Pasien.java
+C:\Users\Kusuma\Documents\PBO\Sistem-Informasi-Klinik 1\src\main\java\Resepsionis\JFrame_Main_Resepsionis.java
+C:\Users\Kusuma\Documents\PBO\Sistem-Informasi-Klinik 1\src\main\java\Resepsionis\JPanel_Dashboard_Resepsionis.java
+C:\Users\Kusuma\Documents\PBO\Sistem-Informasi-Klinik 1\src\main\java\Resepsionis\JPanel_Informasi_Dokter.java
+C:\Users\Kusuma\Documents\PBO\Sistem-Informasi-Klinik 1\src\main\java\Resepsionis\JPanel_Manajemen_Jadwal.java
+C:\Users\Kusuma\Documents\PBO\Sistem-Informasi-Klinik 1\src\main\java\Resepsionis\JPanel_Manajemen_Pasien.java
+C:\Users\Kusuma\Documents\PBO\Sistem-Informasi-Klinik 1\src\main\java\Resepsionis\JPanel_Registrasi_Kunjungan.java
