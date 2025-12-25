@@ -48,7 +48,7 @@ public final class JPanel_Manajemen_Pasien extends javax.swing.JPanel {
         tblPasien.getTableHeader().setBackground(new java.awt.Color(32, 136, 203)); // Warna biru
         tblPasien.getTableHeader().setForeground(new java.awt.Color(255,255,255)); // Teks putih
 
-//        loadDataToTable(null);
+        loadDataToTable();
     }
     public void loadDataToTable() {
         loadDataToTable(null);  
@@ -406,44 +406,48 @@ public final class JPanel_Manajemen_Pasien extends javax.swing.JPanel {
                 JOptionPane.YES_NO_OPTION,
                 JOptionPane.WARNING_MESSAGE
         );
-
-        // 5. Cek jika pengguna menekan "Ya"
-        if (pilihan == JOptionPane.YES_OPTION) {
-            // 6. Lakukan operasi database
-            String sql = "DELETE FROM pasien WHERE pasien_id = ?";
-
-//            try (Connection conn = KoneksiDatabase.getConnection();
-//                 PreparedStatement pstmt = conn.prepareStatement(sql)) {
-//
-//                pstmt.setString(1, idPasien);
-//
-//                // 7. Eksekusi delete
-//                int rowsAffected = pstmt.executeUpdate();
-//
-//                if (rowsAffected > 0) {
-//                    JOptionPane.showMessageDialog(this, 
-//                            "Data pasien berhasil dihapus.", 
-//                            "Sukses", 
-//                            JOptionPane.INFORMATION_MESSAGE);
-//
-//                    // 8. Muat ulang data (dan bersihkan pencarian)
-//                    txtCari.setText(""); // Bersihkan field pencarian
-////                    loadDataToTable(null); // Muat ulang semua data
-//                } else {
-//                    JOptionPane.showMessageDialog(this, 
-//                            "Data pasien tidak ditemukan (mungkin sudah dihapus).", 
-//                            "Info", 
-//                            JOptionPane.INFORMATION_MESSAGE);
-//                }
-//
-//            } catch (Exception e) {
-//                JOptionPane.showMessageDialog(this, 
-//                        "Gagal menghapus data: " + e.getMessage(), 
-//                        "Error Database", 
-//                        JOptionPane.ERROR_MESSAGE);
-////                e.printStackTrace();
-//            }
+        
+        
+        // 4. Jika user klik YES, baru eksekusi hapus
+    if (pilihan == JOptionPane.YES_OPTION) {
+        String sql = "DELETE FROM pasien WHERE pasien_id = ?";
+        
+        try (Connection conn = Database.KoneksiDatabase.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            
+            stmt.setString(1, idPasien);
+            
+            int rowsAffected = stmt.executeUpdate();
+            
+            if (rowsAffected > 0) {
+                JOptionPane.showMessageDialog(this, "Data pasien berhasil dihapus!");
+                
+                // 5. Refresh tabel agar data yang dihapus hilang dari tampilan
+                loadDataToTable(); 
+                
+                // Opsional: Bersihkan field pencarian jika ada
+                txtCari.setText("");
+            }
+            
+        } catch (java.sql.SQLIntegrityConstraintViolationException e) {
+            // ERROR KHUSUS: Jika pasien sudah punya riwayat kunjungan (Foreign Key)
+            JOptionPane.showMessageDialog(this, 
+                "Gagal menghapus data!\n" +
+                "Pasien ini memiliki riwayat kunjungan/resep.\n" +
+                "Hapus data kunjungan terkait terlebih dahulu.", 
+                "Terproteksi Database", 
+                JOptionPane.ERROR_MESSAGE);
+                
+        } catch (java.sql.SQLException e) {
+            // Error database umum lainnya
+            JOptionPane.showMessageDialog(this, 
+                "Terjadi kesalahan database: " + e.getMessage(), 
+                "Error", 
+                JOptionPane.ERROR_MESSAGE);
         }
+    }
+
+        
     }//GEN-LAST:event_btnHapusActionPerformed
 
     private void btnCariActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCariActionPerformed
