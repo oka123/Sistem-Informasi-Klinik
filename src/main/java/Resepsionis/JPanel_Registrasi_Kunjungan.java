@@ -55,8 +55,8 @@ public class JPanel_Registrasi_Kunjungan extends javax.swing.JPanel {
         btnDaftarkan.setEnabled(false);
 
         // 2. Format JSpinner
-        JSpinner.NumberEditor editor = new JSpinner.NumberEditor(spinnerBiayaJasa, "#,##0");
-        spinnerBiayaJasa.setEditor(editor);
+//        JSpinner.NumberEditor editor = new JSpinner.NumberEditor(spinnerBiayaJasa, "#,##0");
+//        spinnerBiayaJasa.setEditor(editor);
 
         // 3. Muat data dokter ke JComboBox
         loadDokterComboBox();
@@ -65,7 +65,7 @@ public class JPanel_Registrasi_Kunjungan extends javax.swing.JPanel {
         comboDokter.addActionListener(e -> {
             DokterItem item = (DokterItem) comboDokter.getSelectedItem();
             if (item != null) {
-                lblInfoSpesialisasi.setText(item.spesialisasi);
+//                label_dokter.setText(item.spesialisasi);
             }
         });
     }
@@ -105,11 +105,12 @@ public class JPanel_Registrasi_Kunjungan extends javax.swing.JPanel {
         label_alamat = new javax.swing.JLabel();
         panelStep2 = new javax.swing.JPanel();
         jLabel4 = new javax.swing.JLabel();
-        comboDokter = new javax.swing.JComboBox<>();
         jLabel7 = new javax.swing.JLabel();
-        lblInfoSpesialisasi = new javax.swing.JLabel();
-        jLabel9 = new javax.swing.JLabel();
-        spinnerBiayaJasa = new javax.swing.JSpinner();
+        comboDokter = new javax.swing.JComboBox<>();
+        jComboBox2 = new javax.swing.JComboBox<>();
+        jPanel1 = new javax.swing.JPanel();
+        label_dokter1 = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
         btnDaftarkan = new javax.swing.JButton();
 
         setBackground(java.awt.Color.white);
@@ -248,26 +249,18 @@ public class JPanel_Registrasi_Kunjungan extends javax.swing.JPanel {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        panelStep2.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Pilih Dokter & Biaya", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("SansSerif", 1, 14))); // NOI18N
+        panelStep2.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("SansSerif", 1, 14))); // NOI18N
         panelStep2.setEnabled(false);
 
         jLabel4.setFont(new java.awt.Font("SansSerif", 0, 14)); // NOI18N
-        jLabel4.setText("Pilih Dokter Tujuan:");
-
-        comboDokter.setFont(new java.awt.Font("SansSerif", 0, 14)); // NOI18N
-        comboDokter.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Dokter 1", "Dokter 2", "Dokter 3" }));
+        jLabel4.setText("Pilih Poli");
 
         jLabel7.setFont(new java.awt.Font("SansSerif", 0, 14)); // NOI18N
-        jLabel7.setText("Spesialisasi");
+        jLabel7.setText("Dokter");
 
-        lblInfoSpesialisasi.setFont(new java.awt.Font("SansSerif", 0, 14)); // NOI18N
-        lblInfoSpesialisasi.setText("Spesialisasi");
+        comboDokter.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Dokter Kliniks", "Wahyu Triadi", "Amelia Devi" }));
 
-        jLabel9.setFont(new java.awt.Font("SansSerif", 0, 14)); // NOI18N
-        jLabel9.setText("Biaya Konsultasi/Jasa (Rp):");
-
-        spinnerBiayaJasa.setFont(new java.awt.Font("SansSerif", 0, 14)); // NOI18N
-        spinnerBiayaJasa.setModel(new javax.swing.SpinnerNumberModel(30000, 0, null, 10000));
+        jComboBox2.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Poli Umum", "Poli Gigi", "Poli Anak", "Poli Mata", "Poli THT" }));
 
         javax.swing.GroupLayout panelStep2Layout = new javax.swing.GroupLayout(panelStep2);
         panelStep2.setLayout(panelStep2Layout);
@@ -276,32 +269,58 @@ public class JPanel_Registrasi_Kunjungan extends javax.swing.JPanel {
             .addGroup(panelStep2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(panelStep2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jLabel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jLabel9, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, 173, Short.MAX_VALUE)
+                    .addComponent(jLabel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(panelStep2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(comboDokter, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(lblInfoSpesialisasi, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(spinnerBiayaJasa))
-                .addContainerGap())
+                    .addComponent(comboDokter, javax.swing.GroupLayout.PREFERRED_SIZE, 688, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, 688, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(15, Short.MAX_VALUE))
         );
         panelStep2Layout.setVerticalGroup(
             panelStep2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panelStep2Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(panelStep2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addContainerGap(23, Short.MAX_VALUE)
+                .addGroup(panelStep2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(comboDokter, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(panelStep2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(lblInfoSpesialisasi, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(panelStep2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(spinnerBiayaJasa, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(comboDokter, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(27, 27, 27))
+        );
+
+        label_dokter1.setFont(new java.awt.Font("SansSerif", 0, 14)); // NOI18N
+
+        jLabel3.setFont(new java.awt.Font("SansSerif", 0, 14)); // NOI18N
+        jLabel3.setText("Estimasi Nomor Antrian");
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel3)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel1Layout.createSequentialGroup()
+                    .addContainerGap(186, Short.MAX_VALUE)
+                    .addComponent(label_dokter1, javax.swing.GroupLayout.PREFERRED_SIZE, 703, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGap(7, 7, 7)))
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addContainerGap(16, Short.MAX_VALUE)
+                .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18))
+            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel1Layout.createSequentialGroup()
+                    .addGap(20, 20, 20)
+                    .addComponent(label_dokter1, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addContainerGap(20, Short.MAX_VALUE)))
         );
 
         btnDaftarkan.setBackground(new java.awt.Color(25, 135, 84));
@@ -324,16 +343,17 @@ public class JPanel_Registrasi_Kunjungan extends javax.swing.JPanel {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(panelStep1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jSeparator1, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(panelStep2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(btnDaftarkan))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(11, 11, 11)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel1)
                             .addComponent(lblJudul))
-                        .addGap(0, 501, Short.MAX_VALUE))
-                    .addComponent(panelStep2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(btnDaftarkan)))
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -350,8 +370,10 @@ public class JPanel_Registrasi_Kunjungan extends javax.swing.JPanel {
                 .addGap(18, 18, 18)
                 .addComponent(panelStep2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 122, Short.MAX_VALUE)
                 .addComponent(btnDaftarkan, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(44, 44, 44))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -375,16 +397,16 @@ public class JPanel_Registrasi_Kunjungan extends javax.swing.JPanel {
         String resepsionisId = this.loggedInResepsionisId;
         DokterItem dokter = (DokterItem) comboDokter.getSelectedItem();
         String dokterId = dokter.id;
-        int biayaJasa = (Integer) spinnerBiayaJasa.getValue();
+//        int biayaJasa = (Integer) spinnerBiayaJasa.getValue();
 
         // 3. Konfirmasi
-        int pilihan = JOptionPane.showConfirmDialog(this, 
-                "Daftarkan pasien:\n" + label_nama.getText() + "\nKe Dokter: " + dokter.nama + "\nBiaya Jasa: Rp. " + biayaJasa,
-                "Konfirmasi Pendaftaran", JOptionPane.YES_NO_OPTION);
+//        int pilihan = JOptionPane.showConfirmDialog(this, 
+//                "Daftarkan pasien:\n" + label_nama.getText() + "\nKe Dokter: " + dokter.nama + "\nBiaya Jasa: Rp. " +
+//                "Konfirmasi Pendaftaran", JOptionPane.YES_NO_OPTION);
 
-        if (pilihan == JOptionPane.NO_OPTION) {
-            return; // Batal
-        }
+//        if (pilihan == JOptionPane.NO_OPTION) {
+//            return; // Batal
+//        }
 
         // 4. Eksekusi TRANSAKSI DATABASE
         // Connection conn = Koneksi.getConnection();
@@ -435,7 +457,7 @@ public class JPanel_Registrasi_Kunjungan extends javax.swing.JPanel {
         panelStep2.setEnabled(false);
         btnDaftarkan.setEnabled(false);
         comboDokter.setSelectedIndex(0);
-        spinnerBiayaJasa.setValue(50000);
+//        spinnerBiayaJasa.setValue(50000);
         this.selectedPasienId = null;
     }
     
@@ -446,26 +468,27 @@ public class JPanel_Registrasi_Kunjungan extends javax.swing.JPanel {
     private javax.swing.JButton btnCariPasien;
     private javax.swing.JButton btnDaftarkan;
     private javax.swing.JComboBox<String> comboDokter;
+    private javax.swing.JComboBox<String> jComboBox2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
-    private javax.swing.JLabel jLabel9;
+    private javax.swing.JPanel jPanel1;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JLabel labelID;
     private javax.swing.JLabel label_alamat;
+    private javax.swing.JLabel label_dokter1;
     private javax.swing.JLabel label_id;
     private javax.swing.JLabel label_nama;
     private javax.swing.JLabel label_tgl_lahir;
-    private javax.swing.JLabel lblInfoSpesialisasi;
     private javax.swing.JLabel lblJudul;
     private javax.swing.JPanel panelInfoPasien;
     private javax.swing.JPanel panelStep1;
     private javax.swing.JPanel panelStep2;
-    private javax.swing.JSpinner spinnerBiayaJasa;
     private javax.swing.JTextField txtCariPasien;
     // End of variables declaration//GEN-END:variables
 
@@ -521,7 +544,7 @@ public class JPanel_Registrasi_Kunjungan extends javax.swing.JPanel {
                 panelInfoPasien.setVisible(true); // Munculkan detail pasien
                 panelStep2.setEnabled(true);      // Aktifkan panel dokter
                 comboDokter.setEnabled(true);     // Aktifkan combo box
-                spinnerBiayaJasa.setEnabled(true);
+//                spinnerBiayaJasa.setEnabled(true);
                 btnDaftarkan.setEnabled(true);    // Aktifkan tombol daftar
             // ==========================================
 
