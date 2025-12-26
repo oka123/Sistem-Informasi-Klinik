@@ -71,6 +71,7 @@ Manajemen\JPanel_Laporan$2.class
 Manajemen\JFrame_Main_Manajemen$5.class
 Manajemen\JPanel_Manajemen_User$1.class
 Resepsionis\JPanel_Registrasi_Kunjungan$1.class
+Resepsionis\JDialog_Form_Pasien$7.class
 Main\JFrame_Login$1.class
 Manajemen\JPanel_Dashboard_Manajemen.class
 Resepsionis\JFrame_Main_Resepsionis$1.class
@@ -79,6 +80,7 @@ Dokter\JPanel_Riwayat_Rekam_Medis.class
 Manajemen\JPanel_Manajemen_Dokter.class
 Manajemen\JPanel_Manajemen_Dokter$3.class
 Dokter\JDialog_Rekam_Medis$2.class
+Resepsionis\JDialog_Form_Pasien$4.class
 Manajemen\JPanel_Laporan.class
 Resepsionis\JPanel_Dashboard_Resepsionis$2.class
 Main\Main.class
@@ -93,6 +95,7 @@ Manajemen\JFrame_Main_Manajemen$8.class
 Manajemen\JFrame_Main_Manajemen$4.class
 Manajemen\JPanel_Manajemen_Dokter$2.class
 Manajemen\JPanel_Manajemen_User.class
+Resepsionis\JDialog_Form_Pasien$5.class
 Apoteker\JFrameMainApoteker.class
 Manajemen\JDialog_Form_User$2.class
 Apoteker\JPanelAntreanResep.class
@@ -109,6 +112,7 @@ Manajemen\JFrame_Main_Manajemen$3.class
 Manajemen\JFrame_Main_Manajemen$9.class
 Manajemen\JDialog_Form_User$3.class
 Main\JFrame_Login.class
+Resepsionis\JDialog_Form_Pasien$6.class
 Apoteker\SistemFarmasiApoteker.class
 Resepsionis\JPanel_Manajemen_Jadwal$1.class
 Resepsionis\JPanel_Manajemen_Pasien$1.class
