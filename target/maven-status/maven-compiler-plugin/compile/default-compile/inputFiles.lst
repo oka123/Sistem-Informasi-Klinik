@@ -20,11 +20,13 @@ D:\BELAJAR\CODING\Java\KlinikGUI\src\main\java\Main\JFrame_Login.java
 D:\BELAJAR\CODING\Java\KlinikGUI\src\main\java\Main\Main.java
 D:\BELAJAR\CODING\Java\KlinikGUI\src\main\java\Main\ThreadPoolManager.java
 D:\BELAJAR\CODING\Java\KlinikGUI\src\main\java\Manajemen\JDialog_Form_Dokter.java
+D:\BELAJAR\CODING\Java\KlinikGUI\src\main\java\Manajemen\JDialog_Form_Layanan.java
 D:\BELAJAR\CODING\Java\KlinikGUI\src\main\java\Manajemen\JDialog_Form_User.java
 D:\BELAJAR\CODING\Java\KlinikGUI\src\main\java\Manajemen\JFrame_Main_Manajemen.java
 D:\BELAJAR\CODING\Java\KlinikGUI\src\main\java\Manajemen\JPanel_Dashboard_Manajemen.java
 D:\BELAJAR\CODING\Java\KlinikGUI\src\main\java\Manajemen\JPanel_Laporan.java
 D:\BELAJAR\CODING\Java\KlinikGUI\src\main\java\Manajemen\JPanel_Manajemen_Dokter.java
+D:\BELAJAR\CODING\Java\KlinikGUI\src\main\java\Manajemen\JPanel_Manajemen_Layanan.java
 D:\BELAJAR\CODING\Java\KlinikGUI\src\main\java\Manajemen\JPanel_Manajemen_User.java
 D:\BELAJAR\CODING\Java\KlinikGUI\src\main\java\Manajemen\Manajemen.java
 D:\BELAJAR\CODING\Java\KlinikGUI\src\main\java\Resepsionis\JDialog_Form_Jadwal.java
@@ -35,3 +37,4 @@ D:\BELAJAR\CODING\Java\KlinikGUI\src\main\java\Resepsionis\JPanel_Informasi_Dokt
 D:\BELAJAR\CODING\Java\KlinikGUI\src\main\java\Resepsionis\JPanel_Manajemen_Jadwal.java
 D:\BELAJAR\CODING\Java\KlinikGUI\src\main\java\Resepsionis\JPanel_Manajemen_Pasien.java
 D:\BELAJAR\CODING\Java\KlinikGUI\src\main\java\Resepsionis\JPanel_Registrasi_Kunjungan.java
+D:\BELAJAR\CODING\Java\KlinikGUI\src\main\java\Utils\NumericFilter.java

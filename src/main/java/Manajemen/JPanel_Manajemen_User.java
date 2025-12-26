@@ -7,9 +7,11 @@ package Manajemen;
 import Database.KoneksiDatabase;
 import Main.ThreadPoolManager;
 import java.awt.Cursor;
+import java.awt.HeadlessException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JFrame;
@@ -51,9 +53,11 @@ public class JPanel_Manajemen_User extends javax.swing.JPanel implements Manajem
             if (isSearch) {
                 sql += " AND (username LIKE ? OR nama_lengkap LIKE ?)";
             }
+            
+            sql += " ORDER BY nama_lengkap ASC";
 
             try {
-                Connection conn = Database.KoneksiDatabase.getConnection();
+                Connection conn = KoneksiDatabase.getConnection();
                 PreparedStatement pstmt = conn.prepareStatement(sql);
 
                 if (isSearch) {
@@ -66,7 +70,7 @@ public class JPanel_Manajemen_User extends javax.swing.JPanel implements Manajem
                     while (rs.next()) {
                         // Simpan data ke list sementara dulu
                         dataList.add(new Object[]{
-                            rs.getString("user_id"),
+                            rs.getInt("user_id"),
                             rs.getString("username"),
                             rs.getString("nama_lengkap"),
                             rs.getString("role"),
@@ -75,7 +79,7 @@ public class JPanel_Manajemen_User extends javax.swing.JPanel implements Manajem
                         });
                     }
                 }
-            } catch (Exception e) {
+            } catch (SQLException e) {
                 errorMsg = e.getMessage();
                 e.printStackTrace();
             }
@@ -153,6 +157,25 @@ public class JPanel_Manajemen_User extends javax.swing.JPanel implements Manajem
 //        } catch (Exception e) {
 //            JOptionPane.showMessageDialog(this, "Gagal memuat data user: " + e.getMessage());
 //        }
+    }
+    
+    @Override
+    public void hapusDataUser (int idUser) {
+        String sql = "DELETE FROM user WHERE user_id = ?";
+
+        try {
+            Connection conn = KoneksiDatabase.getConnection();
+
+            try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+                pstmt.setInt(1, idUser);
+                pstmt.executeUpdate();
+
+                JOptionPane.showMessageDialog(this, "Data user berhasil dihapus.");
+                loadDataUser(""); // Refresh tabel
+            }
+        } catch (HeadlessException | SQLException e) {
+            JOptionPane.showMessageDialog(this, "Gagal menghapus: " + e.getMessage());
+        }
     }
 
     @SuppressWarnings("unchecked")
@@ -277,44 +300,45 @@ public class JPanel_Manajemen_User extends javax.swing.JPanel implements Manajem
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGap(22, 22, 22)
+                .addGap(24, 24, 24)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jScrollPane1)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(btnTambahUser, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                                .addComponent(btnTambahUser)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(btnEditUser, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(btnEditUser)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(btnHapusUser, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addComponent(btnHapusUser))
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(btn_cariUser)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(txtCariUser, javax.swing.GroupLayout.PREFERRED_SIZE, 276, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(txtCariUser, javax.swing.GroupLayout.PREFERRED_SIZE, 280, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(btnCariUser, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 379, Short.MAX_VALUE)
+                                .addComponent(btnCariUser, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(12, 12, 12)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 368, Short.MAX_VALUE)
                         .addComponent(btnRefresh)))
-                .addGap(27, 27, 27))
+                .addGap(24, 24, 24))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(29, 29, 29)
+                .addGap(24, 24, 24)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
                     .addComponent(btn_cariUser, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(txtCariUser, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnCariUser, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnRefresh, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
+                .addGap(24, 24, 24)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnTambahUser, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnEditUser, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnHapusUser, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 629, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(26, Short.MAX_VALUE))
+                .addContainerGap(18, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -333,22 +357,20 @@ public class JPanel_Manajemen_User extends javax.swing.JPanel implements Manajem
 
     private void btnEditUserActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditUserActionPerformed
         int selectedRow = tblUser.getSelectedRow();
-        
         if (selectedRow == -1) {
             JOptionPane.showMessageDialog(this, "Mohon pilih baris data user yang ingin diubah.", "Peringatan", JOptionPane.WARNING_MESSAGE);
             return;
         }
         
+        // Konversi index jika tabel sedang di-sort dan ambil ID yang terpilih
         int modelRow = tblUser.convertRowIndexToModel(selectedRow);
-        
-        DefaultTableModel model = (DefaultTableModel) tblUser.getModel();
-        String userId = model.getValueAt(modelRow, 0).toString();
+        int idUser = (int) tblUser.getModel().getValueAt(modelRow, 0);
 
         JFrame parentFrame = (JFrame) SwingUtilities.getWindowAncestor(this); 
         
         // Buka Dialog dalam mode EDIT (kirim userId)
-        JDialog_Form_User form = new JDialog_Form_User(parentFrame, true, userId);
-        form.setTitle("Edit User");
+        JDialog_Form_User form = new JDialog_Form_User(parentFrame, true, idUser);
+        form.setTitle("Edit Data User");
         form.setVisible(true);
 
         loadDataUser(""); // Refresh setelah edit
@@ -360,33 +382,19 @@ public class JPanel_Manajemen_User extends javax.swing.JPanel implements Manajem
             JOptionPane.showMessageDialog(this, "Mohon pilih baris data user yang ingin dihapus.", "Peringatan", JOptionPane.WARNING_MESSAGE);
             return;
         }
+        
+        // Konversi index jika tabel sedang di-sort
         int modelRow = tblUser.convertRowIndexToModel(selectedRow);
-        
-        DefaultTableModel model = (DefaultTableModel) tblUser.getModel();
-        
-        String userId = model.getValueAt(modelRow, 0).toString();
-        String username = model.getValueAt(modelRow, 1).toString();
+        int idUser = (int) tblUser.getModel().getValueAt(modelRow, 0);
+        String username = (String) tblUser.getModel().getValueAt(modelRow, 1);
+//        String username = model.getValueAt(modelRow, 1).toString();
 
-        int confirm = JOptionPane.showConfirmDialog(this, 
+        int konfirmasi = JOptionPane.showConfirmDialog(this, 
                 "Apakah Anda yakin ingin menghapus User: " + username + "?", 
                 "Konfirmasi Hapus", JOptionPane.YES_NO_OPTION);
 
-        if (confirm == JOptionPane.YES_OPTION) {
-            // EKSEKUSI DELETE DATABASE
-            String sql = "DELETE FROM user WHERE user_id = ?";
-            
-            try (Connection conn = new KoneksiDatabase().getConnection();
-                 PreparedStatement pstmt = conn.prepareStatement(sql)) {
-                
-                pstmt.setString(1, userId);
-                pstmt.executeUpdate();
-                
-                JOptionPane.showMessageDialog(this, "User berhasil dihapus.");
-                loadDataUser(""); // Refresh tabel
-                
-            } catch (Exception e) {
-                JOptionPane.showMessageDialog(this, "Gagal menghapus: " + e.getMessage());
-            }
+        if (konfirmasi == JOptionPane.YES_OPTION) {
+            hapusDataUser(idUser);
         }
     }//GEN-LAST:event_btnHapusUserActionPerformed
 

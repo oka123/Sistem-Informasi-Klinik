@@ -4,10 +4,12 @@
  */
 package Manajemen;
 
+import Database.KoneksiDatabase;
 import Main.JFrame_Login;
 import Main.ThreadPoolManager;
 import java.awt.CardLayout;
 import java.awt.Image;
+import java.sql.SQLException;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -42,18 +44,21 @@ public class JFrame_Main_Manajemen extends javax.swing.JFrame {
         JPanel_Laporan panelLaporan = new JPanel_Laporan();
         JPanel_Manajemen_User panelUser = new JPanel_Manajemen_User();
         JPanel_Manajemen_Dokter panelDokter = new JPanel_Manajemen_Dokter();
+        JPanel_Manajemen_Layanan panelLayanan = new JPanel_Manajemen_Layanan();
 
         // Tambahkan panel-panel tersebut ke panelContent dengan nama unik (key) untuk memanggil panel itu
         panelContent.add(panelDashboard, "cardDashboard");
         panelContent.add(panelLaporan, "cardLaporan");
         panelContent.add(panelUser, "cardUser");
         panelContent.add(panelDokter, "cardDokter");
+        panelContent.add(panelLayanan, "cardLayanan");
 
         // Tampilkan panel pertama (dashboard) saat aplikasi dibuka
         CardLayout cl = (CardLayout) panelContent.getLayout();
         cl.show(panelContent, "cardDashboard");
     }
     
+    // Konsep Polimorfisme (Method Overloading)
     // Constructor Login
     public JFrame_Main_Manajemen(int userId, String namaLengkap) {
         // Panggil constructor default (yang akan menjalankan initComponents dan membuat Panel Dashboard)
@@ -98,11 +103,12 @@ public class JFrame_Main_Manajemen extends javax.swing.JFrame {
         btnManajemenUser = new javax.swing.JButton();
         btnManajemenDokter = new javax.swing.JButton();
         btn_logout = new javax.swing.JButton();
+        btnManajemenLayanan = new javax.swing.JButton();
         jScrollPane2 = new javax.swing.JScrollPane();
         panelContent = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setTitle("Admin Dashboard - Sistem Informasi Klinik");
+        setTitle("Manajemen - Sistem Informasi Klinik");
 
         jScrollPane1.setBorder(null);
 
@@ -218,6 +224,28 @@ public class JFrame_Main_Manajemen extends javax.swing.JFrame {
             }
         });
 
+        btnManajemenLayanan.setBackground(new java.awt.Color(255, 255, 255));
+        btnManajemenLayanan.setFont(new java.awt.Font("sansserif", 1, 14)); // NOI18N
+        btnManajemenLayanan.setForeground(java.awt.Color.white);
+        btnManajemenLayanan.setText("️📋  Manajemen Layanan");
+        btnManajemenLayanan.setBorderPainted(false);
+        btnManajemenLayanan.setContentAreaFilled(false);
+        btnManajemenLayanan.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnManajemenLayanan.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        btnManajemenLayanan.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                btnManajemenLayananMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                btnManajemenLayananMouseExited(evt);
+            }
+        });
+        btnManajemenLayanan.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnManajemenLayananActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout panelSidebarLayout = new javax.swing.GroupLayout(panelSidebar);
         panelSidebar.setLayout(panelSidebarLayout);
         panelSidebarLayout.setHorizontalGroup(
@@ -235,7 +263,8 @@ public class JFrame_Main_Manajemen extends javax.swing.JFrame {
                                     .addComponent(btnDashboard, javax.swing.GroupLayout.PREFERRED_SIZE, 193, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(btnLaporan, javax.swing.GroupLayout.PREFERRED_SIZE, 210, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(btnManajemenUser, javax.swing.GroupLayout.PREFERRED_SIZE, 210, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(btnManajemenDokter, javax.swing.GroupLayout.PREFERRED_SIZE, 210, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                    .addComponent(btnManajemenDokter, javax.swing.GroupLayout.PREFERRED_SIZE, 210, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(btnManajemenLayanan, javax.swing.GroupLayout.PREFERRED_SIZE, 210, javax.swing.GroupLayout.PREFERRED_SIZE)))
                             .addGroup(panelSidebarLayout.createSequentialGroup()
                                 .addGap(20, 20, 20)
                                 .addComponent(labelIconKlinik, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -262,7 +291,9 @@ public class JFrame_Main_Manajemen extends javax.swing.JFrame {
                 .addComponent(btnManajemenUser, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(btnManajemenDokter, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 198, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(btnManajemenLayanan, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(btn_logout, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(24, 24, 24))
         );
@@ -287,7 +318,7 @@ public class JFrame_Main_Manajemen extends javax.swing.JFrame {
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jScrollPane2)
-            .addComponent(jScrollPane1)
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 496, Short.MAX_VALUE)
         );
 
         pack();
@@ -325,6 +356,7 @@ public class JFrame_Main_Manajemen extends javax.swing.JFrame {
 
         if (pilihan == JOptionPane.YES_OPTION) {
             ThreadPoolManager.getInstance().shutdown();
+            KoneksiDatabase.closeConnection();
             new JFrame_Login().setVisible(true);
             this.dispose(); 
         }
@@ -361,6 +393,20 @@ public class JFrame_Main_Manajemen extends javax.swing.JFrame {
     private void btnManajemenDokterMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnManajemenDokterMouseExited
         btnManajemenDokter.setForeground(java.awt.Color.white);
     }//GEN-LAST:event_btnManajemenDokterMouseExited
+
+    private void btnManajemenLayananMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnManajemenLayananMouseEntered
+        btnManajemenLayanan.setForeground(new java.awt.Color(50,120,220));
+    }//GEN-LAST:event_btnManajemenLayananMouseEntered
+
+    private void btnManajemenLayananMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnManajemenLayananMouseExited
+        btnManajemenLayanan.setForeground(java.awt.Color.white);
+    }//GEN-LAST:event_btnManajemenLayananMouseExited
+
+    private void btnManajemenLayananActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnManajemenLayananActionPerformed
+        // TODO add your handling code here:
+        CardLayout cl = (CardLayout) panelContent.getLayout();
+        cl.show(panelContent, "cardLayanan");
+    }//GEN-LAST:event_btnManajemenLayananActionPerformed
     
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
@@ -388,6 +434,7 @@ public class JFrame_Main_Manajemen extends javax.swing.JFrame {
     private javax.swing.JButton btnDashboard;
     private javax.swing.JButton btnLaporan;
     private javax.swing.JButton btnManajemenDokter;
+    private javax.swing.JButton btnManajemenLayanan;
     private javax.swing.JButton btnManajemenUser;
     private javax.swing.JButton btn_logout;
     private javax.swing.JScrollPane jScrollPane1;

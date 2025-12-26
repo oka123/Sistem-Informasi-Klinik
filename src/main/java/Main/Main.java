@@ -4,14 +4,10 @@
 
 package Main;
 
+import Database.KoneksiDatabase;
 import java.sql.Connection;
 import java.sql.SQLException;
-import Database.KoneksiDatabase;
-
 import java.awt.Font;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.Statement;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 
@@ -43,7 +39,7 @@ public class Main {
         
 //      Uji Coba Koneksi ke DB
         try {
-            Connection conn = Database.KoneksiDatabase.getConnection();
+            Connection conn = KoneksiDatabase.getConnection();
             if (conn != null) {
                 JOptionPane.showMessageDialog(null, "Koneksi ke Database Berhasil, Silahkan Login!");
             }

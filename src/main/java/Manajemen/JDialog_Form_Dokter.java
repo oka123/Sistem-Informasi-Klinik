@@ -5,26 +5,29 @@
 package Manajemen;
 
 import Database.KoneksiDatabase;
+import Utils.NumericFilter;
 import at.favre.lib.crypto.bcrypt.BCrypt;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 import javax.swing.JOptionPane;
+import javax.swing.text.PlainDocument;
 
-public class JDialog_Form_Dokter extends javax.swing.JDialog {
+public class JDialog_Form_Dokter extends javax.swing.JDialog implements Manajemen {
     // Atribut
     private Integer idDokterToEdit = null;
     String pesanError = "";
-
-    // Constructor
-    // Tambahkan juga referensi ke panel tabel (opsional tapi berguna)
-    private JPanel_Manajemen_Dokter panelManajemen;
     
+    // Constructor
     public JDialog_Form_Dokter(java.awt.Frame parent, boolean modal, Integer idDokter) {
         super(parent, modal);
         initComponents();
         setLocationRelativeTo(null);
+        
+        PlainDocument doc = (PlainDocument) txtNoTelepon.getDocument();
+        doc.setDocumentFilter(new NumericFilter());
         
         this.idDokterToEdit = idDokter;
         txtIDDokter.setEnabled(false);
@@ -35,9 +38,9 @@ public class JDialog_Form_Dokter extends javax.swing.JDialog {
             
             // Saat Edit, Username & Password biasanya tidak diubah di sini untuk keamanan/konsistensi
             // Kita disable atau sembunyikan logika insert user
-            txtUsername.setEnabled(false); 
+            lblInfoPassword.setText("Biarkan kosong jika tidak ingin mengubah password");
             
-            loadDataForEdit();
+            loadDataDokterForEdit();
         } else {
             lblJudul.setText("Tambah Dokter Baru");
             txtIDDokter.setText("Auto");
@@ -45,27 +48,30 @@ public class JDialog_Form_Dokter extends javax.swing.JDialog {
         }
     }
     
-    private void loadDataForEdit() {
+    private void loadDataDokterForEdit() {
         String sql = "SELECT d.dokter_id, d.spesialisasi, u.username, u.nama_lengkap, u.no_telepon, u.alamat " +
                      "FROM dokter d " +
                      "JOIN user u ON d.user_id = u.user_id " +
                      "WHERE d.dokter_id = ?";
                      
-        try (Connection conn = new KoneksiDatabase().getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            
-            pstmt.setInt(1, this.idDokterToEdit);
-            ResultSet rs = pstmt.executeQuery();
-            
-            if (rs.next()) {
-                txtNamaLengkap.setText(rs.getString("nama_lengkap"));
-                txtUsername.setText(rs.getString("username"));
-                txtPassword.setText("");
-                comboSpesialisasi.setSelectedItem(rs.getString("spesialisasi"));
-                txtAlamat.setText(rs.getString("alamat"));
-                txtNoTelepon.setText(rs.getString("no_telepon"));
+        try {
+            Connection conn = KoneksiDatabase.getConnection();  // Koneksi dibuka di sini
+
+            try (PreparedStatement pstmt = conn.prepareStatement(sql)) {  // PreparedStatement ditangani oleh try-with-resources
+                pstmt.setInt(1, this.idDokterToEdit);
+                ResultSet rs = pstmt.executeQuery();
+
+                if (rs.next()) {
+                    txtNamaLengkap.setText(rs.getString("nama_lengkap"));
+                    txtUsername.setText(rs.getString("username"));
+                    txtPassword.setText("");
+                    comboSpesialisasi.setSelectedItem(rs.getString("spesialisasi"));
+                    txtAlamat.setText(rs.getString("alamat"));
+                    txtNoTelepon.setText(rs.getString("no_telepon"));
+                }
             }
-        } catch (Exception e) {
+            
+        } catch (SQLException e) {
             JOptionPane.showMessageDialog(this, "Gagal memuat data: " + e.getMessage());
         }
     }
@@ -77,7 +83,100 @@ public class JDialog_Form_Dokter extends javax.swing.JDialog {
         }
         return "";
     }
+    
+    @Override
+    public void tambahDokter(Connection conn, String nama, String username, char[] passwordChars, String spesialisasi, String telp, String alamat) throws Exception {
+        
+        if (passwordChars.length == 0) {
+            throw new Exception("Password wajib diisi untuk dokter baru!");
+        }
 
+        String hashedPassword = BCrypt.withDefaults().hashToString(12, passwordChars);
+
+        // 1. Insert ke tabel User
+        String sqlUser = "INSERT INTO user (username, password, nama_lengkap, role, no_telepon, alamat) " +
+                         "VALUES (?, ?, ?, 'Dokter', ?, ?)";
+        
+        int userIdBaru = -1;
+        try (PreparedStatement pstmtUser = conn.prepareStatement(sqlUser, Statement.RETURN_GENERATED_KEYS)) {
+            pstmtUser.setString(1, username);
+            pstmtUser.setString(2, hashedPassword);
+            pstmtUser.setString(3, nama);
+            pstmtUser.setString(4, telp);
+            pstmtUser.setString(5, alamat);
+            pstmtUser.executeUpdate();
+
+            ResultSet rs = pstmtUser.getGeneratedKeys();
+            if (rs.next()) userIdBaru = rs.getInt(1);
+        }
+
+        if (userIdBaru == -1) throw new Exception("Gagal mendapatkan generated User ID.");
+
+        // 2. Insert ke tabel Dokter
+        String sqlDokter = "INSERT INTO dokter (user_id, spesialisasi, no_telepon, alamat) VALUES (?, ?, ?, ?)";
+        try (PreparedStatement pstmtDokter = conn.prepareStatement(sqlDokter)) {
+            pstmtDokter.setInt(1, userIdBaru);
+            pstmtDokter.setString(2, spesialisasi);
+            pstmtDokter.setString(3, telp);
+            pstmtDokter.setString(4, alamat);
+            pstmtDokter.executeUpdate();
+        }
+        
+        JOptionPane.showMessageDialog(this, "Dokter berhasil ditambahkan!");
+    }
+    
+    @Override
+    public void editDokter(Connection conn, String nama, String username, char[] passwordChars, String spesialisasi, String telp, String alamat) throws Exception {
+        
+        // 1. Cari user_id berdasarkan idDokterToEdit
+        int userId = -1;
+        String sqlGetId = "SELECT user_id FROM dokter WHERE dokter_id = ?";
+        try (PreparedStatement ps = conn.prepareStatement(sqlGetId)) {
+            ps.setInt(1, idDokterToEdit);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) userId = rs.getInt("user_id");
+        }
+
+        if (userId == -1) throw new Exception("Data User tidak ditemukan untuk Dokter ini.");
+
+        // 2. Update tabel User
+        if (passwordChars.length > 0) {
+            // Update dengan Password Baru
+            String hashedPassword = BCrypt.withDefaults().hashToString(12, passwordChars);
+            String sqlUser = "UPDATE user SET nama_lengkap=?, username=?, password=?, no_telepon=?, alamat=? WHERE user_id=?";
+            try (PreparedStatement psUser = conn.prepareStatement(sqlUser)) {
+                psUser.setString(1, nama);
+                psUser.setString(2, username);
+                psUser.setString(3, hashedPassword);
+                psUser.setString(4, telp);
+                psUser.setString(5, alamat);
+                psUser.setInt(6, userId);
+                psUser.executeUpdate();
+            }
+        } else {
+            // Update Tanpa Password
+            String sqlUser = "UPDATE user SET nama_lengkap=?, username=?, no_telepon=?, alamat=? WHERE user_id=?";
+            try (PreparedStatement psUser = conn.prepareStatement(sqlUser)) {
+                psUser.setString(1, nama);
+                psUser.setString(2, username);
+                psUser.setString(3, telp);
+                psUser.setString(4, alamat);
+                psUser.setInt(5, userId);
+                psUser.executeUpdate();
+            }
+        }
+
+        // 3. Update tabel Dokter
+        String sqlDokter = "UPDATE dokter SET spesialisasi=? WHERE dokter_id=?";
+        try (PreparedStatement psDokter = conn.prepareStatement(sqlDokter)) {
+            psDokter.setString(1, spesialisasi);
+            psDokter.setInt(2, idDokterToEdit);
+            psDokter.executeUpdate();
+        }
+
+        JOptionPane.showMessageDialog(this, "Data dokter berhasil diperbarui!");
+    }
+    
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -105,13 +204,17 @@ public class JDialog_Form_Dokter extends javax.swing.JDialog {
         txtUsername = new javax.swing.JTextField();
         jLabel7 = new javax.swing.JLabel();
         txtPassword = new javax.swing.JPasswordField();
+        lblInfoPassword = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Form Data Dokter");
         setModal(true);
 
+        jScrollPane2.setPreferredSize(new java.awt.Dimension(461, 569));
+
         panelForm.setBackground(new java.awt.Color(255, 255, 255));
         panelForm.setBorder(javax.swing.BorderFactory.createEmptyBorder(15, 15, 15, 15));
+        panelForm.setPreferredSize(new java.awt.Dimension(461, 569));
 
         lblJudul.setFont(new java.awt.Font("sansserif", 1, 20)); // NOI18N
         lblJudul.setForeground(new java.awt.Color(0, 0, 0));
@@ -208,7 +311,6 @@ public class JDialog_Form_Dokter extends javax.swing.JDialog {
         panelForm.setLayout(panelFormLayout);
         panelFormLayout.setHorizontalGroup(
             panelFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jSeparator1, javax.swing.GroupLayout.Alignment.TRAILING)
             .addGroup(panelFormLayout.createSequentialGroup()
                 .addGroup(panelFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelFormLayout.createSequentialGroup()
@@ -230,14 +332,16 @@ public class JDialog_Form_Dokter extends javax.swing.JDialog {
                             .addComponent(jLabel7, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addGap(27, 27, 27)
                         .addGroup(panelFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(scrollAlamat, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 312, Short.MAX_VALUE)
+                            .addComponent(scrollAlamat, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 314, Short.MAX_VALUE)
                             .addComponent(txtNamaLengkap, javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(txtIDDokter, javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(txtNoTelepon)
                             .addComponent(comboSpesialisasi, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(txtUsername, javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(txtPassword))))
+                            .addComponent(txtPassword)
+                            .addComponent(lblInfoPassword, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                 .addContainerGap())
+            .addComponent(jSeparator1)
         );
         panelFormLayout.setVerticalGroup(
             panelFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -245,7 +349,7 @@ public class JDialog_Form_Dokter extends javax.swing.JDialog {
                 .addComponent(lblJudul)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(17, 17, 17)
+                .addGap(18, 18, 18)
                 .addGroup(panelFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(txtIDDokter, javax.swing.GroupLayout.DEFAULT_SIZE, 40, Short.MAX_VALUE)
                     .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -261,11 +365,13 @@ public class JDialog_Form_Dokter extends javax.swing.JDialog {
                 .addGroup(panelFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(txtPassword, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(lblInfoPassword)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(panelFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(comboSpesialisasi, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(panelFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(scrollAlamat, javax.swing.GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE)
                     .addComponent(jLabel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -273,11 +379,10 @@ public class JDialog_Form_Dokter extends javax.swing.JDialog {
                 .addGroup(panelFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jLabel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(txtNoTelepon, javax.swing.GroupLayout.DEFAULT_SIZE, 40, Short.MAX_VALUE))
-                .addGap(18, 18, 18)
+                .addGap(18, 18, Short.MAX_VALUE)
                 .addGroup(panelFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnSimpan, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnBatal, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(0, 0, Short.MAX_VALUE))
+                    .addComponent(btnBatal, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)))
         );
 
         jScrollPane2.setViewportView(panelForm);
@@ -293,7 +398,7 @@ public class JDialog_Form_Dokter extends javax.swing.JDialog {
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGap(0, 0, Short.MAX_VALUE)
+                .addGap(0, 0, 0)
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
@@ -323,104 +428,35 @@ public class JDialog_Form_Dokter extends javax.swing.JDialog {
 
         Connection conn = null;
         try {
-            conn = new KoneksiDatabase().getConnection();
+            conn = KoneksiDatabase.getConnection();
             conn.setAutoCommit(false); 
 
             if (idDokterToEdit == null) {
                 // --- Tambah Data ---
-                
-                if (passwordChars.length == 0) {
-                    JOptionPane.showMessageDialog(this, "Password wajib diisi untuk dokter baru!");
-                    return;
-                }
-                String hashedPassword = BCrypt.withDefaults().hashToString(12, passwordChars);
-
-                // Insert User
-                String sqlUser = "INSERT INTO user (username, password, nama_lengkap, role, no_telepon, alamat) VALUES (?, ?, ?, 'Dokter', ?, ?)";
-                
-                int userIdBaru = -1;
-                
-                try (PreparedStatement pstmtUser = conn.prepareStatement(sqlUser, Statement.RETURN_GENERATED_KEYS)) {
-                    pstmtUser.setString(1, username);
-                    pstmtUser.setString(2, hashedPassword);
-                    pstmtUser.setString(3, nama);
-                    pstmtUser.setString(4, telp);   // Masuk ke User
-                    pstmtUser.setString(5, alamat); // Masuk ke User
-                    pstmtUser.executeUpdate();
-                    
-                    ResultSet rs = pstmtUser.getGeneratedKeys();
-                    if (rs.next()) userIdBaru = rs.getInt(1);
-                }
-
-                // 2. Insert Dokter
-                if (userIdBaru != -1) {
-                    String sqlDokter = "INSERT INTO dokter (user_id, spesialisasi, no_telepon, alamat) VALUES (?, ?, ?, ?)";
-                    try (PreparedStatement pstmtDokter = conn.prepareStatement(sqlDokter)) {
-                        pstmtDokter.setInt(1, userIdBaru);
-                        pstmtDokter.setString(2, spesialisasi);
-                        pstmtDokter.setString(3, telp);
-                        pstmtDokter.setString(4, alamat);
-                        pstmtDokter.executeUpdate();
-                    }
-                    JOptionPane.showMessageDialog(this, "Dokter berhasil ditambahkan!");
-                } else {
-                    throw new Exception("Gagal membuat User ID.");
-                }
-
+                tambahDokter(conn, nama, username, passwordChars, spesialisasi, telp, alamat);
             } else {
                 // --- Edit Data ---
-                
-                // Ambil user_id (Pakai INT)
-                int userId = -1;
-                String sqlGetId = "SELECT user_id FROM dokter WHERE dokter_id = ?";
-                try(PreparedStatement ps = conn.prepareStatement(sqlGetId)){
-                    ps.setInt(1, idDokterToEdit); // SET INT
-                    ResultSet rs = ps.executeQuery();
-                    if(rs.next()) userId = rs.getInt("user_id");
-                }
-
-                // Update User (Password Opsional)
-                if (passwordChars.length > 0) {
-                    String hashedPassword = at.favre.lib.crypto.bcrypt.BCrypt.withDefaults().hashToString(12, passwordChars);
-                    String sqlUser = "UPDATE user SET nama_lengkap=?, password=?, no_telepon=?, alamat=? WHERE user_id=?";
-                    try(PreparedStatement psUser = conn.prepareStatement(sqlUser)){
-                        psUser.setString(1, nama);
-                        psUser.setString(2, hashedPassword);
-                        psUser.setString(3, telp);   // Update di User
-                        psUser.setString(4, alamat); // Update di User
-                        psUser.setInt(5, userId);
-                        psUser.executeUpdate();
-                    }
-                } else {
-                    String sqlUser = "UPDATE user SET nama_lengkap=?, no_telepon=?, alamat=? WHERE user_id=?";
-                    try(PreparedStatement psUser = conn.prepareStatement(sqlUser)){
-                        psUser.setString(1, nama);
-                        psUser.setString(2, telp);   // Update di User
-                        psUser.setString(3, alamat); // Update di User
-                        psUser.setInt(4, userId);
-                        psUser.executeUpdate();
-                    }
-                }
-
-                // 3. Update Dokter (Pakai INT di WHERE)
-                String sqlDokter = "UPDATE dokter SET spesialisasi=? WHERE dokter_id=?";
-                try(PreparedStatement psDokter = conn.prepareStatement(sqlDokter)){
-                    psDokter.setString(1, spesialisasi);
-                    psDokter.setInt(2, idDokterToEdit);
-                    psDokter.executeUpdate();
-                }
-                
-                JOptionPane.showMessageDialog(this, "Data dokter berhasil diperbarui!");
+                editDokter(conn, nama, username, passwordChars, spesialisasi, telp, alamat);
             }
 
             conn.commit(); 
             this.dispose();
 
         } catch (Exception e) {
-            try { if (conn != null) conn.rollback(); } catch(Exception ex){} 
+            try { 
+                if (conn != null) conn.rollback(); 
+            } catch(SQLException ex){
+                ex.printStackTrace();
+            } 
             JOptionPane.showMessageDialog(this, "Gagal menyimpan: " + e.getMessage());
         } finally {
-            try { if (conn != null) { conn.setAutoCommit(true); conn.close(); } } catch(Exception ex){}
+            try { 
+                if (conn != null) { 
+                    conn.setAutoCommit(true);
+                } 
+            } catch(SQLException ex){
+                ex.printStackTrace();
+            }
         }
     }//GEN-LAST:event_btnSimpanActionPerformed
 
@@ -451,6 +487,7 @@ public class JDialog_Form_Dokter extends javax.swing.JDialog {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JSeparator jSeparator1;
+    private javax.swing.JLabel lblInfoPassword;
     private javax.swing.JLabel lblJudul;
     private javax.swing.JPanel panelForm;
     private javax.swing.JScrollPane scrollAlamat;
