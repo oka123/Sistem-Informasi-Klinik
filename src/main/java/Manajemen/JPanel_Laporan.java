@@ -4,6 +4,7 @@
  */
 package Manajemen;
 
+import Database.KoneksiDatabase;
 import Main.ThreadPoolManager;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -31,6 +32,9 @@ import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.data.category.DefaultCategoryDataset;
 import javax.swing.JDialog;
 import java.awt.BorderLayout;
+import java.awt.HeadlessException;
+import java.io.IOException;
+import java.sql.Date;
 import javax.swing.SwingUtilities;
 
 public class JPanel_Laporan extends javax.swing.JPanel implements Manajemen {
@@ -85,8 +89,8 @@ public class JPanel_Laporan extends javax.swing.JPanel implements Manajemen {
         }
 
         // 2. Konversi Tanggal (Tetap di UI Thread)
-        final java.sql.Date sqlDari = new java.sql.Date(dcDariTanggal.getDate().getTime());
-        final java.sql.Date sqlSampai = new java.sql.Date(dcSampaiTanggal.getDate().getTime());
+        final Date sqlDari = new Date(dcDariTanggal.getDate().getTime());
+        final Date sqlSampai = new Date(dcSampaiTanggal.getDate().getTime());
         final String jenisLaporan = (String) comboJenisLaporan.getSelectedItem();
 
         // 3. UBAH KURSOR JADI LOADING
@@ -107,7 +111,7 @@ public class JPanel_Laporan extends javax.swing.JPanel implements Manajemen {
                     case "Laporan Penjualan Obat" -> resultModel = loadLaporanObat(sqlDari, sqlSampai);
                     default -> JOptionPane.showMessageDialog(this, "Jenis laporan tidak valid.");
                 }
-            } catch (Exception e) {
+            } catch (HeadlessException | SQLException e) {
                 errorMsg = e.getMessage();
                 e.printStackTrace();
             }
@@ -143,8 +147,8 @@ public class JPanel_Laporan extends javax.swing.JPanel implements Manajemen {
 //        }
 //
 //        // Konversi Tanggal Java ke SQL Date
-//        java.sql.Date sqlDari = new java.sql.Date(dcDariTanggal.getDate().getTime());
-//        java.sql.Date sqlSampai = new java.sql.Date(dcSampaiTanggal.getDate().getTime());
+//        Date sqlDari = new Date(dcDariTanggal.getDate().getTime());
+//        Date sqlSampai = new Date(dcSampaiTanggal.getDate().getTime());
 //
 //        String jenisLaporan = (String) comboJenisLaporan.getSelectedItem();
 //
@@ -159,7 +163,7 @@ public class JPanel_Laporan extends javax.swing.JPanel implements Manajemen {
 
     }
     
-//    private void loadLaporanPendapatan(java.sql.Date dari, java.sql.Date sampai) {
+//    private void loadLaporanPendapatan(Date dari, Date sampai) {
 //        DefaultTableModel model = new DefaultTableModel();
 //        model.setColumnIdentifiers(new Object[]{"ID Pembayaran", "Tanggal Bayar", "Kasir", "Metode", "Biaya Jasa", "Biaya Obat", "Total Bayar"});
 //        
@@ -208,7 +212,7 @@ public class JPanel_Laporan extends javax.swing.JPanel implements Manajemen {
 //        }
 //    }
     
-//    private void loadLaporanKunjungan(java.sql.Date dari, java.sql.Date sampai) {
+//    private void loadLaporanKunjungan(Date dari, Date sampai) {
 //        DefaultTableModel model = new DefaultTableModel();
 //        model.setColumnIdentifiers(new Object[]{"Tanggal", "Pasien", "Dokter", "Status"});
 //        
@@ -249,7 +253,7 @@ public class JPanel_Laporan extends javax.swing.JPanel implements Manajemen {
 //        }
 //    }
     
-//    private void loadLaporanObat(java.sql.Date dari, java.sql.Date sampai) {
+//    private void loadLaporanObat(Date dari, Date sampai) {
 //        DefaultTableModel model = new DefaultTableModel();
 //        model.setColumnIdentifiers(new Object[]{"Nama Obat", "Satuan", "Total Terjual (Qty)", "Sisa Stok"});
 //        
@@ -297,7 +301,7 @@ public class JPanel_Laporan extends javax.swing.JPanel implements Manajemen {
     
     // 1. Laporan Pendapatan
     @Override
-    public DefaultTableModel loadLaporanPendapatan(java.sql.Date dari, java.sql.Date sampai) throws SQLException {
+    public DefaultTableModel loadLaporanPendapatan(Date dari, Date sampai) throws SQLException {
         DefaultTableModel model = new DefaultTableModel();
         model.setColumnIdentifiers(new Object[]{"ID Pembayaran", "Tanggal Bayar", "Kasir", "Metode", "Biaya Jasa", "Biaya Obat", "Total Bayar"});
         
@@ -342,7 +346,7 @@ public class JPanel_Laporan extends javax.swing.JPanel implements Manajemen {
 
     // 2. Laporan Kunjungan
     @Override
-    public DefaultTableModel loadLaporanKunjungan(java.sql.Date dari, java.sql.Date sampai) throws SQLException {
+    public DefaultTableModel loadLaporanKunjungan(Date dari, Date sampai) throws SQLException {
         DefaultTableModel model = new DefaultTableModel();
         model.setColumnIdentifiers(new Object[]{"Tanggal", "Pasien", "Dokter", "Status"});
         int totalKunjungan = 0;
@@ -379,7 +383,7 @@ public class JPanel_Laporan extends javax.swing.JPanel implements Manajemen {
 
     // 3. Laporan Obat
     @Override
-    public DefaultTableModel loadLaporanObat(java.sql.Date dari, java.sql.Date sampai) throws SQLException {
+    public DefaultTableModel loadLaporanObat(Date dari, Date sampai) throws SQLException {
         DefaultTableModel model = new DefaultTableModel();
         model.setColumnIdentifiers(new Object[]{"Nama Obat", "Satuan", "Total Terjual (Qty)", "Sisa Stok"});
         int totalItemTerjual = 0;
@@ -498,7 +502,7 @@ public class JPanel_Laporan extends javax.swing.JPanel implements Manajemen {
                                 if (value != null) {
                                     String strValue = value.toString();
                                     if (strValue.startsWith("Rp")) cell.setCellValue(strValue);
-                                    else if (value instanceof Number) cell.setCellValue(((Number) value).doubleValue());
+                                    else if (value instanceof Number number) cell.setCellValue(number.doubleValue());
                                     else cell.setCellValue(strValue);
                                 } else {
                                     cell.setCellValue("");
@@ -515,17 +519,18 @@ public class JPanel_Laporan extends javax.swing.JPanel implements Manajemen {
                     }
                     
                     SwingUtilities.invokeLater(() -> {
-                        this.setCursor(Cursor.getDefaultCursor());
-                        btnExportData.setEnabled(true);
                         JOptionPane.showMessageDialog(this, "Data berhasil diexport ke:\n" + finalFileToSave.getAbsolutePath());
                     });
 
-                } catch (Exception e) {
+                } catch (IOException e) {
                     SwingUtilities.invokeLater(() -> {
                         this.setCursor(Cursor.getDefaultCursor());
                         JOptionPane.showMessageDialog(this, "Gagal mengexport data: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
                     });
                     e.printStackTrace();
+                } finally {
+                    this.setCursor(Cursor.getDefaultCursor());
+                    btnExportData.setEnabled(true);
                 }
             });
         }
@@ -639,8 +644,8 @@ public class JPanel_Laporan extends javax.swing.JPanel implements Manajemen {
             return;
         }
 
-        final java.sql.Date sqlDari = new java.sql.Date(dcDariTanggal.getDate().getTime());
-        final java.sql.Date sqlSampai = new java.sql.Date(dcSampaiTanggal.getDate().getTime());
+        final Date sqlDari = new Date(dcDariTanggal.getDate().getTime());
+        final Date sqlSampai = new Date(dcSampaiTanggal.getDate().getTime());
         
         this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
         btnGrafik.setEnabled(false);
@@ -657,21 +662,24 @@ public class JPanel_Laporan extends javax.swing.JPanel implements Manajemen {
                          "GROUP BY DATE(tanggal_bayar) " +
                          "ORDER BY tgl ASC";
 
-            try (Connection conn = new Database.KoneksiDatabase().getConnection();
-                 PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            try {
+                Connection conn = KoneksiDatabase.getConnection();  // Koneksi dibuka di sini
 
-                pstmt.setDate(1, sqlDari);
-                pstmt.setDate(2, sqlSampai);
-                ResultSet rs = pstmt.executeQuery();
-                
-                while (rs.next()) {
-                    String tanggal = rs.getString("tgl");
-                    double total = rs.getDouble("total");
-                    dataset.addValue(total, "Pendapatan", tanggal);
+                try (PreparedStatement pstmt = conn.prepareStatement(sql)) {  // PreparedStatement ditangani oleh try-with-resources
+                    pstmt.setDate(1, sqlDari);
+                    pstmt.setDate(2, sqlSampai);
+                    ResultSet rs = pstmt.executeQuery();
+
+                    while (rs.next()) {
+                        String tanggal = rs.getString("tgl");
+                        double total = rs.getDouble("total");
+                        dataset.addValue(total, "Pendapatan", tanggal);
+                    }
+
+                    success = true;  // Set success jika data berhasil diproses
                 }
-                success = true;
 
-            } catch (Exception e) {
+            } catch (SQLException e) {
                 errorMsg = e.getMessage();
             }
 
@@ -709,8 +717,8 @@ public class JPanel_Laporan extends javax.swing.JPanel implements Manajemen {
 //            return;
 //        }
 //
-//        java.sql.Date sqlDari = new java.sql.Date(dcDariTanggal.getDate().getTime());
-//        java.sql.Date sqlSampai = new java.sql.Date(dcSampaiTanggal.getDate().getTime());
+//        Date sqlDari = new Date(dcDariTanggal.getDate().getTime());
+//        Date sqlSampai = new Date(dcSampaiTanggal.getDate().getTime());
 //
 //        // 2. Siapkan Dataset (Wadah Data untuk Grafik)
 //        DefaultCategoryDataset dataset = new DefaultCategoryDataset();
@@ -803,6 +811,11 @@ public class JPanel_Laporan extends javax.swing.JPanel implements Manajemen {
 
         dcDariTanggal.setBackground(new java.awt.Color(255, 255, 255));
         dcDariTanggal.setForeground(new java.awt.Color(0, 0, 0));
+        dcDariTanggal.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                dcDariTanggalMouseClicked(evt);
+            }
+        });
 
         dcSampaiTanggal.setBackground(new java.awt.Color(255, 255, 255));
         dcSampaiTanggal.setForeground(new java.awt.Color(0, 0, 0));
@@ -955,12 +968,10 @@ public class JPanel_Laporan extends javax.swing.JPanel implements Manajemen {
         String jenis = (String) comboJenisLaporan.getSelectedItem();
         
         // Set header preview tabel saja
-        if (jenis.equals("Laporan Pendapatan")) {
-            modelKosong.setColumnIdentifiers(new Object[]{"ID Bayar", "Tgl Bayar", "Kasir", "Metode", "Jasa", "Obat", "Total"});
-        } else if (jenis.equals("Laporan Kunjungan Pasien")) {
-            modelKosong.setColumnIdentifiers(new Object[]{"Tgl Kunjungan", "No Antrean", "Pasien", "Dokter", "Status"});
-        } else {
-            modelKosong.setColumnIdentifiers(new Object[]{"Nama Obat", "Satuan", "Total Terjual", "Sisa Stok"});
+        switch (jenis) {
+            case "Laporan Pendapatan" -> modelKosong.setColumnIdentifiers(new Object[]{"ID Bayar", "Tgl Bayar", "Kasir", "Metode", "Jasa", "Obat", "Total"});
+            case "Laporan Kunjungan Pasien" -> modelKosong.setColumnIdentifiers(new Object[]{"Tgl Kunjungan", "No Antrean", "Pasien", "Dokter", "Status"});
+            default -> modelKosong.setColumnIdentifiers(new Object[]{"Nama Obat", "Satuan", "Total Terjual", "Sisa Stok"});
         }
         
         tblLaporan.setModel(modelKosong);
@@ -978,6 +989,10 @@ public class JPanel_Laporan extends javax.swing.JPanel implements Manajemen {
         JOptionPane.showMessageDialog(this, "Fitur grafik saat ini hanya tersedia untuk Laporan Pendapatan.");
     }
     }//GEN-LAST:event_btnGrafikActionPerformed
+
+    private void dcDariTanggalMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_dcDariTanggalMouseClicked
+       dcDariTanggal.getCalendarButton().doClick();
+    }//GEN-LAST:event_dcDariTanggalMouseClicked
     
     
     // Variables declaration - do not modify//GEN-BEGIN:variables

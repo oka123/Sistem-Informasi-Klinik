@@ -47,6 +47,19 @@ public class KoneksiDatabase {
         return koneksi;
     }
     
+    public static void closeConnection() {
+        try {
+            if (koneksi != null && !koneksi.isClosed()) {
+                koneksi.close();
+            }
+        } catch (SQLException e) {
+            System.err.println("Gagal menutup koneksi database: " + e.getMessage());
+        } finally {
+            // Penting: Set ke null agar saat login lagi, getConnection() membuat objek baru
+            koneksi = null;
+        }
+    }
+    
 //    public KoneksiDatabase(){
 //        try{
 //            Class.forName("com.mysql.cj.jdbc.Driver");

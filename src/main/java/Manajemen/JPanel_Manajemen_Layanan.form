@@ -28,22 +28,21 @@
                   <Group type="102" attributes="0">
                       <Group type="103" groupAlignment="1" max="-2" attributes="0">
                           <Group type="102" alignment="0" attributes="0">
-                              <Component id="btnTambahUser" min="-2" max="-2" attributes="0"/>
+                              <Component id="btnTambahLayanan" min="-2" max="-2" attributes="0"/>
                               <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                              <Component id="btnEditUser" min="-2" max="-2" attributes="0"/>
+                              <Component id="btnEditLayanan" min="-2" max="-2" attributes="0"/>
                               <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                              <Component id="btnHapusUser" min="-2" max="-2" attributes="0"/>
+                              <Component id="btnHapusLayanan" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <Group type="102" attributes="0">
                               <Component id="btn_cariUser" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace type="separate" max="-2" attributes="0"/>
-                              <Component id="txtCariUser" min="-2" pref="280" max="-2" attributes="0"/>
+                              <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                              <Component id="txtCariLayanan" min="-2" pref="280" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
-                              <Component id="btnCariUser" min="-2" pref="40" max="-2" attributes="0"/>
-                              <EmptySpace min="-2" pref="12" max="-2" attributes="0"/>
+                              <Component id="btnCariLayanan" min="-2" pref="40" max="-2" attributes="0"/>
                           </Group>
                       </Group>
-                      <EmptySpace pref="368" max="32767" attributes="0"/>
+                      <EmptySpace pref="352" max="32767" attributes="0"/>
                       <Component id="btnRefresh" min="-2" max="-2" attributes="0"/>
                   </Group>
               </Group>
@@ -57,15 +56,15 @@
               <EmptySpace min="-2" pref="24" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="2" attributes="0">
                   <Component id="btn_cariUser" alignment="2" min="-2" pref="40" max="-2" attributes="0"/>
-                  <Component id="txtCariUser" alignment="2" min="-2" pref="40" max="-2" attributes="0"/>
-                  <Component id="btnCariUser" alignment="2" min="-2" pref="40" max="-2" attributes="0"/>
+                  <Component id="txtCariLayanan" alignment="2" min="-2" pref="40" max="-2" attributes="0"/>
+                  <Component id="btnCariLayanan" alignment="2" min="-2" pref="40" max="-2" attributes="0"/>
                   <Component id="btnRefresh" alignment="2" min="-2" pref="40" max="-2" attributes="0"/>
               </Group>
               <EmptySpace min="-2" pref="24" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
-                  <Component id="btnTambahUser" alignment="3" min="-2" pref="40" max="-2" attributes="0"/>
-                  <Component id="btnEditUser" alignment="3" min="-2" pref="40" max="-2" attributes="0"/>
-                  <Component id="btnHapusUser" alignment="3" min="-2" pref="40" max="-2" attributes="0"/>
+                  <Component id="btnTambahLayanan" alignment="3" min="-2" pref="40" max="-2" attributes="0"/>
+                  <Component id="btnEditLayanan" alignment="3" min="-2" pref="40" max="-2" attributes="0"/>
+                  <Component id="btnHapusLayanan" alignment="3" min="-2" pref="40" max="-2" attributes="0"/>
               </Group>
               <EmptySpace type="separate" max="-2" attributes="0"/>
               <Component id="jScrollPane1" min="-2" pref="629" max="-2" attributes="0"/>
@@ -83,10 +82,10 @@
         <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
           <Color blue="0" green="0" red="0" type="rgb"/>
         </Property>
-        <Property name="text" type="java.lang.String" value="Cari User"/>
+        <Property name="text" type="java.lang.String" value="Cari Layanan"/>
       </Properties>
     </Component>
-    <Component class="javax.swing.JTextField" name="txtCariUser">
+    <Component class="javax.swing.JTextField" name="txtCariLayanan">
       <Properties>
         <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
           <Color blue="ff" green="ff" red="ff" type="rgb"/>
@@ -96,7 +95,7 @@
         </Property>
       </Properties>
     </Component>
-    <Component class="javax.swing.JButton" name="btnCariUser">
+    <Component class="javax.swing.JButton" name="btnCariLayanan">
       <Properties>
         <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
           <Color blue="ff" green="ff" red="ff" type="rgb"/>
@@ -118,7 +117,7 @@
         </Property>
       </Properties>
       <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnCariUserActionPerformed"/>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnCariLayananActionPerformed"/>
       </Events>
     </Component>
     <Container class="javax.swing.JScrollPane" name="jScrollPane1">
@@ -128,18 +127,17 @@
 
       <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
       <SubComponents>
-        <Component class="javax.swing.JTable" name="tblUser">
+        <Component class="javax.swing.JTable" name="tblLayanan">
           <Properties>
             <Property name="autoCreateRowSorter" type="boolean" value="true"/>
             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
               <Font name="SansSerif" size="14" style="0"/>
             </Property>
             <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
-              <Table columnCount="4" rowCount="20">
-                <Column editable="true" title="User Id" type="java.lang.Object"/>
-                <Column editable="true" title="Username" type="java.lang.Object"/>
-                <Column editable="true" title="Nama Lengkap" type="java.lang.Object"/>
-                <Column editable="true" title="Role" type="java.lang.Object"/>
+              <Table columnCount="3" rowCount="10">
+                <Column editable="true" title="layanan_id" type="java.lang.Object"/>
+                <Column editable="true" title="nama_layanan" type="java.lang.Object"/>
+                <Column editable="true" title="biaya_layanan" type="java.lang.Object"/>
               </Table>
             </Property>
             <Property name="gridColor" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
@@ -157,7 +155,7 @@
         </Component>
       </SubComponents>
     </Container>
-    <Component class="javax.swing.JButton" name="btnTambahUser">
+    <Component class="javax.swing.JButton" name="btnTambahLayanan">
       <Properties>
         <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
           <Color blue="ff" green="7b" red="0" type="rgb"/>
@@ -174,10 +172,10 @@
         </Property>
       </Properties>
       <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnTambahUserActionPerformed"/>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnTambahLayananActionPerformed"/>
       </Events>
     </Component>
-    <Component class="javax.swing.JButton" name="btnEditUser">
+    <Component class="javax.swing.JButton" name="btnEditLayanan">
       <Properties>
         <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
           <Color blue="0" green="82" red="ff" type="rgb"/>
@@ -194,10 +192,10 @@
         </Property>
       </Properties>
       <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnEditUserActionPerformed"/>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnEditLayananActionPerformed"/>
       </Events>
     </Component>
-    <Component class="javax.swing.JButton" name="btnHapusUser">
+    <Component class="javax.swing.JButton" name="btnHapusLayanan">
       <Properties>
         <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
           <Color blue="45" green="35" red="dc" type="rgb"/>
@@ -214,7 +212,7 @@
         </Property>
       </Properties>
       <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnHapusUserActionPerformed"/>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnHapusLayananActionPerformed"/>
       </Events>
     </Component>
     <Component class="javax.swing.JButton" name="btnRefresh">

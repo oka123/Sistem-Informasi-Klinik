@@ -4,11 +4,14 @@
  */
 package Manajemen;
 
+import Database.KoneksiDatabase;
 import Main.ThreadPoolManager;
 import java.awt.Cursor;
+import java.awt.HeadlessException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JFrame;
@@ -39,8 +42,8 @@ public final class JPanel_Manajemen_Dokter extends javax.swing.JPanel implements
 
             // Query JOIN: Mengambil data spesifik dokter dan data umum dari tabel user
             String sql = "SELECT d.dokter_id, u.nama_lengkap, u.username, d.spesialisasi, u.no_telepon, u.alamat " +
-                         "FROM dokter d " +
-                         "JOIN user u ON d.user_id = u.user_id";
+                         "FROM dokter AS d " +
+                         "JOIN user AS u ON d.user_id = u.user_id";
 
             boolean isSearch = (key != null && !key.trim().isEmpty());
             
@@ -52,7 +55,7 @@ public final class JPanel_Manajemen_Dokter extends javax.swing.JPanel implements
             sql += " ORDER BY u.nama_lengkap ASC"; // Urutkan abjad nama
 
             try {
-                Connection conn = Database.KoneksiDatabase.getConnection();
+                Connection conn = KoneksiDatabase.getConnection();
                 PreparedStatement pstmt = conn.prepareStatement(sql);
 
                 if (isSearch) {
@@ -75,7 +78,7 @@ public final class JPanel_Manajemen_Dokter extends javax.swing.JPanel implements
                         });
                     }
                 }
-            } catch (Exception e) {
+            } catch (SQLException e) {
                 errorMsg = e.getMessage();
                 e.printStackTrace();
             }
@@ -160,7 +163,7 @@ public final class JPanel_Manajemen_Dokter extends javax.swing.JPanel implements
     public void hapusDokterDanUser(int idDokter) {
         Connection conn = null;
         try {
-            conn = Database.KoneksiDatabase.getConnection();
+            conn = KoneksiDatabase.getConnection();
             conn.setAutoCommit(false); 
 
             // Ambil user_id (Query pakai int)
@@ -194,11 +197,11 @@ public final class JPanel_Manajemen_Dokter extends javax.swing.JPanel implements
             JOptionPane.showMessageDialog(this, "Data dokter berhasil dihapus.");
             loadDataDokter("");
 
-        } catch (Exception e) {
-            try { if (conn != null) conn.rollback(); } catch(Exception ex){} 
+        } catch (HeadlessException | SQLException e) {
+            try { if (conn != null) conn.rollback(); } catch(SQLException ex){} 
             JOptionPane.showMessageDialog(this, "Gagal menghapus: " + e.getMessage());
         } finally {
-            try { if (conn != null) { conn.setAutoCommit(true); conn.close(); } } catch(Exception ex){}
+            try { if (conn != null) { conn.setAutoCommit(true); } } catch(SQLException ex){}
         }
     }
         
@@ -206,24 +209,18 @@ public final class JPanel_Manajemen_Dokter extends javax.swing.JPanel implements
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        lblJudul = new javax.swing.JLabel();
-        jSeparator1 = new javax.swing.JSeparator();
         panelKontrol = new javax.swing.JPanel();
         btnTambah = new javax.swing.JButton();
         btnEdit = new javax.swing.JButton();
         btnHapus = new javax.swing.JButton();
-        btnCari = new javax.swing.JButton();
         scrollPaneTabel = new javax.swing.JScrollPane();
         tblDokter = new javax.swing.JTable();
+        jLabel1 = new javax.swing.JLabel();
         txtCari = new javax.swing.JTextField();
+        btnCari = new javax.swing.JButton();
+        btnRefresh = new javax.swing.JButton();
 
         setBackground(new java.awt.Color(255, 255, 255));
-
-        lblJudul.setFont(new java.awt.Font("sansserif", 1, 24)); // NOI18N
-        lblJudul.setForeground(new java.awt.Color(51, 51, 51));
-        lblJudul.setText("Manajemen Data Dokter");
-
-        jSeparator1.setForeground(new java.awt.Color(0, 0, 0));
 
         panelKontrol.setBackground(new java.awt.Color(255, 255, 255));
 
@@ -260,20 +257,6 @@ public final class JPanel_Manajemen_Dokter extends javax.swing.JPanel implements
             }
         });
 
-        btnCari.setBackground(new java.awt.Color(255, 255, 255));
-        btnCari.setFont(new java.awt.Font("SansSerif", 1, 24)); // NOI18N
-        btnCari.setForeground(new java.awt.Color(0, 0, 0));
-        btnCari.setText("🔍");
-        btnCari.setBorder(null);
-        btnCari.setBorderPainted(false);
-        btnCari.setContentAreaFilled(false);
-        btnCari.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        btnCari.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnCariActionPerformed(evt);
-            }
-        });
-
         tblDokter.setAutoCreateRowSorter(true);
         tblDokter.setFont(new java.awt.Font("SansSerif", 0, 14)); // NOI18N
         tblDokter.setModel(new javax.swing.table.DefaultTableModel(
@@ -301,31 +284,25 @@ public final class JPanel_Manajemen_Dokter extends javax.swing.JPanel implements
         panelKontrolLayout.setHorizontalGroup(
             panelKontrolLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panelKontrolLayout.createSequentialGroup()
-                .addContainerGap()
+                .addGap(0, 0, 0)
                 .addGroup(panelKontrolLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(scrollPaneTabel, javax.swing.GroupLayout.DEFAULT_SIZE, 842, Short.MAX_VALUE)
+                    .addComponent(scrollPaneTabel, javax.swing.GroupLayout.DEFAULT_SIZE, 836, Short.MAX_VALUE)
                     .addGroup(panelKontrolLayout.createSequentialGroup()
                         .addComponent(btnTambah)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(btnEdit)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(btnHapus)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(txtCari, javax.swing.GroupLayout.PREFERRED_SIZE, 258, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnCari, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap())
+                        .addGap(0, 0, Short.MAX_VALUE)))
+                .addGap(0, 0, 0))
         );
         panelKontrolLayout.setVerticalGroup(
             panelKontrolLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panelKontrolLayout.createSequentialGroup()
                 .addGroup(panelKontrolLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(panelKontrolLayout.createSequentialGroup()
-                        .addGroup(panelKontrolLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(txtCari, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(btnCari, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(18, 18, 18)
-                        .addComponent(scrollPaneTabel, javax.swing.GroupLayout.DEFAULT_SIZE, 653, Short.MAX_VALUE))
+                        .addGap(58, 58, 58)
+                        .addComponent(scrollPaneTabel, javax.swing.GroupLayout.DEFAULT_SIZE, 633, Short.MAX_VALUE))
                     .addGroup(panelKontrolLayout.createSequentialGroup()
                         .addGroup(panelKontrolLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(btnHapus, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -335,34 +312,66 @@ public final class JPanel_Manajemen_Dokter extends javax.swing.JPanel implements
                 .addContainerGap())
         );
 
+        jLabel1.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
+        jLabel1.setForeground(new java.awt.Color(0, 0, 0));
+        jLabel1.setText("Cari Dokter");
+
+        btnCari.setBackground(new java.awt.Color(255, 255, 255));
+        btnCari.setFont(new java.awt.Font("SansSerif", 1, 24)); // NOI18N
+        btnCari.setForeground(new java.awt.Color(0, 0, 0));
+        btnCari.setText("🔍");
+        btnCari.setBorder(null);
+        btnCari.setBorderPainted(false);
+        btnCari.setContentAreaFilled(false);
+        btnCari.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnCari.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCariActionPerformed(evt);
+            }
+        });
+
+        btnRefresh.setBackground(new java.awt.Color(0, 123, 255));
+        btnRefresh.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
+        btnRefresh.setForeground(new java.awt.Color(255, 255, 255));
+        btnRefresh.setText("🔄 Refresh");
+        btnRefresh.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnRefresh.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnRefreshActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(24, 24, 24)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jSeparator1))
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(panelKontrol, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
-                        .addGap(17, 17, 17)
-                        .addComponent(lblJudul)
-                        .addGap(0, 569, Short.MAX_VALUE)))
-                .addContainerGap())
+                        .addComponent(jLabel1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(txtCari, javax.swing.GroupLayout.PREFERRED_SIZE, 280, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnCari, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(btnRefresh))
+                    .addComponent(panelKontrol, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(24, 24, 24))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(18, 18, 18)
-                .addComponent(lblJudul)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGap(24, 24, 24)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtCari, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(btnCari, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(btnRefresh, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(20, 20, 20)
                 .addComponent(panelKontrol, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
+                .addGap(24, 24, 24))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -374,8 +383,9 @@ public final class JPanel_Manajemen_Dokter extends javax.swing.JPanel implements
         JFrame parentFrame = (JFrame) SwingUtilities.getWindowAncestor(this);
         
         // Mode TAMBAH (id null)
-        JDialog_Form_Dokter formDokter = new JDialog_Form_Dokter(parentFrame, true, null);
-        formDokter.setVisible(true);
+        JDialog_Form_Dokter form = new JDialog_Form_Dokter(parentFrame, true, null);
+        form.setTitle("Tambah Dokter Baru");
+        form.setVisible(true);
 
         loadDataDokter(""); // Refresh setelah tambah
     }//GEN-LAST:event_btnTambahActionPerformed
@@ -383,52 +393,58 @@ public final class JPanel_Manajemen_Dokter extends javax.swing.JPanel implements
     private void btnEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditActionPerformed
         int selectedRow = tblDokter.getSelectedRow();
         if (selectedRow == -1) {
-            JOptionPane.showMessageDialog(this, "Pilih data dokter yang ingin diedit.", "Peringatan", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Mohon pilih baris data dokter yang ingin diubah.", "Peringatan", JOptionPane.WARNING_MESSAGE);
             return;
         }
 
-        // Ambil ID sebagai String dulu dari tabel, lalu parse ke Integer
-        String idStr = tblDokter.getValueAt(selectedRow, 0).toString();
-        int idDokter = Integer.parseInt(idStr); // KONVERSI KE INT
+        // Konversi index jika tabel sedang di-sort dan ambil ID yang terpilih
+        int modelRow = tblDokter.convertRowIndexToModel(selectedRow);
+        int idDokter = (int) tblDokter.getModel().getValueAt(modelRow, 0);
 
         JFrame parentFrame = (JFrame) SwingUtilities.getWindowAncestor(this);
-
         // Kirim ID dalam bentuk Integer
         JDialog_Form_Dokter formDokter = new JDialog_Form_Dokter(parentFrame, true, idDokter);
+        formDokter.setTitle("Edit Data Dokter");
         formDokter.setVisible(true);
         
-        loadDataDokter(txtCari.getText());
+        loadDataDokter("");
     }//GEN-LAST:event_btnEditActionPerformed
 
     private void btnHapusActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnHapusActionPerformed
         int selectedRow = tblDokter.getSelectedRow();
         if (selectedRow == -1) {
-            JOptionPane.showMessageDialog(this, "Pilih data dokter yang ingin dihapus.", "Peringatan", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Mohon pilih baris data dokter yang ingin dihapus.", "Peringatan", JOptionPane.WARNING_MESSAGE);
             return;
         }
 
-        String idStr = tblDokter.getValueAt(selectedRow, 0).toString();
-        int idDokter = Integer.parseInt(idStr); // KONVERSI KE INT
-        
-        String namaDokter = tblDokter.getValueAt(selectedRow, 1).toString();
+//        String idStr = tblDokter.getValueAt(selectedRow, 0).toString();
+//        int idDokter = Integer.parseInt(idStr); // KONVERSI KE INT
 
-        int pilihan = JOptionPane.showConfirmDialog(this,
-            "Menghapus Dokter '" + namaDokter + "' akan menghapus akun User-nya juga.\nLanjutkan?",
+        int modelRow = tblDokter.convertRowIndexToModel(selectedRow);
+        int idDokter = (int) tblDokter.getModel().getValueAt(modelRow, 0);
+        String namaDokter = (String) tblDokter.getModel().getValueAt(modelRow, 1);
+
+        int konfirmasi = JOptionPane.showConfirmDialog(this,
+            "Apakah Anda yakin ingin menghapus Dokter: '" + namaDokter + "' dan menghapus akun User-nya juga.\nLanjutkan?",
             "Konfirmasi Hapus", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
 
-        if (pilihan == JOptionPane.YES_OPTION) {
+        if (konfirmasi == JOptionPane.YES_OPTION) {
             hapusDokterDanUser(idDokter); // Kirim int
         }
     }//GEN-LAST:event_btnHapusActionPerformed
+
+    private void btnRefreshActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRefreshActionPerformed
+        loadDataDokter("");
+    }//GEN-LAST:event_btnRefreshActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCari;
     private javax.swing.JButton btnEdit;
     private javax.swing.JButton btnHapus;
+    private javax.swing.JButton btnRefresh;
     private javax.swing.JButton btnTambah;
-    private javax.swing.JSeparator jSeparator1;
-    private javax.swing.JLabel lblJudul;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel panelKontrol;
     private javax.swing.JScrollPane scrollPaneTabel;
     private javax.swing.JTable tblDokter;

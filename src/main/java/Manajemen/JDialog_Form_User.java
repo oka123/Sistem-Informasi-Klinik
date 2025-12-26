@@ -5,30 +5,35 @@
 package Manajemen;
 
 import Database.KoneksiDatabase;
+import Utils.NumericFilter;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import javax.swing.JOptionPane;
 
 import at.favre.lib.crypto.bcrypt.BCrypt;
+import java.sql.SQLException;
+import javax.swing.text.PlainDocument;
 
-public class JDialog_Form_User extends javax.swing.JDialog {
+public class JDialog_Form_User extends javax.swing.JDialog implements Manajemen {
     // Atribut
-    private String idUserToEdit = null;
-    String pesanError = "";
+    private Integer idUserToEdit = null;
 
     // Constructor
-    public JDialog_Form_User(java.awt.Frame parent, boolean modal, String idUser) {
+    public JDialog_Form_User(java.awt.Frame parent, boolean modal, Integer idUser) {
         super(parent, modal);
         initComponents();
         this.setLocationRelativeTo(null);
+        
+        PlainDocument doc = (PlainDocument) txtNoTelepon.getDocument();
+        doc.setDocumentFilter(new NumericFilter());
         
         this.idUserToEdit = idUser;
         
         if (this.idUserToEdit != null) {
             // Mode EDIT: Muat data lama
-            loadDataForEdit();
-            txt_user_id.setText(idUser);
+            loadDataUserForEdit();
+            txt_user_id.setText(String.valueOf(idUser));
             txt_user_id.setEnabled(false); // ID tidak boleh diubah
             lblInfoPassword.setText("Biarkan kosong jika tidak ingin mengubah password");
         } else {
@@ -40,24 +45,87 @@ public class JDialog_Form_User extends javax.swing.JDialog {
     }
     
     // Method untuk memuat data lama ke form (Mode Edit)
-    private void loadDataForEdit() {
+    private void loadDataUserForEdit() {
         String sql = "SELECT * FROM user WHERE user_id = ?";
-        try (Connection conn = new KoneksiDatabase().getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            
-            pstmt.setString(1, this.idUserToEdit);
-            ResultSet rs = pstmt.executeQuery();
-            
-            if (rs.next()) {
-                txt_username.setText(rs.getString("username"));
-                txt_nama_lengkap.setText(rs.getString("nama_lengkap"));
-                comboRole.setSelectedItem(rs.getString("role"));
-                txtNoTelepon.setText(rs.getString("no_telepon"));
-                txtAlamat.setText(rs.getString("alamat"));
+        try {
+            Connection conn = KoneksiDatabase.getConnection();
+            try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+                pstmt.setInt(1, this.idUserToEdit);
+                ResultSet rs = pstmt.executeQuery();
+
+                if (rs.next()) {
+                    txt_username.setText(rs.getString("username"));
+                    txt_nama_lengkap.setText(rs.getString("nama_lengkap"));
+                    comboRole.setSelectedItem(rs.getString("role"));
+                    txtNoTelepon.setText(rs.getString("no_telepon"));
+                    txtAlamat.setText(rs.getString("alamat"));
+                }
             }
-        } catch (Exception e) {
+        } catch (SQLException e) {
             JOptionPane.showMessageDialog(this, "Gagal memuat data: " + e.getMessage());
         }
+    }
+          
+    @Override
+    public void tambahUser(Connection conn, String username, char[] passwordChars, String namaLengkap, String role, String noTelepon, String alamat) throws Exception {
+        
+        // Validasi khusus: Password wajib diisi untuk user baru
+        if (passwordChars.length == 0) {
+            throw new Exception("Password wajib diisi untuk user baru!");
+        }
+
+        // Proses Hashing BCrypt
+        String hashedPassword = BCrypt.withDefaults().hashToString(12, passwordChars);
+
+        String sql = "INSERT INTO user (username, password, nama_lengkap, role, no_telepon, alamat) VALUES (?, ?, ?, ?, ?, ?)";
+
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, username);
+            pstmt.setString(2, hashedPassword);
+            pstmt.setString(3, namaLengkap);
+            pstmt.setString(4, role);
+            pstmt.setString(5, noTelepon);
+            pstmt.setString(6, alamat);
+            pstmt.executeUpdate();
+            
+            JOptionPane.showMessageDialog(this, "User baru berhasil ditambahkan!");
+        }
+    }
+    
+    @Override
+    public void editUser(Connection conn, String username, char[] passwordChars, String namaLengkap, String role, String noTelepon, String alamat) throws Exception {
+        
+        if (passwordChars.length == 0) {
+            // Skenario A: Update TANPA mengubah password
+            String sql = "UPDATE user SET username=?, nama_lengkap=?, role=?, no_telepon=?, alamat=? WHERE user_id=?";
+            try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+                pstmt.setString(1, username);
+                pstmt.setString(2, namaLengkap);
+                pstmt.setString(3, role);
+                pstmt.setString(4, noTelepon);
+                pstmt.setString(5, alamat);
+                pstmt.setInt(6, this.idUserToEdit);
+                pstmt.executeUpdate();
+            }
+        } else {
+            // Skenario B: Update DENGAN password baru (Hash ulang)
+            String hashedPassword = BCrypt.withDefaults().hashToString(12, passwordChars);
+
+            String sql = "UPDATE user SET username=?, password=?, nama_lengkap=?, role=?, no_telepon=?, alamat=? WHERE user_id=?";
+            try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+                pstmt.setString(1, username);
+                pstmt.setString(2, hashedPassword);
+                pstmt.setString(3, namaLengkap);
+                pstmt.setString(4, role);
+                pstmt.setString(5, noTelepon);
+                pstmt.setString(6, alamat);
+                pstmt.setInt(7, this.idUserToEdit);
+                pstmt.executeUpdate();
+            }
+        }
+        
+        JOptionPane.showMessageDialog(this, "Data user berhasil diperbarui!");
     }
     
     // Metode untuk validasi input yang mengumpulkan pesan error
@@ -93,8 +161,13 @@ public class JDialog_Form_User extends javax.swing.JDialog {
         jLabel8 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         txtAlamat = new javax.swing.JTextArea();
+        jSeparator1 = new javax.swing.JSeparator();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+
+        jScrollPane2.setPreferredSize(new java.awt.Dimension(452, 538));
+
+        jPanel1.setPreferredSize(new java.awt.Dimension(452, 538));
 
         jLabel1.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
         jLabel1.setText("Form Data User");
@@ -103,6 +176,11 @@ public class JDialog_Form_User extends javax.swing.JDialog {
         jLabel2.setText("User ID");
 
         txt_user_id.setFont(new java.awt.Font("SansSerif", 0, 14)); // NOI18N
+        txt_user_id.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txt_user_idActionPerformed(evt);
+            }
+        });
 
         jLabel3.setFont(new java.awt.Font("SansSerif", 0, 14)); // NOI18N
         jLabel3.setText("Username");
@@ -157,7 +235,6 @@ public class JDialog_Form_User extends javax.swing.JDialog {
         });
 
         lblInfoPassword.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
-        lblInfoPassword.setText(" ");
 
         jLabel7.setFont(new java.awt.Font("SansSerif", 0, 14)); // NOI18N
         jLabel7.setText("No. Telepon");
@@ -172,6 +249,8 @@ public class JDialog_Form_User extends javax.swing.JDialog {
         txtAlamat.setRows(5);
         jScrollPane1.setViewportView(txtAlamat);
 
+        jSeparator1.setForeground(new java.awt.Color(0, 0, 0));
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -184,77 +263,76 @@ public class JDialog_Form_User extends javax.swing.JDialog {
                         .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addGap(146, 146, 146)
-                                .addComponent(btnBatal, javax.swing.GroupLayout.PREFERRED_SIZE, 128, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(btnSimpanUser, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(jLabel4))
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel2)
-                            .addComponent(jLabel3)
-                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(jLabel5, javax.swing.GroupLayout.Alignment.TRAILING)
-                                .addComponent(jLabel7)
-                                .addComponent(jLabel8))
-                            .addComponent(jLabel6))
-                        .addGap(49, 49, 49)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(comboRole, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(txt_nama_lengkap, javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(txtNoTelepon, javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addComponent(txt_user_id, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 275, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(txt_username, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 275, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(txt_password, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 275, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(lblInfoPassword, javax.swing.GroupLayout.Alignment.LEADING))
-                                .addGap(0, 0, Short.MAX_VALUE)))
-                        .addGap(15, 15, 15))))
+                            .addComponent(jLabel4)
+                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                .addGroup(jPanel1Layout.createSequentialGroup()
+                                    .addComponent(btnBatal, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                    .addComponent(btnSimpanUser, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGroup(jPanel1Layout.createSequentialGroup()
+                                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(jLabel2)
+                                        .addComponent(jLabel3)
+                                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addComponent(jLabel5, javax.swing.GroupLayout.Alignment.TRAILING)
+                                            .addComponent(jLabel7)
+                                            .addComponent(jLabel8))
+                                        .addComponent(jLabel6))
+                                    .addGap(49, 49, 49)
+                                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                        .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 265, Short.MAX_VALUE)
+                                        .addComponent(txtNoTelepon, javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(txt_nama_lengkap, javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(txt_username, javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(txt_user_id, javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(txt_password, javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(comboRole, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(lblInfoPassword, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 411, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addContainerGap(27, Short.MAX_VALUE))))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(19, 19, 19)
                 .addComponent(jLabel1)
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 12, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(txt_user_id, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(txt_username, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(txt_password, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(lblInfoPassword)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
                     .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(txt_nama_lengkap, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
                     .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(txtNoTelepon, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
                     .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(comboRole, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 24, Short.MAX_VALUE)
+                .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnSimpanUser, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnBatal, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap())
+                .addContainerGap(21, Short.MAX_VALUE))
         );
 
         jScrollPane2.setViewportView(jPanel1);
@@ -263,113 +341,17 @@ public class JDialog_Form_User extends javax.swing.JDialog {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane2)
+            .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
+                .addGap(0, 0, 0))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
-    private void btnBatalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBatalActionPerformed
-        this.dispose();
-    }//GEN-LAST:event_btnBatalActionPerformed
-
-    private void btnSimpanUserActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSimpanUserActionPerformed
-        String username = txt_username.getText();
-        char[] passwordChars = txt_password.getPassword();
-        String namaLengkap = txt_nama_lengkap.getText();
-        String role = (String) comboRole.getSelectedItem();
-        String noTelepon = txtNoTelepon.getText();
-        String alamat = txtAlamat.getText();
-        
-        // Validasi untuk masing-masing input
-        pesanError += validasiInput(username, "Username, ");
-        pesanError += validasiInput(namaLengkap, "Nama lengkap, ");
-        pesanError += validasiInput(role, "Role, ");
-        pesanError += validasiInput(noTelepon, "Nomor Telepon, ");
-        pesanError += validasiInput(alamat, "Alamat, ");
-
-        // Jika ada pesan error, tampilkan dalam satu dialog
-        if (!pesanError.isEmpty()) {
-            JOptionPane.showMessageDialog(this, pesanError + "wajib diisi!");
-            return;
-        }
-
-        try (Connection conn = new KoneksiDatabase().getConnection()) {
-            
-            if (this.idUserToEdit == null) {
-                // --- Tambah User Baru ---
-                
-                // Validasi: Password wajib diisi untuk user baru
-                if (passwordChars.length == 0) {
-                    JOptionPane.showMessageDialog(this, "Password wajib diisi untuk user baru!");
-                    return;
-                }
-                
-                // 1. PROSES HASHING BCRYPT
-                // Cost 12 adalah standar yang baik (seimbang antara keamanan dan performa)
-                String hashedPassword = BCrypt.withDefaults().hashToString(12, passwordChars);
-                
-                String sql = "INSERT INTO user (username, password, nama_lengkap, role, no_telepon, alamat) VALUES (?, ?, ?, ?, ?, ?)";
-                
-                try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-                    pstmt.setString(1, username);
-                    pstmt.setString(2, hashedPassword);
-                    pstmt.setString(3, namaLengkap);
-                    pstmt.setString(4, role);
-                    pstmt.setString(5, noTelepon); 
-                    pstmt.setString(6, alamat);    
-                    pstmt.executeUpdate();
-                    JOptionPane.showMessageDialog(this, "User baru berhasil ditambahkan!");
-                }
-                
-            } else {
-                // --- Edit User ---
-                
-                // Cek apakah password diisi (artinya ingin mengganti password)
-                if (passwordChars.length == 0) {
-                    // Update TANPA mengubah password
-                    String sql = "UPDATE user SET username=?, nama_lengkap=?, role=?, no_telepon=?, alamat=? WHERE user_id=?";
-                    try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-                        pstmt.setString(1, username);
-                        pstmt.setString(2, namaLengkap);
-                        pstmt.setString(3, role);
-                        pstmt.setString(4, noTelepon); // Update No Telp
-                        pstmt.setString(5, alamat);    // Update Alamat
-                        pstmt.setString(6, this.idUserToEdit);
-                        pstmt.executeUpdate();
-                    }
-                } else {
-                    // Update DENGAN password baru
-                    
-                    String hashedPassword = BCrypt.withDefaults().hashToString(12, passwordChars);
-                    
-                    String sql = "UPDATE user SET username=?, password=?, nama_lengkap=?, role=?, no_telepon=?, alamat=? WHERE user_id=?";
-                    try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-                        pstmt.setString(1, username);
-                        pstmt.setString(2, hashedPassword);
-                        pstmt.setString(3, namaLengkap);
-                        pstmt.setString(4, role);
-                        pstmt.setString(5, noTelepon);
-                        pstmt.setString(6, alamat);
-                        pstmt.setString(7, this.idUserToEdit);
-                        pstmt.executeUpdate();
-                    }
-                }
-                JOptionPane.showMessageDialog(this, "Data user berhasil diperbarui!");
-            }
-            
-            this.dispose(); // Tutup dialog setelah simpan
-            
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "Gagal menyimpan: " + e.getMessage());
-        }
-    }//GEN-LAST:event_btnSimpanUserActionPerformed
 
     private void txt_passwordFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txt_passwordFocusGained
         txt_password.setEchoChar((char) 0);
@@ -378,6 +360,54 @@ public class JDialog_Form_User extends javax.swing.JDialog {
     private void txt_passwordFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txt_passwordFocusLost
         txt_password.setEchoChar('*');
     }//GEN-LAST:event_txt_passwordFocusLost
+
+    private void txt_user_idActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_user_idActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txt_user_idActionPerformed
+
+    private void btnSimpanUserActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSimpanUserActionPerformed
+        // 1. Ambil data dari input field
+        String username = txt_username.getText();
+        char[] passwordChars = txt_password.getPassword();
+        String namaLengkap = txt_nama_lengkap.getText();
+        String role = (String) comboRole.getSelectedItem();
+        String noTelepon = txtNoTelepon.getText();
+        String alamat = txtAlamat.getText();
+
+        // 2. Validasi Input
+        String pesanError = "";
+        pesanError += validasiInput(username, "Username, ");
+        pesanError += validasiInput(namaLengkap, "Nama lengkap, ");
+        pesanError += validasiInput(role, "Role, ");
+        pesanError += validasiInput(noTelepon, "Nomor Telepon, ");
+        pesanError += validasiInput(alamat, "Alamat, ");
+
+        if (!pesanError.isEmpty()) {
+            JOptionPane.showMessageDialog(this, pesanError + "wajib diisi!");
+            return;
+        }
+
+        try {
+            Connection conn = KoneksiDatabase.getConnection();
+            
+            // 3. Pilih Jalur (Tambah atau Edit)
+            if (this.idUserToEdit == null) {
+                tambahUser(conn, username, passwordChars, namaLengkap, role, noTelepon, alamat);
+            } else {
+                editUser(conn, username, passwordChars, namaLengkap, role, noTelepon, alamat);
+            }
+
+            this.dispose(); // Tutup dialog setelah sukses
+
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Gagal menyimpan: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }//GEN-LAST:event_btnSimpanUserActionPerformed
+
+    private void btnBatalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBatalActionPerformed
+        this.dispose();
+    }//GEN-LAST:event_btnBatalActionPerformed
   
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnBatal;
@@ -394,6 +424,7 @@ public class JDialog_Form_User extends javax.swing.JDialog {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JSeparator jSeparator1;
     private javax.swing.JLabel lblInfoPassword;
     private javax.swing.JTextArea txtAlamat;
     private javax.swing.JTextField txtNoTelepon;

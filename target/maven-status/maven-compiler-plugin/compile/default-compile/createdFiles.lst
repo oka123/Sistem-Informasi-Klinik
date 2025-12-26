@@ -10,6 +10,7 @@ Resepsionis\JFrame_Main_Resepsionis$8.class
 Resepsionis\JDialog_Form_Jadwal.class
 Dokter\JPanel_Antrean_Pasien.class
 Dokter\JPanel_Riwayat_Rekam_Medis$1.class
+Manajemen\JDialog_Form_User$4.class
 Resepsionis\JPanel_Dashboard_Resepsionis$1.class
 Manajemen\JDialog_Form_Dokter$3.class
 Apoteker\Obat.class
@@ -21,8 +22,12 @@ Dokter\SessionDokter.class
 Dokter\JPanel_Riwayat_Rekam_Medis$PasienItem.class
 Manajemen\JDialog_Form_Dokter.class
 <<<<<<< HEAD
+<<<<<<< HEAD
 Dokter\JPanel_Antrean_Pasien$2.class
 =======
+=======
+Manajemen\JFrame_Main_Manajemen$10.class
+>>>>>>> 337d152 (Add: Manajemen Layanan_)
 Main\ThreadPoolManager.class
 >>>>>>> 50c678e (Feat: Graphic Report + Thread Pool)
 Manajemen\JDialog_Form_User$1.class
@@ -32,6 +37,7 @@ Dokter\JFrame_Main_Dokter$1.class
 Resepsionis\JPanel_Manajemen_Pasien.class
 Resepsionis\JPanel_Dashboard_Resepsionis.class
 Resepsionis\JPanel_Informasi_Dokter.class
+Manajemen\JPanel_Manajemen_Layanan$3.class
 Resepsionis\JPanel_Registrasi_Kunjungan$DokterItem.class
 Manajemen\JPanel_Manajemen_User$5.class
 Dokter\JDialog_Rekam_Medis.class
@@ -42,9 +48,12 @@ Resepsionis\JDialog_Form_Jadwal$1.class
 Dokter\JPanel_Antrean_Pasien$1.class
 Apoteker\DetailResep.class
 Manajemen\JPanel_Manajemen_User$2.class
+Manajemen\JPanel_Manajemen_Dokter$5.class
 Manajemen\JFrame_Main_Manajemen$1.class
 Main\JFrame_Login$2.class
 Kasir\Dummy_Data.class
+Manajemen\JPanel_Manajemen_Layanan.class
+Utils\NumericFilter.class
 Apoteker\JDialogFormObat.class
 Resepsionis\JPanel_Manajemen_Jadwal$3.class
 Resepsionis\JPanel_Manajemen_Pasien$3.class
@@ -61,7 +70,11 @@ Resepsionis\JPanel_Registrasi_Kunjungan$3.class
 Resepsionis\JPanel_Manajemen_Pasien$4.class
 Resepsionis\JPanel_Registrasi_Kunjungan.class
 Resepsionis\JPanel_Manajemen_Jadwal$4.class
+<<<<<<< HEAD
 Dokter\ObatItem.class
+=======
+Manajemen\JPanel_Manajemen_Layanan$2.class
+>>>>>>> 337d152 (Add: Manajemen Layanan_)
 Manajemen\JDialog_Form_Dokter$1.class
 Manajemen\JPanel_Laporan$1.class
 Main\JFrame_Login$3.class
@@ -74,8 +87,11 @@ Main\JFrame_Login$4.class
 Resepsionis\JPanel_Informasi_Dokter$3.class
 Resepsionis\JPanel_Manajemen_Jadwal$2.class
 Resepsionis\JDialog_Form_Jadwal$DokterItem.class
+Manajemen\JPanel_Manajemen_Layanan$4.class
 Apoteker\JDialogProsesResep.class
+Manajemen\JPanel_Manajemen_Layanan$1.class
 Manajemen\JPanel_Manajemen_User$4.class
+Manajemen\JFrame_Main_Manajemen$11.class
 Manajemen\JFrame_Main_Manajemen$2.class
 Resepsionis\JFrame_Main_Resepsionis$4.class
 Manajemen\JPanel_Laporan$2.class
@@ -105,12 +121,19 @@ Apoteker\SistemFarmasiApotekerLogic.class
 Dokter\JFrame_Main_Dokter$4.class
 Resepsionis\JFrame_Main_Resepsionis.class
 Manajemen\JFrame_Main_Manajemen$8.class
+Manajemen\JDialog_Form_Layanan.class
 Manajemen\JFrame_Main_Manajemen$4.class
 Manajemen\JPanel_Manajemen_Dokter$2.class
 Manajemen\JPanel_Manajemen_User.class
 Resepsionis\JDialog_Form_Pasien$5.class
 Apoteker\JFrameMainApoteker.class
+<<<<<<< HEAD
+=======
+Manajemen\JDialog_Form_Layanan$2.class
+Dokter\JPanel_Riwayat_Rekam_Medis$3.class
+>>>>>>> 337d152 (Add: Manajemen Layanan_)
 Manajemen\JDialog_Form_User$2.class
+Manajemen\JPanel_Laporan$5.class
 Apoteker\JPanelAntreanResep.class
 Resepsionis\JPanel_Informasi_Dokter$1.class
 Kasir\Dialog_Pembayaran.class
@@ -121,6 +144,7 @@ Manajemen\JPanel_Manajemen_Dokter$1.class
 Resepsionis\JFrame_Main_Resepsionis$11.class
 Apoteker\JFrameMainApoteker$1.class
 Dokter\JFrame_Main_Dokter$5.class
+Manajemen\JDialog_Form_Layanan$1.class
 Dokter\JDialog_Rekam_Medis$3.class
 Manajemen\JFrame_Main_Manajemen$3.class
 Manajemen\JFrame_Main_Manajemen$9.class
@@ -131,4 +155,5 @@ Resepsionis\JDialog_Form_Pasien$6.class
 Apoteker\SistemFarmasiApoteker.class
 Resepsionis\JPanel_Manajemen_Jadwal$1.class
 Resepsionis\JPanel_Manajemen_Pasien$1.class
+Manajemen\JPanel_Manajemen_Layanan$5.class
 Dokter\JFrame_Main_Dokter.class
