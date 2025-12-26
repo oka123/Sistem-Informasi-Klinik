@@ -54,54 +54,7 @@ public final class JPanel_Manajemen_Pasien extends javax.swing.JPanel {
         loadDataToTable(null);  
     }
     public void loadDataToTable(String searchTerm) {
-//        // 1. Dapatkan model tabel
-//        DefaultTableModel model = (DefaultTableModel) tblPasien.getModel();
-//
-//        // 2. Kosongkan tabel (hapus baris lama)
-//        model.setRowCount(0);
-//
-//        // 3. Buat query SQL dasar
-//        String sql = "SELECT * FROM pasien";
-//
-//        // 4. Tambahkan kondisi WHERE jika ada searchTerm
-//        if (searchTerm != null && !searchTerm.trim().isEmpty()) {
-//            sql += " WHERE nama_pasien LIKE ? OR pasien_id LIKE ?";
-//        }
-//
-//        // 5. Gunakan try-with-resources untuk koneksi
-//        try (Connection conn = Koneksi.getConnection(); // Asumsi Anda punya kelas Koneksi
-//             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-//
-//            // 6. Set parameter pencarian jika ada
-//            if (searchTerm != null && !searchTerm.trim().isEmpty()) {
-//                String likeTerm = "%" + searchTerm + "%";
-//                pstmt.setString(1, likeTerm);
-//                pstmt.setString(2, likeTerm);
-//            }
-//
-//            // 7. Eksekusi query
-//            try (ResultSet rs = pstmt.executeQuery()) {
-//                // 8. Looping hasil dan tambahkan ke model tabel
-//                while (rs.next()) {
-//                    model.addRow(new Object[]{
-//                        rs.getString("pasien_id"),
-//                        rs.getString("nama_pasien"),
-//                        rs.getDate("tanggal_lahir"), // Asumsi tipe data DATE
-//                        rs.getString("jenis_kelamin"),
-//                        rs.getString("alamat"),
-//                        rs.getString("no_telepon")
-//                    });
-//                }
-//            }
-//
-//        } catch (Exception e) {
-//            JOptionPane.showMessageDialog(this, 
-//                    "Gagal memuat data pasien: " + e.getMessage(), 
-//                    "Error Database", 
-//                    JOptionPane.ERROR_MESSAGE);
-//            e.printStackTrace(); // Tampilkan error di console untuk debug
-//        }
-
+        
            javax.swing.table.DefaultTableModel model = (javax.swing.table.DefaultTableModel) tblPasien.getModel();
             model.setRowCount(0); // Bersihkan tabel
 
@@ -115,11 +68,11 @@ public final class JPanel_Manajemen_Pasien extends javax.swing.JPanel {
         try (Connection conn = db.getConnection();
          PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-        // 2. Jika ada kata kunci pencarian, masukkan ke parameter
-        if (searchTerm != null && !searchTerm.trim().isEmpty()) {
-            String likeValue = "%" + searchTerm + "%";
-            stmt.setString(1, likeValue);
-            stmt.setString(2, likeValue);
+            // 2. Jika ada kata kunci pencarian, masukkan ke parameter
+            if (searchTerm != null && !searchTerm.trim().isEmpty()) {
+                String likeValue = "%" + searchTerm + "%";
+                stmt.setString(1, likeValue);
+                stmt.setString(2, likeValue);
         }
 
         try (ResultSet rs = stmt.executeQuery()) {
@@ -130,7 +83,13 @@ public final class JPanel_Manajemen_Pasien extends javax.swing.JPanel {
                     rs.getDate("tanggal_lahir"),
                     rs.getString("jenis_kelamin"),
                     rs.getString("alamat"),
-                    rs.getString("no_telepon")
+                    rs.getString("no_telepon"),
+                    rs.getString("golongan_darah"),
+                    rs.getString("pekerjaan"),
+                    rs.getString("nama_kerabat"),
+                    rs.getString("no_telp_kerabat"),
+                    rs.getString("status_pernikahan")
+                    
                 };
                 model.addRow(row);
             }
@@ -228,27 +187,27 @@ public final class JPanel_Manajemen_Pasien extends javax.swing.JPanel {
         tblPasien.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
         tblPasien.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {"P001", "ABCD", "20-12-2001", "Laki-laki", "Jl. Abc", "0813"},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null}
+                {"P001", "ABCD", "20-12-2001", "Laki-laki", "Jl. Abc", "0813", null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null}
             },
             new String [] {
-                "ID Pasien", "Nama Lengkap", "Tanggal Lahir", "Jenis Kelamin", "Alamat", "No. Telepon"
+                "ID Pasien", "Nama Lengkap", "Tanggal Lahir", "Jenis Kelamin", "Alamat", "No. Telepon", "Golongan Darah", "Pekerjaan", "Nama Kerabat", "No. Telp Kerabat", "Status"
             }
         ));
         tblPasien.setGridColor(new java.awt.Color(224, 224, 224));
@@ -336,33 +295,7 @@ public final class JPanel_Manajemen_Pasien extends javax.swing.JPanel {
     }//GEN-LAST:event_btnTambahActionPerformed
 
     private void btnEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditActionPerformed
-        // TODO add your handling code here:
-        // 1. Dapatkan baris yang dipilih
-//        int selectedRow = tblPasien.getSelectedRow();
-//
-//        // 2. Cek apakah ada baris yang dipilih
-//        if (selectedRow == -1) {
-//            JOptionPane.showMessageDialog(this, 
-//                    "Pilih data pasien yang ingin Anda edit terlebih dahulu.", 
-//                    "Peringatan", 
-//                    JOptionPane.WARNING_MESSAGE);
-////            return; // Hentikan eksekusi
-//        }
-//
-//        // 3. Ambil ID Pasien dari kolom pertama (index 0)
-//        String idPasienToEdit = tblPasien.getValueAt(selectedRow, 0).toString();
-//
-//        // 4. Dapatkan frame induk (cara paling aman)
-//        Frame parentFrame = (Frame) SwingUtilities.getWindowAncestor(this);
-//
-//        // 5. Buat dan tampilkan JDialog_Form_Pasien dalam mode EDIT
-//        //    (Asumsi Anda punya constructor ini)
-//        JDialog_Form_Pasien formEdit = new JDialog_Form_Pasien(parentFrame, true, this, idPasienToEdit);
-//        formEdit.setVisible(true);
-//
-//        // 6. Setelah form ditutup, muat ulang data di tabel
-//        //    Kita kirim txtCari.getText() agar pencarian tetap aktif jika ada
-//        loadDataToTable(txtCari.getText());
+        
 
             int baris = tblPasien.getSelectedRow();
     

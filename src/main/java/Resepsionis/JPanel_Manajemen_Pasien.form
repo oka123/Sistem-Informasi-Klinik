@@ -223,7 +223,7 @@
                   <Font name="SansSerif" size="12" style="0"/>
                 </Property>
                 <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
-                  <Table columnCount="6" rowCount="18">
+                  <Table columnCount="11" rowCount="18">
                     <Column editable="true" title="ID Pasien" type="java.lang.Object">
                       <Data value="P001"/>
                       <Data value="null"/>
@@ -344,6 +344,11 @@
                       <Data value="null"/>
                       <Data value="null"/>
                     </Column>
+                    <Column editable="true" title="Golongan Darah" type="java.lang.Object"/>
+                    <Column editable="true" title="Pekerjaan" type="java.lang.Object"/>
+                    <Column editable="true" title="Nama Kerabat" type="java.lang.Object"/>
+                    <Column editable="true" title="No. Telp Kerabat" type="java.lang.Object"/>
+                    <Column editable="true" title="Status" type="java.lang.Object"/>
                   </Table>
                 </Property>
                 <Property name="gridColor" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
