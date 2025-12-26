@@ -277,7 +277,7 @@
             </Property>
           </Properties>
           <AuxValues>
-            <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
+            <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value=""/>
           </AuxValues>
         </Component>
         <Component class="javax.swing.JComboBox" name="comboHari">
@@ -291,7 +291,7 @@
                 <StringItem index="1" value="Selasa"/>
                 <StringItem index="2" value="Rabu"/>
                 <StringItem index="3" value="Kamis"/>
-                <StringItem index="4" value="Jum&apos;at"/>
+                <StringItem index="4" value="Jumat"/>
                 <StringItem index="5" value="Sabtu"/>
               </StringArray>
             </Property>

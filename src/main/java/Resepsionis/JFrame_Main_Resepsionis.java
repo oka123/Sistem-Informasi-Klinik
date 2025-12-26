@@ -79,6 +79,7 @@ public class JFrame_Main_Resepsionis extends javax.swing.JFrame {
         btnManajemenJadwal = new javax.swing.JButton();
         btn_logout = new javax.swing.JButton();
         btnRegistrasiKunjungan = new javax.swing.JButton();
+        btnRegistrasiKunjungan1 = new javax.swing.JButton();
         panelContent = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -217,6 +218,27 @@ public class JFrame_Main_Resepsionis extends javax.swing.JFrame {
             }
         });
 
+        btnRegistrasiKunjungan1.setBackground(new java.awt.Color(255, 255, 255));
+        btnRegistrasiKunjungan1.setFont(new java.awt.Font("sansserif", 1, 14)); // NOI18N
+        btnRegistrasiKunjungan1.setForeground(java.awt.Color.white);
+        btnRegistrasiKunjungan1.setText("📝 Antrean Pasien");
+        btnRegistrasiKunjungan1.setContentAreaFilled(false);
+        btnRegistrasiKunjungan1.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnRegistrasiKunjungan1.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        btnRegistrasiKunjungan1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                btnRegistrasiKunjungan1MouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                btnRegistrasiKunjungan1MouseExited(evt);
+            }
+        });
+        btnRegistrasiKunjungan1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnRegistrasiKunjungan1ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout panelSidebarLayout = new javax.swing.GroupLayout(panelSidebar);
         panelSidebar.setLayout(panelSidebarLayout);
         panelSidebarLayout.setHorizontalGroup(
@@ -237,10 +259,11 @@ public class JFrame_Main_Resepsionis extends javax.swing.JFrame {
                         .addGroup(panelSidebarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jSeparator1, javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(btnDashboard, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(btnRegistrasiKunjungan, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(btnRegistrasiKunjungan, javax.swing.GroupLayout.DEFAULT_SIZE, 238, Short.MAX_VALUE)
                             .addComponent(btnManajemenPasien, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(btnManajemenJadwal, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(btnInformasiDokter, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addComponent(btnInformasiDokter, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(btnRegistrasiKunjungan1, javax.swing.GroupLayout.DEFAULT_SIZE, 238, Short.MAX_VALUE))
                         .addContainerGap())))
         );
         panelSidebarLayout.setVerticalGroup(
@@ -256,6 +279,8 @@ public class JFrame_Main_Resepsionis extends javax.swing.JFrame {
                 .addComponent(btnDashboard, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(btnRegistrasiKunjungan, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(btnRegistrasiKunjungan1, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(btnManajemenPasien, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -388,6 +413,18 @@ public class JFrame_Main_Resepsionis extends javax.swing.JFrame {
         CardLayout cl = (CardLayout) panelContent.getLayout();
         cl.show(panelContent, "cardRegistrasiKunjungan");
     }//GEN-LAST:event_btnRegistrasiKunjunganActionPerformed
+
+    private void btnRegistrasiKunjungan1MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnRegistrasiKunjungan1MouseEntered
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnRegistrasiKunjungan1MouseEntered
+
+    private void btnRegistrasiKunjungan1MouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnRegistrasiKunjungan1MouseExited
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnRegistrasiKunjungan1MouseExited
+
+    private void btnRegistrasiKunjungan1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegistrasiKunjungan1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnRegistrasiKunjungan1ActionPerformed
     
     /**
      * @param args the command line arguments
@@ -420,6 +457,7 @@ public class JFrame_Main_Resepsionis extends javax.swing.JFrame {
     private javax.swing.JButton btnManajemenJadwal;
     private javax.swing.JButton btnManajemenPasien;
     private javax.swing.JButton btnRegistrasiKunjungan;
+    private javax.swing.JButton btnRegistrasiKunjungan1;
     private javax.swing.JButton btn_logout;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JLabel labelIconKlinik;
