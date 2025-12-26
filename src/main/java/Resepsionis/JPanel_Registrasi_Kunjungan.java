@@ -4,6 +4,10 @@
  */
 package Resepsionis;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import javax.swing.JOptionPane;
 import javax.swing.JSpinner;
 
@@ -91,12 +95,14 @@ public class JPanel_Registrasi_Kunjungan extends javax.swing.JPanel {
         txtCariPasien = new javax.swing.JTextField();
         btnCariPasien = new javax.swing.JButton();
         panelInfoPasien = new javax.swing.JPanel();
-        jLabel3 = new javax.swing.JLabel();
-        lblInfoId = new javax.swing.JLabel();
+        labelID = new javax.swing.JLabel();
+        label_id = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
-        lblInfoNama = new javax.swing.JLabel();
+        label_nama = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
-        lblInfoTglLahir = new javax.swing.JLabel();
+        label_tgl_lahir = new javax.swing.JLabel();
+        jLabel8 = new javax.swing.JLabel();
+        label_alamat = new javax.swing.JLabel();
         panelStep2 = new javax.swing.JPanel();
         jLabel4 = new javax.swing.JLabel();
         comboDokter = new javax.swing.JComboBox<>();
@@ -136,32 +142,40 @@ public class JPanel_Registrasi_Kunjungan extends javax.swing.JPanel {
         });
 
         panelInfoPasien.setBackground(new java.awt.Color(245, 245, 245));
-        panelInfoPasien.setBorder(javax.swing.BorderFactory.createEmptyBorder(5, 5, 5, 5));
+        panelInfoPasien.setBorder(javax.swing.BorderFactory.createTitledBorder("Detail Data Pasien"));
         panelInfoPasien.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
 
-        jLabel3.setFont(new java.awt.Font("SansSerif", 0, 14)); // NOI18N
-        jLabel3.setForeground(java.awt.Color.black);
-        jLabel3.setText("ID Pasien:");
+        labelID.setFont(new java.awt.Font("SansSerif", 0, 14)); // NOI18N
+        labelID.setForeground(java.awt.Color.black);
+        labelID.setText("ID Pasien:");
 
-        lblInfoId.setFont(new java.awt.Font("SansSerif", 0, 14)); // NOI18N
-        lblInfoId.setForeground(java.awt.Color.black);
-        lblInfoId.setText("P001");
+        label_id.setFont(new java.awt.Font("SansSerif", 0, 14)); // NOI18N
+        label_id.setForeground(java.awt.Color.black);
+        label_id.setText("-");
 
         jLabel5.setFont(new java.awt.Font("SansSerif", 0, 14)); // NOI18N
         jLabel5.setForeground(java.awt.Color.black);
         jLabel5.setText("Nama:");
 
-        lblInfoNama.setFont(new java.awt.Font("SansSerif", 0, 14)); // NOI18N
-        lblInfoNama.setForeground(java.awt.Color.black);
-        lblInfoNama.setText("ABC");
+        label_nama.setFont(new java.awt.Font("SansSerif", 0, 14)); // NOI18N
+        label_nama.setForeground(java.awt.Color.black);
+        label_nama.setText("-");
 
         jLabel6.setFont(new java.awt.Font("SansSerif", 0, 14)); // NOI18N
         jLabel6.setForeground(java.awt.Color.black);
         jLabel6.setText("Tgl. Lahir:");
 
-        lblInfoTglLahir.setFont(new java.awt.Font("SansSerif", 0, 14)); // NOI18N
-        lblInfoTglLahir.setForeground(java.awt.Color.black);
-        lblInfoTglLahir.setText("ABC");
+        label_tgl_lahir.setFont(new java.awt.Font("SansSerif", 0, 14)); // NOI18N
+        label_tgl_lahir.setForeground(java.awt.Color.black);
+        label_tgl_lahir.setText("-");
+
+        jLabel8.setFont(new java.awt.Font("SansSerif", 0, 14)); // NOI18N
+        jLabel8.setForeground(java.awt.Color.black);
+        jLabel8.setText("Alamat");
+
+        label_alamat.setFont(new java.awt.Font("SansSerif", 0, 14)); // NOI18N
+        label_alamat.setForeground(java.awt.Color.black);
+        label_alamat.setText("-");
 
         javax.swing.GroupLayout panelInfoPasienLayout = new javax.swing.GroupLayout(panelInfoPasien);
         panelInfoPasien.setLayout(panelInfoPasienLayout);
@@ -169,14 +183,16 @@ public class JPanel_Registrasi_Kunjungan extends javax.swing.JPanel {
             panelInfoPasienLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panelInfoPasienLayout.createSequentialGroup()
                 .addGroup(panelInfoPasienLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel3)
+                    .addComponent(labelID)
                     .addComponent(jLabel5)
-                    .addComponent(jLabel6))
+                    .addComponent(jLabel6)
+                    .addComponent(jLabel8))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(panelInfoPasienLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(lblInfoId, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(lblInfoNama, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(lblInfoTglLahir, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(label_id, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(label_nama, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(label_tgl_lahir, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(label_alamat, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         panelInfoPasienLayout.setVerticalGroup(
@@ -184,16 +200,20 @@ public class JPanel_Registrasi_Kunjungan extends javax.swing.JPanel {
             .addGroup(panelInfoPasienLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(panelInfoPasienLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(lblInfoId, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(labelID, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(label_id, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(panelInfoPasienLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(lblInfoNama, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(label_nama, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(panelInfoPasienLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(lblInfoTglLahir, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(label_tgl_lahir, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(panelInfoPasienLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(label_alamat, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -337,28 +357,8 @@ public class JPanel_Registrasi_Kunjungan extends javax.swing.JPanel {
 
     private void btnCariPasienActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCariPasienActionPerformed
         // TODO add your handling code here:
-        String searchTerm = txtCariPasien.getText();
-        // Logika pencarian (sama seperti di JPanel_Riwayat_Rekam_Medis)
-        // SQL: "SELECT pasien_id, nama_pasien, tanggal_lahir FROM pasien WHERE pasien_id = ? OR nama_pasien LIKE ?"
-
-        // ... (Eksekusi query) ...
-
-        // Skenario 1: Tidak Ditemukan
-        // if (hasil.isEmpty()) {
-        //    JOptionPane.showMessageDialog(this, "Pasien tidak ditemukan. Silakan daftar di menu Manajemen Pasien.");
-        //    resetForm();
-        // }
-
-        // Skenario 2: Ditemukan (asumsikan 1 hasil dulu)
-        // if (rs.next()) {
-        //    this.selectedPasienId = rs.getString("pasien_id");
-        //    lblInfoId.setText(this.selectedPasienId);
-        //    lblInfoNama.setText(rs.getString("nama_pasien"));
-        //    lblInfoTglLahir.setText(rs.getString("tanggal_lahir"));
-        //    
-        //    panelInfoPasien.setVisible(true);
-        //    panelStep2.setEnabled(true); // Aktifkan langkah 2
-        //    btnDaftarkan.setEnabled(true); // Aktifkan tombol daftar
+        cariPasien();
+       
         // }
     }//GEN-LAST:event_btnCariPasienActionPerformed
 
@@ -379,7 +379,7 @@ public class JPanel_Registrasi_Kunjungan extends javax.swing.JPanel {
 
         // 3. Konfirmasi
         int pilihan = JOptionPane.showConfirmDialog(this, 
-                "Daftarkan pasien:\n" + lblInfoNama.getText() + "\nKe Dokter: " + dokter.nama + "\nBiaya Jasa: Rp. " + biayaJasa,
+                "Daftarkan pasien:\n" + label_nama.getText() + "\nKe Dokter: " + dokter.nama + "\nBiaya Jasa: Rp. " + biayaJasa,
                 "Konfirmasi Pendaftaran", JOptionPane.YES_NO_OPTION);
 
         if (pilihan == JOptionPane.NO_OPTION) {
@@ -438,6 +438,9 @@ public class JPanel_Registrasi_Kunjungan extends javax.swing.JPanel {
         spinnerBiayaJasa.setValue(50000);
         this.selectedPasienId = null;
     }
+    
+    
+    
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCariPasien;
@@ -445,17 +448,19 @@ public class JPanel_Registrasi_Kunjungan extends javax.swing.JPanel {
     private javax.swing.JComboBox<String> comboDokter;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JSeparator jSeparator1;
-    private javax.swing.JLabel lblInfoId;
-    private javax.swing.JLabel lblInfoNama;
+    private javax.swing.JLabel labelID;
+    private javax.swing.JLabel label_alamat;
+    private javax.swing.JLabel label_id;
+    private javax.swing.JLabel label_nama;
+    private javax.swing.JLabel label_tgl_lahir;
     private javax.swing.JLabel lblInfoSpesialisasi;
-    private javax.swing.JLabel lblInfoTglLahir;
     private javax.swing.JLabel lblJudul;
     private javax.swing.JPanel panelInfoPasien;
     private javax.swing.JPanel panelStep1;
@@ -463,4 +468,82 @@ public class JPanel_Registrasi_Kunjungan extends javax.swing.JPanel {
     private javax.swing.JSpinner spinnerBiayaJasa;
     private javax.swing.JTextField txtCariPasien;
     // End of variables declaration//GEN-END:variables
+
+
+    private void cariPasien() {
+        String keyword = txtCariPasien.getText().trim();
+
+        // Validasi jika kosong
+        if (keyword.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Mohon isi ID atau Nama Pasien terlebih dahulu!");
+            return;
+        }
+
+        // Query: Cari berdasarkan ID ATAU Nama yang mirip
+        String sql = "SELECT * FROM pasien WHERE pasien_id = ? OR nama_pasien LIKE ?";
+
+        try (Connection conn = Database.KoneksiDatabase.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+             // Parameter 1: Cari ID Pasien (Persis)
+             stmt.setString(1, keyword);
+             // Parameter 2: Cari Nama (Mirip/Mengandung kata)
+             stmt.setString(2, "%" + keyword + "%");
+
+             ResultSet rs = stmt.executeQuery();
+        
+            if (rs.next()) {
+                // --- JIKA DATA DITEMUKAN ---
+
+                // 1. Simpan ID ke variabel global (untuk dipakai saat tombol Daftar diklik nanti)
+                selectedPasienId = rs.getString("pasien_id");
+
+                // 2. Tampilkan data ke Label GUI
+                label_id.setText(rs.getString("pasien_id"));
+                label_nama.setText(rs.getString("nama_pasien"));
+                label_tgl_lahir.setText(rs.getString("tanggal_lahir"));
+                label_alamat.setText(rs.getString("alamat"));
+
+                // 3. Hitung Usia (Opsional tapi bagus)
+                java.sql.Date tglLahir = rs.getDate("tanggal_lahir");
+                if (tglLahir != null) {
+                    // Konversi tanggal ke string + hitung tahun (logika sederhana)
+                    String tglStr = new java.text.SimpleDateFormat("dd MMMM yyyy").format(tglLahir);
+                    label_tgl_lahir.setText(tglStr);
+                } else {
+                    label_tgl_lahir.setText("-");
+                }
+
+                // Opsional: Beri warna hijau pada teks agar terlihat 'Found'
+                label_nama.setForeground(new java.awt.Color(0, 153, 51));
+                
+                
+                panelInfoPasien.setVisible(true); // Munculkan detail pasien
+                panelStep2.setEnabled(true);      // Aktifkan panel dokter
+                comboDokter.setEnabled(true);     // Aktifkan combo box
+                spinnerBiayaJasa.setEnabled(true);
+                btnDaftarkan.setEnabled(true);    // Aktifkan tombol daftar
+            // ==========================================
+
+            } else {
+                // --- JIKA DATA TIDAK DITEMUKAN ---
+                resetFormPasien();
+                JOptionPane.showMessageDialog(this, "Data pasien tidak ditemukan!", "Info", JOptionPane.INFORMATION_MESSAGE);
+            }
+        
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(this, "Error Database: " + e.getMessage());
+        }
+    }
+
+// Method helper untuk membersihkan label jika tidak ketemu
+    private void resetFormPasien() {
+        selectedPasienId = null; // Reset ID
+        label_id.setText("-");
+        label_nama.setText("-");
+        label_tgl_lahir.setText("-");
+        label_alamat.setText("-");
+        label_nama.setForeground(java.awt.Color.BLACK); // Kembalikan warna hitam
+    }
+    
 }
