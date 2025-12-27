@@ -128,6 +128,9 @@ public final class JPanel_Manajemen_Pasien extends javax.swing.JPanel {
         scrollPaneTabel = new javax.swing.JScrollPane();
         tblPasien = new javax.swing.JTable();
         txtCari = new javax.swing.JTextField();
+        lblJudul1 = new javax.swing.JLabel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        tabel_riwayat_kunjungan = new javax.swing.JTable();
 
         setBackground(new java.awt.Color(255, 255, 255));
 
@@ -215,7 +218,29 @@ public final class JPanel_Manajemen_Pasien extends javax.swing.JPanel {
         tblPasien.setSelectionBackground(new java.awt.Color(50, 120, 220));
         tblPasien.setSelectionForeground(new java.awt.Color(255, 255, 255));
         tblPasien.setShowGrid(true);
+        tblPasien.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tblPasienMouseClicked(evt);
+            }
+        });
         scrollPaneTabel.setViewportView(tblPasien);
+
+        lblJudul1.setFont(new java.awt.Font("sansserif", 1, 20)); // NOI18N
+        lblJudul1.setForeground(new java.awt.Color(51, 51, 51));
+        lblJudul1.setText("Riwayat Pasien");
+
+        tabel_riwayat_kunjungan.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "No", "Tanggal Kunjungan", "Nama Dokter", "Poli"
+            }
+        ));
+        jScrollPane1.setViewportView(tabel_riwayat_kunjungan);
 
         javax.swing.GroupLayout panelKontrolLayout = new javax.swing.GroupLayout(panelKontrol);
         panelKontrol.setLayout(panelKontrolLayout);
@@ -234,7 +259,11 @@ public final class JPanel_Manajemen_Pasien extends javax.swing.JPanel {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(txtCari, javax.swing.GroupLayout.PREFERRED_SIZE, 250, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnCari, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(btnCari, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(panelKontrolLayout.createSequentialGroup()
+                        .addComponent(lblJudul1)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addComponent(jScrollPane1))
                 .addContainerGap())
         );
         panelKontrolLayout.setVerticalGroup(
@@ -251,7 +280,11 @@ public final class JPanel_Manajemen_Pasien extends javax.swing.JPanel {
                         .addComponent(btnCari, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(18, 18, 18)
                 .addComponent(scrollPaneTabel, javax.swing.GroupLayout.PREFERRED_SIZE, 445, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(22, 22, 22))
+                .addGap(164, 164, 164)
+                .addComponent(lblJudul1)
+                .addGap(28, 28, 28)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 479, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(221, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
@@ -269,7 +302,7 @@ public final class JPanel_Manajemen_Pasien extends javax.swing.JPanel {
                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
                         .addGap(17, 17, 17)
                         .addComponent(lblJudul)
-                        .addGap(0, 569, Short.MAX_VALUE)))
+                        .addGap(0, 570, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -280,8 +313,8 @@ public final class JPanel_Manajemen_Pasien extends javax.swing.JPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(panelKontrol, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
+                .addComponent(panelKontrol, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -392,17 +425,83 @@ public final class JPanel_Manajemen_Pasien extends javax.swing.JPanel {
         loadDataToTable(searchTerm);
     }//GEN-LAST:event_btnCariActionPerformed
 
+    private void tblPasienMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblPasienMouseClicked
+        // TODO add your handling code here:
+        int baris = tblPasien.getSelectedRow();
+    
+        if (baris != -1) {
+            // 2. Ambil ID Pasien dari kolom ke-0 (sesuaikan dengan posisi kolom ID di tabel Anda)
+            // Pastikan kolom ke-0 adalah ID Pasien (103, 102, dst pada gambar)
+            String idPasien = tblPasien.getValueAt(baris, 0).toString();
+
+            // 3. Panggil method untuk isi tabel bawah
+            tampilkanRiwayatPasien(idPasien);
+        }
+        
+    }//GEN-LAST:event_tblPasienMouseClicked
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCari;
     private javax.swing.JButton btnEdit;
     private javax.swing.JButton btnHapus;
     private javax.swing.JButton btnTambah;
+    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JLabel lblJudul;
+    private javax.swing.JLabel lblJudul1;
     private javax.swing.JPanel panelKontrol;
     private javax.swing.JScrollPane scrollPaneTabel;
+    private javax.swing.JTable tabel_riwayat_kunjungan;
     private javax.swing.JTable tblPasien;
     private javax.swing.JTextField txtCari;
     // End of variables declaration//GEN-END:variables
+
+
+
+private void tampilkanRiwayatPasien(String idPasien) {
+    // 1. Siapkan Model Tabel
+    javax.swing.table.DefaultTableModel model = new javax.swing.table.DefaultTableModel();
+    model.addColumn("No");
+    model.addColumn("Tanggal Kunjungan");
+    model.addColumn("Nama Dokter");
+    model.addColumn("Poli"); 
+
+    try {
+        int no = 1;
+        
+        // 2. Query SQL dengan DOUBLE JOIN (Kunjungan -> Dokter -> User)
+        String sql = "SELECT k.tanggal_kunjungan, u.nama_lengkap, d.spesialisasi " + 
+                     "FROM kunjungan k " +
+                     "JOIN dokter d ON k.dokter_id = d.dokter_id " +
+                     "JOIN user u ON d.user_id = u.user_id " +
+                     "WHERE k.pasien_id = '" + idPasien + "' " +
+                     "ORDER BY k.tanggal_kunjungan DESC";
+
+        java.sql.Connection conn = (java.sql.Connection) KoneksiDatabase.getConnection();
+        java.sql.Statement stm = conn.createStatement();
+        java.sql.ResultSet res = stm.executeQuery(sql);
+
+        // 3. Masukkan data ke tabel
+        while (res.next()) {
+            model.addRow(new Object[]{
+                no++,
+                res.getString("tanggal_kunjungan"),
+                res.getString("nama_lengkap"), // Ini mengambil dari tabel user
+                res.getString("spesialisasi")     // Asumsi kolom poli ada di tabel dokter
+            });
+        }
+        
+        tabel_riwayat_kunjungan.setModel(model);
+        
+        // Atur lebar kolom (Opsional)
+        tabel_riwayat_kunjungan.getColumnModel().getColumn(0).setPreferredWidth(30);
+        tabel_riwayat_kunjungan.getColumnModel().getColumn(1).setPreferredWidth(120);
+        
+    } catch (Exception e) {
+        System.out.println("Error Load Riwayat: " + e.getMessage());
+        javax.swing.JOptionPane.showMessageDialog(this, "Gagal memuat riwayat: " + e.getMessage());
+    }
+}
+
 }

@@ -19,6 +19,7 @@ Dokter\JPanel_Riwayat_Rekam_Medis$PasienItem.class
 Manajemen\JDialog_Form_Dokter.class
 Manajemen\JDialog_Form_User$1.class
 Resepsionis\JPanel_Manajemen_Pasien$2.class
+Resepsionis\JPanel_Registrasi_Kunjungan$StatusRenderer.class
 Dokter\JFrame_Main_Dokter$1.class
 Resepsionis\JPanel_Manajemen_Pasien.class
 Resepsionis\JPanel_Dashboard_Resepsionis.class
@@ -47,6 +48,7 @@ Dokter\JFrame_Main_Dokter$3.class
 Resepsionis\JDialog_Form_Pasien$2.class
 Manajemen\JFrame_Main_Manajemen.class
 Manajemen\JPanel_Manajemen_User$3.class
+Resepsionis\JPanel_Registrasi_Kunjungan$3.class
 Resepsionis\JPanel_Manajemen_Pasien$4.class
 Resepsionis\JPanel_Registrasi_Kunjungan.class
 Resepsionis\JPanel_Manajemen_Jadwal$4.class
@@ -72,6 +74,7 @@ Resepsionis\JPanel_Registrasi_Kunjungan$1.class
 Resepsionis\JDialog_Form_Pasien$7.class
 Main\JFrame_Login$1.class
 Manajemen\JPanel_Dashboard_Manajemen.class
+Resepsionis\JPanel_Manajemen_Pasien$6.class
 Resepsionis\JFrame_Main_Resepsionis$1.class
 Dokter\JPanel_Riwayat_Rekam_Medis$2.class
 Dokter\JPanel_Riwayat_Rekam_Medis.class
@@ -81,6 +84,7 @@ Dokter\JDialog_Rekam_Medis$2.class
 Resepsionis\JDialog_Form_Pasien$4.class
 Manajemen\JPanel_Laporan.class
 Resepsionis\JPanel_Dashboard_Resepsionis$2.class
+Resepsionis\JPanel_Registrasi_Kunjungan$4.class
 Main\Main.class
 Resepsionis\JDialog_Form_Pasien$1.class
 Database\KoneksiDatabase.class
