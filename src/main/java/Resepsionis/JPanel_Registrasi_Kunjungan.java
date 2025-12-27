@@ -23,8 +23,81 @@ public class JPanel_Registrasi_Kunjungan extends javax.swing.JPanel {
     /**
      * Creates new form JPanel_Registrasi_Kunjungan
      */
+    // Kelas helper untuk JComboBox
+    class DokterItem {
+        String id;
+        String nama;
+
+        public DokterItem(String id, String nama) {
+            this.id = id;
+            this.nama = nama;
+        }
+
+        @Override
+        public String toString() {
+            return nama; // Ini yang akan tampil di layar
+        }
+    }
+    
+    // Class Khusus untuk Mewarnai Baris Tabel
+    class StatusRenderer extends javax.swing.table.DefaultTableCellRenderer {
+
+        @Override
+        public java.awt.Component getTableCellRendererComponent(javax.swing.JTable table, Object value, 
+                boolean isSelected, boolean hasFocus, int row, int column) {
+
+            java.awt.Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+
+            // 1. Ambil Status dari Kolom ke-4 (Index 4 adalah kolom Status di query kita sebelumnya)
+            // Pastikan index kolom status benar. Di method loadDataAntrean, urutannya:
+            // 0: No, 1: Nama, 2: Poli, 3: Dokter, 4: Status
+            Object statusObj = table.getValueAt(row, 4); 
+            String status = (statusObj != null) ? statusObj.toString() : "";
+
+            // 2. Tentukan Warna Berdasarkan Status
+            if ("Selesai".equalsIgnoreCase(status)) {
+                c.setBackground(new java.awt.Color(200, 255, 200)); // Hijau Muda
+                c.setForeground(java.awt.Color.BLACK);
+            } else if ("Diperiksa".equalsIgnoreCase(status)) {
+                c.setBackground(new java.awt.Color(255, 255, 200)); // Kuning Muda
+                c.setForeground(java.awt.Color.BLACK);
+            } else if ("Batal".equalsIgnoreCase(status)) {
+                c.setBackground(new java.awt.Color(255, 200, 200)); // Merah Muda
+                c.setForeground(java.awt.Color.BLACK);
+            } else {
+                // Status "Menunggu" atau default
+                c.setBackground(java.awt.Color.WHITE);
+                c.setForeground(java.awt.Color.BLACK);
+            }
+
+            // 3. Jaga agar warna seleksi (saat diklik) tetap biru
+            if (isSelected) {
+                c.setBackground(table.getSelectionBackground());
+                c.setForeground(table.getSelectionForeground());
+            }
+
+            return c;
+        }
+    }
+    
+    
     public JPanel_Registrasi_Kunjungan() {
         initComponents();
+        
+        loadDataAntrean();
+        loadDataPoli();
+        tampilkanEstimasiAntrean();
+        
+        //Memastikan label estimasi anrean di tengah
+        label_antrean.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        
+        // --- PASANG PEWARNA TABEL ---
+        // Kita pasang renderer ini ke SEMUA kolom (0 sampai 4)
+        StatusRenderer renderer = new StatusRenderer();
+        for (int i = 0; i < tblAntrean.getColumnCount(); i++) {
+            tblAntrean.getColumnModel().getColumn(i).setCellRenderer(renderer);
+        }
+        
         txtCariPasien.putClientProperty("JTextField.placeholderText", "Ketik ID atau Nama...");
         
         // --- TAMBAHKAN BARIS INI UNTUK MENYEMBUNYIKANNYA ---
@@ -32,14 +105,67 @@ public class JPanel_Registrasi_Kunjungan extends javax.swing.JPanel {
         // ---
 
         initForm();
+        
+        // --- FITUR KLIK KANAN PADA TABEL ---
+        javax.swing.JPopupMenu popupMenu = new javax.swing.JPopupMenu();
+        javax.swing.JMenuItem itemDiperiksa = new javax.swing.JMenuItem("Set Status: Diperiksa");
+        javax.swing.JMenuItem itemSelesai = new javax.swing.JMenuItem("Set Status: Selesai");
+        javax.swing.JMenuItem itemBatal = new javax.swing.JMenuItem("Batalkan Antrean/Hapus Pasien");
+
+        popupMenu.add(itemDiperiksa);
+        popupMenu.add(itemSelesai);
+        popupMenu.addSeparator(); // Garis pemisah
+        popupMenu.add(itemBatal);
+
+        // 1. Aksi Menu "Diperiksa"
+        itemDiperiksa.addActionListener(e -> {
+            int row = tblAntrean.getSelectedRow();
+            if (row != -1) {
+                String id = tblAntrean.getValueAt(row, 0).toString(); // Ambil No. Antrean
+                updateStatusKunjungan(id, "Diperiksa");
+            }
+        });
+
+        // 2. Aksi Menu "Selesai"
+        itemSelesai.addActionListener(e -> {
+            int row = tblAntrean.getSelectedRow();
+            if (row != -1) {
+                String id = tblAntrean.getValueAt(row, 0).toString();
+                updateStatusKunjungan(id, "Selesai");
+            }
+        });
+
+        // 3. Aksi Menu "Batal" (Hapus data atau set batal)
+        itemBatal.addActionListener(e -> {
+            int row = tblAntrean.getSelectedRow();
+            if (row != -1) {
+                String id = tblAntrean.getValueAt(row, 0).toString();
+                int jawab = javax.swing.JOptionPane.showConfirmDialog(this, "Yakin batalkan antrean " + id + "?");
+                if (jawab == javax.swing.JOptionPane.YES_OPTION) {
+                    // Kita gunakan method updateStatusKunjungan tapi kita ubah querynya nanti kalau mau DELETE
+                    // Untuk sekarang kita set status jadi "Batal" (Pastikan ENUM di DB mendukung 'Batal')
+                    // Jika tidak, hapus saja:
+                     hapusAntrean(id); // Kita buat method hapus di bawah
+                }
+            }
+        });
+
+        // Pasang Mouse Listener ke Tabel
+        tblAntrean.setComponentPopupMenu(popupMenu);
+        tblAntrean.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mousePressed(java.awt.event.MouseEvent e) {
+                // Agar baris otomatis terpilih saat klik kanan
+                if (javax.swing.SwingUtilities.isRightMouseButton(e)) {
+                    int row = tblAntrean.rowAtPoint(e.getPoint());
+                    tblAntrean.setRowSelectionInterval(row, row);
+                }
+            }
+        });
+        
     }
     
-    // Kelas helper untuk JComboBox
-    class DokterItem {
-        public String id; public String nama; public String spesialisasi;
-        public DokterItem(String id, String nama, String spes) { this.id=id; this.nama=nama; this.spesialisasi=spes; }
-        @Override public String toString() { return nama; }
-    }
+    
     
     public JPanel_Registrasi_Kunjungan(String resepsionisId) {
         initComponents();
@@ -62,8 +188,8 @@ public class JPanel_Registrasi_Kunjungan extends javax.swing.JPanel {
         loadDokterComboBox();
 
         // 4. Tambahkan listener ke comboDokter
-        comboDokter.addActionListener(e -> {
-            DokterItem item = (DokterItem) comboDokter.getSelectedItem();
+        cbDokter.addActionListener(e -> {
+            DokterItem item = (DokterItem) cbDokter.getSelectedItem();
             if (item != null) {
 //                label_dokter.setText(item.spesialisasi);
             }
@@ -86,6 +212,7 @@ public class JPanel_Registrasi_Kunjungan extends javax.swing.JPanel {
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
+        java.awt.GridBagConstraints gridBagConstraints;
 
         jSeparator1 = new javax.swing.JSeparator();
         lblJudul = new javax.swing.JLabel();
@@ -106,12 +233,15 @@ public class JPanel_Registrasi_Kunjungan extends javax.swing.JPanel {
         panelStep2 = new javax.swing.JPanel();
         jLabel4 = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
-        comboDokter = new javax.swing.JComboBox<>();
-        jComboBox2 = new javax.swing.JComboBox<>();
-        jPanel1 = new javax.swing.JPanel();
-        label_dokter1 = new javax.swing.JLabel();
-        jLabel3 = new javax.swing.JLabel();
+        cbDokter = new javax.swing.JComboBox();
+        cbPoli = new javax.swing.JComboBox<>();
+        PanelEstimasi = new javax.swing.JPanel();
+        label_judul = new javax.swing.JLabel();
+        label_antrean = new javax.swing.JLabel();
         btnDaftarkan = new javax.swing.JButton();
+        jSeparator2 = new javax.swing.JSeparator();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        tblAntrean = new javax.swing.JTable();
 
         setBackground(java.awt.Color.white);
 
@@ -258,9 +388,14 @@ public class JPanel_Registrasi_Kunjungan extends javax.swing.JPanel {
         jLabel7.setFont(new java.awt.Font("SansSerif", 0, 14)); // NOI18N
         jLabel7.setText("Dokter");
 
-        comboDokter.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Dokter Kliniks", "Wahyu Triadi", "Amelia Devi" }));
+        cbDokter.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Dokter Kliniks", "Wahyu Triadi", "Amelia Devi" }));
 
-        jComboBox2.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Poli Umum", "Poli Gigi", "Poli Anak", "Poli Mata", "Poli THT" }));
+        cbPoli.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Poli Umum", "Poli Gigi", "Poli Anak", "Poli Mata", "Poli THT" }));
+        cbPoli.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cbPoliActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout panelStep2Layout = new javax.swing.GroupLayout(panelStep2);
         panelStep2.setLayout(panelStep2Layout);
@@ -273,8 +408,8 @@ public class JPanel_Registrasi_Kunjungan extends javax.swing.JPanel {
                     .addComponent(jLabel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(panelStep2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(comboDokter, javax.swing.GroupLayout.PREFERRED_SIZE, 688, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, 688, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(cbDokter, javax.swing.GroupLayout.PREFERRED_SIZE, 688, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(cbPoli, javax.swing.GroupLayout.PREFERRED_SIZE, 688, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(15, Short.MAX_VALUE))
         );
         panelStep2Layout.setVerticalGroup(
@@ -283,45 +418,35 @@ public class JPanel_Registrasi_Kunjungan extends javax.swing.JPanel {
                 .addContainerGap(23, Short.MAX_VALUE)
                 .addGroup(panelStep2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(cbPoli, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(panelStep2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(comboDokter, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(cbDokter, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(27, 27, 27))
         );
 
-        label_dokter1.setFont(new java.awt.Font("SansSerif", 0, 14)); // NOI18N
+        PanelEstimasi.setLayout(new java.awt.GridBagLayout());
 
-        jLabel3.setFont(new java.awt.Font("SansSerif", 0, 14)); // NOI18N
-        jLabel3.setText("Estimasi Nomor Antrian");
+        label_judul.setFont(new java.awt.Font("SansSerif", 1, 16)); // NOI18N
+        label_judul.setForeground(new java.awt.Color(255, 255, 255));
+        label_judul.setText("Estimasi Nomor Antrean Berikutnya");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.SOUTH;
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 10, 0);
+        PanelEstimasi.add(label_judul, gridBagConstraints);
 
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel3)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(jPanel1Layout.createSequentialGroup()
-                    .addContainerGap(186, Short.MAX_VALUE)
-                    .addComponent(label_dokter1, javax.swing.GroupLayout.PREFERRED_SIZE, 703, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGap(7, 7, 7)))
-        );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap(16, Short.MAX_VALUE)
-                .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18))
-            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(jPanel1Layout.createSequentialGroup()
-                    .addGap(20, 20, 20)
-                    .addComponent(label_dokter1, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addContainerGap(20, Short.MAX_VALUE)))
-        );
+        label_antrean.setFont(new java.awt.Font("SansSerif", 1, 48)); // NOI18N
+        label_antrean.setForeground(new java.awt.Color(51, 255, 51));
+        label_antrean.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        label_antrean.setText("-");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTH;
+        PanelEstimasi.add(label_antrean, gridBagConstraints);
 
         btnDaftarkan.setBackground(new java.awt.Color(25, 135, 84));
         btnDaftarkan.setFont(new java.awt.Font("SansSerif", 1, 16)); // NOI18N
@@ -334,6 +459,21 @@ public class JPanel_Registrasi_Kunjungan extends javax.swing.JPanel {
             }
         });
 
+        jScrollPane1.setBorder(javax.swing.BorderFactory.createTitledBorder("Daftar Antrean Pasien Hari Ini"));
+
+        tblAntrean.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null}
+            },
+            new String [] {
+                "No Antrean", "Nama Pasien", "Poli", "Dokter Tujuan", "Status"
+            }
+        ));
+        jScrollPane1.setViewportView(tblAntrean);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -341,20 +481,24 @@ public class JPanel_Registrasi_Kunjungan extends javax.swing.JPanel {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(panelStep1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jSeparator1, javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(panelStep2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jSeparator2)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(btnDaftarkan))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(11, 11, 11)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel1)
-                            .addComponent(lblJudul))
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap())
+                            .addComponent(jScrollPane1)
+                            .addComponent(panelStep1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jSeparator1, javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(panelStep2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addGap(0, 0, Short.MAX_VALUE)
+                                .addComponent(btnDaftarkan))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(11, 11, 11)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel1)
+                                    .addComponent(lblJudul))
+                                .addGap(0, 0, Short.MAX_VALUE)))
+                        .addContainerGap())
+                    .addComponent(PanelEstimasi, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -369,11 +513,15 @@ public class JPanel_Registrasi_Kunjungan extends javax.swing.JPanel {
                 .addComponent(panelStep1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(panelStep2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 122, Short.MAX_VALUE)
+                .addGap(41, 41, 41)
+                .addComponent(PanelEstimasi, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnDaftarkan, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(44, 44, 44))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 72, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 472, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(24, 24, 24))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -385,78 +533,93 @@ public class JPanel_Registrasi_Kunjungan extends javax.swing.JPanel {
     }//GEN-LAST:event_btnCariPasienActionPerformed
 
     private void btnDaftarkanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDaftarkanActionPerformed
-        // TODO add your handling code here:
-        // 1. Validasi
-        if (this.selectedPasienId == null) {
-            JOptionPane.showMessageDialog(this, "Kesalahan: Tidak ada pasien terpilih.");
-            return;
+       // 1. Validasi: Pastikan pasien sudah dipilih
+    if (this.selectedPasienId == null || this.selectedPasienId.isEmpty()) {
+        javax.swing.JOptionPane.showMessageDialog(this, "Kesalahan: Harap pilih pasien terlebih dahulu dari hasil pencarian.");
+        return;
+    }
+
+    // 2. Ambil Data dari Form
+    String pasienId = this.selectedPasienId;
+    
+    // PENTING: Pastikan Anda punya variabel ini. Jika belum login, ganti sementara dengan "1" (ID Admin default)
+    // String resepsionisId = this.loggedInResepsionisId; 
+    String resepsionisId = "1"; // <-- GANTI INI NANTI dengan ID user yang login
+    
+    // Ambil Dokter (Gunakan class DokterPilihan yang baru kita buat)
+    if (cbDokter.getSelectedItem() == null) {
+        javax.swing.JOptionPane.showMessageDialog(this, "Pilih dokter tujuan!");
+        return;
+    }
+    
+    // Casting ke DokterPilihan (sesuai perbaikan sebelumnya)
+    DokterItem dokter = (DokterItem) cbDokter.getSelectedItem();
+    String dokterId = dokter.id;
+
+    // 3. Konfirmasi (Opsional, biar aman)
+    int pilihan = javax.swing.JOptionPane.showConfirmDialog(this, 
+            "Daftarkan pasien " + label_nama.getText() + "\nKe " + dokter.nama + "?",
+            "Konfirmasi Pendaftaran", 
+            javax.swing.JOptionPane.YES_NO_OPTION);
+
+    if (pilihan != javax.swing.JOptionPane.YES_OPTION) {
+        return; // Batal jika user klik No
+    }
+
+    // 4. Eksekusi INSERT ke Database
+    // Query sesuai tabel 'kunjungan' di gambar image_554e49.jpg
+    String sql = "INSERT INTO kunjungan (pasien_id, dokter_id, user_resepsionis_id, tanggal_kunjungan, status_kunjungan) " +
+                 "VALUES (?, ?, ?, NOW(), 'Menunggu')";
+
+    try (java.sql.Connection conn = Database.KoneksiDatabase.getConnection();
+         java.sql.PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+        // Set Parameter Tanda Tanya (?)
+        stmt.setString(1, pasienId);      // Pasien ID
+        stmt.setString(2, dokterId);      // Dokter ID
+        stmt.setString(3, resepsionisId); // Resepsionis ID
+        
+        // Eksekusi
+        int berhasil = stmt.executeUpdate();
+
+        if (berhasil > 0) {
+            javax.swing.JOptionPane.showMessageDialog(this, "Pasien berhasil didaftarkan ke antrean!", "Sukses", javax.swing.JOptionPane.INFORMATION_MESSAGE);
+            
+            // --- PENTING: Refresh Tabel Bawah ---
+            loadDataAntrean(); 
+            // ------------------------------------
+            //refresh angka estimasi
+            tampilkanEstimasiAntrean();
+            
+            // Reset Form biar bersih
+            txtCariPasien.setText("");
+            // Kosongkan label detail pasien jika perlu
+            // labelNama.setText("-"); 
+            selectedPasienId = null; // Reset ID terpilih
         }
 
-        // 2. Ambil semua data
-        String pasienId = this.selectedPasienId;
-        String resepsionisId = this.loggedInResepsionisId;
-        DokterItem dokter = (DokterItem) comboDokter.getSelectedItem();
-        String dokterId = dokter.id;
-//        int biayaJasa = (Integer) spinnerBiayaJasa.getValue();
-
-        // 3. Konfirmasi
-//        int pilihan = JOptionPane.showConfirmDialog(this, 
-//                "Daftarkan pasien:\n" + label_nama.getText() + "\nKe Dokter: " + dokter.nama + "\nBiaya Jasa: Rp. " +
-//                "Konfirmasi Pendaftaran", JOptionPane.YES_NO_OPTION);
-
-//        if (pilihan == JOptionPane.NO_OPTION) {
-//            return; // Batal
-//        }
-
-        // 4. Eksekusi TRANSAKSI DATABASE
-        // Connection conn = Koneksi.getConnection();
-        // PreparedStatement pstmtKunjungan = null;
-        // PreparedStatement pstmtBayar = null;
-
-        try {
-            // conn.setAutoCommit(false); // Mulai Transaksi
-
-            // --- Query 1: INSERT ke Kunjungan ---
-//            String sqlKunjungan = "INSERT INTO kunjungan (pasien_id, dokter_id, user_id_admin, tanggal_kunjungan, status_kunjungan) " +
-//                                  "VALUES (?, ?, ?, NOW(), 'Menunggu')";
-            // pstmtKunjungan = conn.prepareStatement(sqlKunjungan, Statement.RETURN_GENERATED_KEYS);
-            // pstmtKunjungan.setString(1, pasienId);
-            // ... (set parameter lain) ...
-            // pstmtKunjungan.executeUpdate();
-
-            // Ambil ID Kunjungan yang baru dibuat
-            // ResultSet rsKeys = pstmtKunjungan.getGeneratedKeys();
-            // String kunjunganIdBaru = "";
-            // if (rsKeys.next()) { kunjunganIdBaru = rsKeys.getString(1); }
-
-            // --- Query 2: INSERT ke Pembayaran ---
-//            String sqlBayar = "INSERT INTO pembayaran (kunjungan_id, total_biaya_jasa, total_biaya_obat, total_bayar) " +
-//                              "VALUES (?, ?, 0, ?)";
-            // pstmtBayar = conn.prepareStatement(sqlBayar);
-            // pstmtBayar.setString(1, kunjunganIdBaru);
-            // pstmtBayar.setInt(2, biayaJasa);
-            // pstmtBayar.setInt(3, biayaJasa); // Total bayar awal = biaya jasa
-            // pstmtBayar.executeUpdate();
-
-            // conn.commit(); // Selesaikan Transaksi
-
-            JOptionPane.showMessageDialog(this, "Pasien berhasil didaftarkan ke antrean!", "Sukses", JOptionPane.INFORMATION_MESSAGE);
-            resetForm();
-
-        } catch (Exception e) {
-            // try { conn.rollback(); } catch (SQLException ex) { ... } // Batalkan jika gagal
-            JOptionPane.showMessageDialog(this, "Gagal menyimpan ke database: " + e.getMessage(), "Error Transaksi", JOptionPane.ERROR_MESSAGE);
-        } finally {
-            // Tutup semua PreparedStatement dan setAutoCommit(true)
-        }
+    } catch (Exception e) {
+        javax.swing.JOptionPane.showMessageDialog(this, "Gagal menyimpan ke database: " + e.getMessage(), "Error Database", javax.swing.JOptionPane.ERROR_MESSAGE);
+        e.printStackTrace(); // Cek error di output bawah NetBeans
+    }
     }//GEN-LAST:event_btnDaftarkanActionPerformed
+
+    private void cbPoliActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbPoliActionPerformed
+        // TODO add your handling code here:
+        // Cek apakah ada item yang dipilih (menghindari error saat loading awal)
+        if (cbPoli.getSelectedItem() != null) {
+            String poli = cbPoli.getSelectedItem().toString();
+            loadDokterByPoli(poli);
+        }
+       
+    }//GEN-LAST:event_cbPoliActionPerformed
     
     private void resetForm() {
         txtCariPasien.setText("");
         panelInfoPasien.setVisible(false);
         panelStep2.setEnabled(false);
         btnDaftarkan.setEnabled(false);
-        comboDokter.setSelectedIndex(0);
+        cbDokter.setSelectedIndex(0);
 //        spinnerBiayaJasa.setValue(50000);
         this.selectedPasienId = null;
     }
@@ -465,30 +628,33 @@ public class JPanel_Registrasi_Kunjungan extends javax.swing.JPanel {
     
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JPanel PanelEstimasi;
     private javax.swing.JButton btnCariPasien;
     private javax.swing.JButton btnDaftarkan;
-    private javax.swing.JComboBox<String> comboDokter;
-    private javax.swing.JComboBox<String> jComboBox2;
+    private javax.swing.JComboBox cbDokter;
+    private javax.swing.JComboBox<String> cbPoli;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
-    private javax.swing.JPanel jPanel1;
+    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSeparator jSeparator1;
+    private javax.swing.JSeparator jSeparator2;
     private javax.swing.JLabel labelID;
     private javax.swing.JLabel label_alamat;
-    private javax.swing.JLabel label_dokter1;
+    private javax.swing.JLabel label_antrean;
     private javax.swing.JLabel label_id;
+    private javax.swing.JLabel label_judul;
     private javax.swing.JLabel label_nama;
     private javax.swing.JLabel label_tgl_lahir;
     private javax.swing.JLabel lblJudul;
     private javax.swing.JPanel panelInfoPasien;
     private javax.swing.JPanel panelStep1;
     private javax.swing.JPanel panelStep2;
+    private javax.swing.JTable tblAntrean;
     private javax.swing.JTextField txtCariPasien;
     // End of variables declaration//GEN-END:variables
 
@@ -543,7 +709,7 @@ public class JPanel_Registrasi_Kunjungan extends javax.swing.JPanel {
                 
                 panelInfoPasien.setVisible(true); // Munculkan detail pasien
                 panelStep2.setEnabled(true);      // Aktifkan panel dokter
-                comboDokter.setEnabled(true);     // Aktifkan combo box
+                cbDokter.setEnabled(true);     // Aktifkan combo box
 //                spinnerBiayaJasa.setEnabled(true);
                 btnDaftarkan.setEnabled(true);    // Aktifkan tombol daftar
             // ==========================================
@@ -568,5 +734,176 @@ public class JPanel_Registrasi_Kunjungan extends javax.swing.JPanel {
         label_alamat.setText("-");
         label_nama.setForeground(java.awt.Color.BLACK); // Kembalikan warna hitam
     }
+   
+  private void loadDataAntrean() {
+    // 1. Siapkan Model Tabel
+    javax.swing.table.DefaultTableModel model = (javax.swing.table.DefaultTableModel) tblAntrean.getModel();
+    model.setRowCount(0); // Bersihkan data lama
+
+    // 2. Query SQL Kompleks (JOIN 4 Tabel)
+    // Alur: Kunjungan -> Pasien (ambil nama pasien) -> Dokter -> User (ambil nama dokter)
+    String sql = "SELECT k.kunjungan_id, p.nama_pasien, d.spesialisasi, u.nama_lengkap AS nama_dokter, k.status_kunjungan " +
+                 "FROM kunjungan k " +
+                 "JOIN pasien p ON k.pasien_id = p.pasien_id " +
+                 "JOIN dokter d ON k.dokter_id = d.dokter_id " +
+                 "JOIN user u ON d.user_id = u.user_id " +
+                 "WHERE DATE(k.tanggal_kunjungan) = CURDATE() " + // Filter HANYA HARI INI
+                 "ORDER BY k.kunjungan_id DESC"; // Yang baru daftar ada di atas
+
+    // 3. Eksekusi Query
+    try (java.sql.Connection conn = Database.KoneksiDatabase.getConnection();
+         java.sql.PreparedStatement stmt = conn.prepareStatement(sql);
+         java.sql.ResultSet rs = stmt.executeQuery()) {
+
+        while (rs.next()) {
+            // Kita format ID Kunjungan jadi format Antrean, misal "ANT-001"
+            String idRaw = rs.getString("kunjungan_id");
+            String noAntrean = "ANT-" + idRaw; 
+            
+            Object[] row = {
+                noAntrean,
+                rs.getString("nama_pasien"),
+                rs.getString("spesialisasi"),
+                rs.getString("nama_dokter"), // Ini alias dari query di atas
+                rs.getString("status_kunjungan")
+            };
+            model.addRow(row);
+        }
+        
+    } catch (java.sql.SQLException e) {
+        javax.swing.JOptionPane.showMessageDialog(this, "Gagal memuat antrean: " + e.getMessage());
+    }
+}  
+   
+    private void loadDataPoli() {
+      cbPoli.removeAllItems();
+
+      // Ambil data spesialisasi yang unik (DISTINCT)
+      String sql = "SELECT DISTINCT spesialisasi FROM dokter ORDER BY spesialisasi";
+
+      try (java.sql.Connection conn = Database.KoneksiDatabase.getConnection();
+           java.sql.Statement stmt = conn.createStatement();
+           java.sql.ResultSet rs = stmt.executeQuery(sql)) {
+
+          while (rs.next()) {
+              String spes = rs.getString("spesialisasi");
+              if (spes != null && !spes.isEmpty()) {
+                  cbPoli.addItem(spes);
+              }
+          }
+
+      } catch (Exception e) {
+          javax.swing.JOptionPane.showMessageDialog(this, "Gagal memuat poli: " + e.getMessage());
+      }
+  }
     
+    private void loadDokterByPoli(String poliDipilih) {
+     cbDokter.removeAllItems();
+
+     // Query: Ambil Dokter yang spesialisasinya SESUAI pilihan
+     String sql = "SELECT d.dokter_id, u.nama_lengkap " +
+                  "FROM dokter d " +
+                  "JOIN user u ON d.user_id = u.user_id " +
+                  "WHERE d.spesialisasi = ? " +
+                  "ORDER BY u.nama_lengkap ASC";
+
+     try (java.sql.Connection conn = Database.KoneksiDatabase.getConnection();
+          java.sql.PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+         stmt.setString(1, poliDipilih);
+
+         try (java.sql.ResultSet rs = stmt.executeQuery()) {
+             while (rs.next()) {
+                 String id = rs.getString("dokter_id");
+                 String nama = rs.getString("nama_lengkap");
+
+                 // Masukkan ke ComboBox sebagai Objek
+                 cbDokter.addItem(new DokterItem(id, nama));
+             }
+         }
+
+     } catch (Exception e) {
+         javax.swing.JOptionPane.showMessageDialog(this, "Gagal memuat dokter: " + e.getMessage());
+     }
+     
+   }
+    
+  
+  private void tampilkanEstimasiAntrean() {
+    // Logic: Hitung jumlah kunjungan HARI INI
+    String sql = "SELECT COUNT(*) AS total FROM kunjungan WHERE DATE(tanggal_kunjungan) = CURDATE()";
+    
+    try (java.sql.Connection conn = Database.KoneksiDatabase.getConnection();
+         java.sql.Statement stmt = conn.createStatement();
+         java.sql.ResultSet rs = stmt.executeQuery(sql)) {
+        
+        if (rs.next()) {
+            int totalHariIni = rs.getInt("total");
+            int antreanBerikutnya = totalHariIni + 1;
+            
+            // Tampilkan di Panel Estimasi (Saya asumsikan Anda punya JLabel di sana)
+            // Jika belum ada Label, buat JLabel baru di panel bawah bernama 'lblEstimasi'
+            // Format contoh: "Antrean Berikutnya: Nomor 5"
+            
+            // Update Label Judul di panel bawah (lblEstimasi atau sejenisnya)
+            // Pastikan Anda sudah memberi nama variabel pada JLabel di panel hitam bawah tersebut
+            // Contoh nama variabel: lblAngkaAntrean
+            
+            //label_antrean.setText("Nomor Antrean Berikutnya: " + antreanBerikutnya);
+            // Set teks HANYA angkanya saja
+            label_antrean.setText(String.valueOf(antreanBerikutnya));
+        }
+        
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+}
+  
+  private void updateStatusKunjungan(String idKunjunganRaw, String statusBaru) {
+    // idKunjunganRaw formatnya misal "A-005", kita harus ambil angkanya saja "5"
+    // Tapi tunggu, id di database integer. Kita perlu parsing.
+    
+    // 1. Bersihkan ID (Hapus prefix "A-" atau "ANT-")
+    String idBersih = idKunjunganRaw.replaceAll("[^0-9]", ""); // Hanya ambil angka
+    
+    String sql = "UPDATE kunjungan SET status_kunjungan = ? WHERE kunjungan_id = ?";
+    
+    try (java.sql.Connection conn = Database.KoneksiDatabase.getConnection();
+         java.sql.PreparedStatement stmt = conn.prepareStatement(sql)) {
+        
+        stmt.setString(1, statusBaru);
+        stmt.setString(2, idBersih);
+        
+        stmt.executeUpdate();
+        
+        // Refresh tabel agar status berubah
+        loadDataAntrean(); 
+        
+    } catch (Exception e) {
+        javax.swing.JOptionPane.showMessageDialog(this, "Gagal update status: " + e.getMessage());
+    }
+}
+  
+  private void hapusAntrean(String idKunjunganRaw) {
+    String idBersih = idKunjunganRaw.replaceAll("[^0-9]", "");
+    String sql = "DELETE FROM kunjungan WHERE kunjungan_id = ?";
+    
+    try (java.sql.Connection conn = Database.KoneksiDatabase.getConnection();
+         java.sql.PreparedStatement stmt = conn.prepareStatement(sql)) {
+        
+        stmt.setString(1, idBersih);
+        stmt.executeUpdate();
+        loadDataAntrean(); // Refresh
+        tampilkanEstimasiAntrean(); // Refresh angka estimasi juga
+        
+    } catch (Exception e) {
+        javax.swing.JOptionPane.showMessageDialog(this, "Gagal hapus: " + e.getMessage());
+    }
+}
+  
+  
+  
+  
+  
+  
 }
