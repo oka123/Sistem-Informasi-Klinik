@@ -1,32 +1,107 @@
 package Apoteker;
 
+
+
 import java.awt.Frame;
 import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+import Database.KoneksiDatabase; 
+import java.sql.*;
 
 public class JPanel_Antrean_Resep extends javax.swing.JPanel {
-
     private final Frame parentFrame;
-    
+    private DefaultTableModel tableModel;
     public JPanel_Antrean_Resep(Frame parent) {
         initComponents();
         this.parentFrame = parent;
+        initializeTableModel();
+        loadDataAntrean(); 
         setupListeners();
     }
+
     
+
+    private void initializeTableModel() {
+        tableModel = new DefaultTableModel(
+            new Object [][] {},
+            new String [] {"ID Kunjungan", "Waktu Masuk", "Nama Pasien", "Dokter"}
+        );
+        jTable1.setModel(tableModel);
+    }
+
+    public void loadDataAntrean() {
+    tableModel.setRowCount(0);
+
+
+
+    String sql = "SELECT k.kunjungan_id, k.tanggal_kunjungan, p.nama_pasien, d.nama_lengkap AS nama_dokter " +
+                 "FROM klinik.kunjungan k " +
+                 "JOIN klinik.pasien p ON k.pasien_id = p.pasien_id " +
+                 "JOIN klinik.user d ON k.dokter_id = d.user_id " +
+                 "WHERE k.status_kunjungan = 'Menunggu Obat' " +
+                 "AND d.role = 'Dokter' " + 
+                 "ORDER BY k.tanggal_kunjungan ASC";
+
+
+
+    KoneksiDatabase db = new KoneksiDatabase();
+    try (Connection conn = db.getConnection();
+         PreparedStatement pstmt = conn.prepareStatement(sql);
+         ResultSet rs = pstmt.executeQuery()) {
+
+        while (rs.next()) {
+            tableModel.addRow(new Object[]{
+                rs.getString("kunjungan_id"),
+                rs.getString("tanggal_kunjungan"),
+                rs.getString("nama_pasien"),
+                rs.getString("nama_dokter")
+            });
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+        JOptionPane.showMessageDialog(this, "Gagal memuat antrean resep: " + e.getMessage(), "Error DB", JOptionPane.ERROR_MESSAGE);
+    }
+}
+
+    
+
     private void setupListeners() {
-        btnProsesResep.addActionListener(e -> {
-            int selectedRow = jTable1.getSelectedRow();
-            if (selectedRow == -1) {
-                JOptionPane.showMessageDialog(
-                    this, 
-                    "Mohon pilih resep yang ingin diproses.", 
-                    "Peringatan Pemilihan Resep", 
-                    JOptionPane.WARNING_MESSAGE
-                );
-                return; 
+        
+    btnProsesResep.addActionListener(e -> {
+        int selectedRow = jTable1.getSelectedRow();
+        if (selectedRow == -1) {
+
+            JOptionPane.showMessageDialog(
+                this, 
+                "Mohon pilih resep yang ingin diproses.", 
+                "Peringatan Pemilihan Resep", 
+                JOptionPane.WARNING_MESSAGE
+            );
+            return; 
+        }
+
+        String kunjunganIdStr = tableModel.getValueAt(selectedRow, 0).toString();
+        int kunjunganId;
+
+        try {
+
+            kunjunganId = Integer.parseInt(kunjunganIdStr);
+
+        } catch (NumberFormatException ex) {
+            JOptionPane.showMessageDialog(this, "ID Kunjungan tidak valid.", "Error Data", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        JDialog_Proses_Resep dialog = new JDialog_Proses_Resep(parentFrame, true, kunjunganId);
+
+        dialog.addWindowListener(new java.awt.event.WindowAdapter() {
+            @Override
+            public void windowClosed(java.awt.event.WindowEvent windowEvent) {
+
+                loadDataAntrean(); 
             }
-            JDialog_Proses_Resep dialog = new JDialog_Proses_Resep(parentFrame, true);
-            dialog.setVisible(true);
+        });
+        dialog.setVisible(true);
         });
     }
     @SuppressWarnings("unchecked")
@@ -58,14 +133,14 @@ public class JPanel_Antrean_Resep extends javax.swing.JPanel {
             jTable1.getColumnModel().getColumn(0).setResizable(false);
             jTable1.getColumnModel().getColumn(1).setResizable(false);
             jTable1.getColumnModel().getColumn(2).setResizable(false);
-            jTable1.getColumnModel().getColumn(3).setResizable(false);
         }
 
         add(jScrollPane2, java.awt.BorderLayout.CENTER);
 
         tblAntreanResep.setBackground(new java.awt.Color(255, 255, 255));
+        tblAntreanResep.setFont(new java.awt.Font("Segoe UI", 0, 36)); // NOI18N
         tblAntreanResep.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        tblAntreanResep.setText("Antrean Resep Belum Diambil");
+        tblAntreanResep.setText("Antrean Resep");
         add(tblAntreanResep, java.awt.BorderLayout.PAGE_START);
 
         jPanel1.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT));
