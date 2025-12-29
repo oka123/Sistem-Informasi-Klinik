@@ -155,11 +155,14 @@
               <Font name="SansSerif" size="22" style="1"/>
             </Property>
 <<<<<<< HEAD
+<<<<<<< HEAD
             <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
               <Color blue="0" green="0" id="black" palette="1" red="0" type="palette"/>
             </Property>
 =======
 >>>>>>> 8cae046 (final (kayaknya)2)
+=======
+>>>>>>> 88d9e98 (Update 1)
             <Property name="horizontalAlignment" type="int" value="0"/>
             <Property name="text" type="java.lang.String" value="Klinik Sehat Selalu"/>
           </Properties>
@@ -170,11 +173,14 @@
               <Font name="sansserif" size="14" style="1"/>
             </Property>
 <<<<<<< HEAD
+<<<<<<< HEAD
             <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
               <Color blue="0" green="0" id="black" palette="1" red="0" type="palette"/>
             </Property>
 =======
 >>>>>>> 8cae046 (final (kayaknya)2)
+=======
+>>>>>>> 88d9e98 (Update 1)
             <Property name="text" type="java.lang.String" value="Username"/>
           </Properties>
         </Component>
@@ -194,11 +200,14 @@
               <Font name="sansserif" size="14" style="1"/>
             </Property>
 <<<<<<< HEAD
+<<<<<<< HEAD
             <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
               <Color blue="0" green="0" id="black" palette="1" red="0" type="palette"/>
             </Property>
 =======
 >>>>>>> 8cae046 (final (kayaknya)2)
+=======
+>>>>>>> 88d9e98 (Update 1)
             <Property name="text" type="java.lang.String" value="Password"/>
           </Properties>
         </Component>
