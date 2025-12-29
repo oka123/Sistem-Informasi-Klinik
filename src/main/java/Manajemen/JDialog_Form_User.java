@@ -17,6 +17,7 @@ import javax.swing.text.PlainDocument;
 
 public class JDialog_Form_User extends javax.swing.JDialog implements Manajemen {
     // Atribut
+    Connection conn = KoneksiDatabase.getConnection();
     private Integer idUserToEdit = null;
 
     // Constructor
@@ -47,20 +48,17 @@ public class JDialog_Form_User extends javax.swing.JDialog implements Manajemen 
     // Method untuk memuat data lama ke form (Mode Edit)
     private void loadDataUserForEdit() {
         String sql = "SELECT * FROM user WHERE user_id = ?";
-        try {
-            Connection conn = KoneksiDatabase.getConnection();
-            try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+        try (PreparedStatement pstmt = this.conn.prepareStatement(sql)) {
 
-                pstmt.setInt(1, this.idUserToEdit);
-                ResultSet rs = pstmt.executeQuery();
+            pstmt.setInt(1, this.idUserToEdit);
+            ResultSet rs = pstmt.executeQuery();
 
-                if (rs.next()) {
-                    txt_username.setText(rs.getString("username"));
-                    txt_nama_lengkap.setText(rs.getString("nama_lengkap"));
-                    comboRole.setSelectedItem(rs.getString("role"));
-                    txtNoTelepon.setText(rs.getString("no_telepon"));
-                    txtAlamat.setText(rs.getString("alamat"));
-                }
+            if (rs.next()) {
+                txt_username.setText(rs.getString("username"));
+                txt_nama_lengkap.setText(rs.getString("nama_lengkap"));
+                comboRole.setSelectedItem(rs.getString("role"));
+                txtNoTelepon.setText(rs.getString("no_telepon"));
+                txtAlamat.setText(rs.getString("alamat"));
             }
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(this, "Gagal memuat data: " + e.getMessage());
@@ -388,13 +386,11 @@ public class JDialog_Form_User extends javax.swing.JDialog implements Manajemen 
         }
 
         try {
-            Connection conn = KoneksiDatabase.getConnection();
-            
             // 3. Pilih Jalur (Tambah atau Edit)
             if (this.idUserToEdit == null) {
-                tambahUser(conn, username, passwordChars, namaLengkap, role, noTelepon, alamat);
+                tambahUser(this.conn, username, passwordChars, namaLengkap, role, noTelepon, alamat);
             } else {
-                editUser(conn, username, passwordChars, namaLengkap, role, noTelepon, alamat);
+                editUser(this.conn, username, passwordChars, namaLengkap, role, noTelepon, alamat);
             }
 
             this.dispose(); // Tutup dialog setelah sukses

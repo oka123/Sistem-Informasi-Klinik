@@ -18,6 +18,9 @@ import java.sql.Statement;
  */
 public final class JPanel_Manajemen_Pasien extends javax.swing.JPanel {
     
+    // Atribut
+    Connection conn = KoneksiDatabase.getConnection();
+    
     /**
      * Creates new form JPanel_Manajemen_Pasien
      */
@@ -47,9 +50,8 @@ public final class JPanel_Manajemen_Pasien extends javax.swing.JPanel {
              sql += " WHERE nama_pasien LIKE ? OR pasien_id LIKE ?";
            }
         sql += " ORDER BY pasien_id DESC"; // Tambahkan pengurutan
-
-        try (Connection conn = KoneksiDatabase.getConnection();
-         PreparedStatement stmt = conn.prepareStatement(sql)) {
+        
+        try (PreparedStatement stmt = this.conn.prepareStatement(sql)) {
 
             // 2. Jika ada kata kunci pencarian, masukkan ke parameter
             if (searchTerm != null && !searchTerm.trim().isEmpty()) {
@@ -58,28 +60,29 @@ public final class JPanel_Manajemen_Pasien extends javax.swing.JPanel {
                 stmt.setString(2, likeValue);
         }
 
-        try (ResultSet rs = stmt.executeQuery()) {
-            while (rs.next()) {
-                Object[] row = {
-                    rs.getString("pasien_id"),
-                    rs.getString("nama_pasien"),
-                    rs.getDate("tanggal_lahir"),
-                    rs.getString("jenis_kelamin"),
-                    rs.getString("alamat"),
-                    rs.getString("no_telepon"),
-                    rs.getString("golongan_darah"),
-                    rs.getString("pekerjaan"),
-                    rs.getString("nama_kerabat"),
-                    rs.getString("no_telp_kerabat"),
-                    rs.getString("status_pernikahan")
-                    
-                };
-                model.addRow(row);
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    Object[] row = {
+                        rs.getString("pasien_id"),
+                        rs.getString("nama_pasien"),
+                        rs.getDate("tanggal_lahir"),
+                        rs.getString("jenis_kelamin"),
+                        rs.getString("alamat"),
+                        rs.getString("no_telepon"),
+                        rs.getString("golongan_darah"),
+                        rs.getString("pekerjaan"),
+                        rs.getString("nama_kerabat"),
+                        rs.getString("no_telp_kerabat"),
+                        rs.getString("status_pernikahan")
+
+                    };
+                    model.addRow(row);
+                }
             }
-            }
-         } catch (SQLException e) {
-        JOptionPane.showMessageDialog(this, "Gagal memuat tabel: " + e.getMessage());
-        e.printStackTrace();
+        
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(this, "Gagal memuat tabel: " + e.getMessage());
+            e.printStackTrace();
         }
 
 
@@ -267,9 +270,9 @@ public final class JPanel_Manajemen_Pasien extends javax.swing.JPanel {
                         .addComponent(btnHapus, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(txtCari, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(btnCari, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(27, 27, 27)
+                .addGap(18, 18, 18)
                 .addComponent(scrollPaneTabel, javax.swing.GroupLayout.PREFERRED_SIZE, 445, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(24, 24, 24)
+                .addGap(18, 18, 18)
                 .addComponent(lblJudul1)
                 .addGap(18, 18, 18)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 479, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -281,15 +284,11 @@ public final class JPanel_Manajemen_Pasien extends javax.swing.JPanel {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addGap(24, 24, 24)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(24, 24, 24)
-                        .addComponent(jSeparator1))
+                    .addComponent(jSeparator1)
+                    .addComponent(panelKontrol, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
-                        .addGap(24, 24, 24)
-                        .addComponent(panelKontrol, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
-                        .addGap(24, 24, 24)
                         .addComponent(lblJudul)
                         .addGap(0, 563, Short.MAX_VALUE)))
                 .addGap(24, 24, 24))
@@ -300,10 +299,10 @@ public final class JPanel_Manajemen_Pasien extends javax.swing.JPanel {
                 .addGap(24, 24, 24)
                 .addComponent(lblJudul)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(25, 25, 25)
                 .addComponent(panelKontrol, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(24, Short.MAX_VALUE))
+                .addContainerGap(18, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -366,24 +365,22 @@ public final class JPanel_Manajemen_Pasien extends javax.swing.JPanel {
         // 4. Jika user klik YES, baru eksekusi hapus
     if (pilihan == JOptionPane.YES_OPTION) {
         String sql = "DELETE FROM pasien WHERE pasien_id = ?";
-        
-        try (Connection conn = KoneksiDatabase.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            
+
+        try (PreparedStatement stmt = this.conn.prepareStatement(sql)) {
+
             stmt.setString(1, idPasien);
-            
+
             int rowsAffected = stmt.executeUpdate();
-            
+
             if (rowsAffected > 0) {
                 JOptionPane.showMessageDialog(this, "Data pasien berhasil dihapus!");
-                
+
                 // 5. Refresh tabel agar data yang dihapus hilang dari tampilan
                 loadDataToTable(); 
-                
+
                 // Opsional: Bersihkan field pencarian jika ada
                 txtCari.setText("");
             }
-            
         } catch (SQLIntegrityConstraintViolationException e) {
             // ERROR KHUSUS: Jika pasien sudah punya riwayat kunjungan (Foreign Key)
             JOptionPane.showMessageDialog(this, """
@@ -470,27 +467,26 @@ private void tampilkanRiwayatPasien(String idPasien) {
                      "JOIN user u ON d.user_id = u.user_id " +
                      "WHERE k.pasien_id = '" + idPasien + "' " +
                      "ORDER BY k.tanggal_kunjungan DESC";
+        
+        try (Statement stm = this.conn.createStatement();
+        ResultSet res = stm.executeQuery(sql)) {
 
-        Connection conn = KoneksiDatabase.getConnection();
-        Statement stm = conn.createStatement();
-        ResultSet res = stm.executeQuery(sql);
+            // 3. Masukkan data ke tabel
+            while (res.next()) {
+                model.addRow(new Object[]{
+                    no++,
+                    res.getString("tanggal_kunjungan"),
+                    res.getString("nama_lengkap"), // Ini mengambil dari tabel user
+                    res.getString("spesialisasi")     // Asumsi kolom poli ada di tabel dokter
+                });
+            }
 
-        // 3. Masukkan data ke tabel
-        while (res.next()) {
-            model.addRow(new Object[]{
-                no++,
-                res.getString("tanggal_kunjungan"),
-                res.getString("nama_lengkap"), // Ini mengambil dari tabel user
-                res.getString("spesialisasi")     // Asumsi kolom poli ada di tabel dokter
-            });
+            tabel_riwayat_kunjungan.setModel(model);
+
+            // Atur lebar kolom (Opsional)
+            tabel_riwayat_kunjungan.getColumnModel().getColumn(0).setPreferredWidth(30);
+            tabel_riwayat_kunjungan.getColumnModel().getColumn(1).setPreferredWidth(120);
         }
-        
-        tabel_riwayat_kunjungan.setModel(model);
-        
-        // Atur lebar kolom (Opsional)
-        tabel_riwayat_kunjungan.getColumnModel().getColumn(0).setPreferredWidth(30);
-        tabel_riwayat_kunjungan.getColumnModel().getColumn(1).setPreferredWidth(120);
-        
     } catch (SQLException e) {
         System.out.println("Error Load Riwayat: " + e.getMessage());
         javax.swing.JOptionPane.showMessageDialog(this, "Gagal memuat riwayat: " + e.getMessage());

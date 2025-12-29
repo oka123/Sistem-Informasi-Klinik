@@ -19,7 +19,7 @@ public class JFrame_Main_Manajemen extends javax.swing.JFrame {
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(JFrame_Main_Manajemen.class.getName());
     
     // Atribut
-    private String namaLengkapManajemen = "Nama Default Manajemen"; // Default value
+    private String namaManajemen = "Nama Default Manajemen"; // Default value
    
     // Icon
     private final ImageIcon clinicIcon = new ImageIcon(getClass().getResource("/gambarKlinik.png"));
@@ -39,7 +39,7 @@ public class JFrame_Main_Manajemen extends javax.swing.JFrame {
         });
         
         // Inisialisasi semua panel halaman
-        JPanel_Dashboard_Manajemen panelDashboard = new JPanel_Dashboard_Manajemen(this.namaLengkapManajemen);
+        JPanel_Dashboard_Manajemen panelDashboard = new JPanel_Dashboard_Manajemen(this.namaManajemen);
         JPanel_Laporan panelLaporan = new JPanel_Laporan();
         JPanel_Manajemen_User panelUser = new JPanel_Manajemen_User();
         JPanel_Manajemen_Dokter panelDokter = new JPanel_Manajemen_Dokter();
@@ -59,18 +59,18 @@ public class JFrame_Main_Manajemen extends javax.swing.JFrame {
     
     // Konsep Polimorfisme (Method Overloading)
     // Constructor Login
-    public JFrame_Main_Manajemen(int userId, String namaLengkap) {
+    public JFrame_Main_Manajemen(int userId, String paramNamaManajemen) {
         // Panggil constructor default (yang akan menjalankan initComponents dan membuat Panel Dashboard)
         this(); 
         
         // Simpan nama ke variabel global SEBELUM memanggil initComponents
-        this.namaLengkapManajemen = namaLengkap;
+        this.namaManajemen = paramNamaManajemen;
         
         // 3. Update Label Sidebar (jika ada)
         // lblNamaManajemen.setText(namaLengkap); 
         
         // Cara Paling Aman (Re-add Dashboard):
-        JPanel_Dashboard_Manajemen panelDashboardBaru = new JPanel_Dashboard_Manajemen(namaLengkap);
+        JPanel_Dashboard_Manajemen panelDashboardBaru = new JPanel_Dashboard_Manajemen(paramNamaManajemen);
         // Menambahkan panel baru dengan key yang SAMA ("cardDashboard") akan menimpa panel lama
         panelContent.add(panelDashboardBaru, "cardDashboard");
         
@@ -81,11 +81,11 @@ public class JFrame_Main_Manajemen extends javax.swing.JFrame {
     
     // Konsep Enkapsulasi (Getter dan Setter)
     public String getNamaLengkapManajemen() {
-        return namaLengkapManajemen;
+        return namaManajemen;
     }
 
     public void setNamaLengkapManajemen(String namaLengkapManajemen) {
-        this.namaLengkapManajemen = namaLengkapManajemen;
+        this.namaManajemen = namaLengkapManajemen;
     }
     
     @SuppressWarnings("unchecked")

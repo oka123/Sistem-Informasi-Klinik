@@ -22,6 +22,7 @@ import javax.swing.table.DefaultTableModel;
 public class JPanel_Manajemen_User extends javax.swing.JPanel implements Manajemen {
     
     // Atribut
+    Connection conn = KoneksiDatabase.getConnection();
 
     // Constructor
     public JPanel_Manajemen_User() {
@@ -56,9 +57,7 @@ public class JPanel_Manajemen_User extends javax.swing.JPanel implements Manajem
             
             sql += " ORDER BY nama_lengkap ASC";
 
-            try {
-                Connection conn = KoneksiDatabase.getConnection();
-                PreparedStatement pstmt = conn.prepareStatement(sql);
+            try (PreparedStatement pstmt = this.conn.prepareStatement(sql)) {
 
                 if (isSearch) {
                     String pattern = "%" + key + "%";
@@ -133,8 +132,7 @@ public class JPanel_Manajemen_User extends javax.swing.JPanel implements Manajem
 //            sql += " AND (username LIKE ? OR nama_lengkap LIKE ?)";
 //        }
 //
-//        try (Connection conn = new KoneksiDatabase().getConnection();
-//             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+//        try (PreparedStatement pstmt = this.conn.prepareStatement(sql)) {
 //
 //            if (isSearch) {
 //                String pattern = "%" + key + "%";
@@ -163,16 +161,13 @@ public class JPanel_Manajemen_User extends javax.swing.JPanel implements Manajem
     public void hapusDataUser (int idUser) {
         String sql = "DELETE FROM user WHERE user_id = ?";
 
-        try {
-            Connection conn = KoneksiDatabase.getConnection();
+        try (PreparedStatement pstmt = this.conn.prepareStatement(sql)) {
+            pstmt.setInt(1, idUser);
+            pstmt.executeUpdate();
 
-            try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-                pstmt.setInt(1, idUser);
-                pstmt.executeUpdate();
-
-                JOptionPane.showMessageDialog(this, "Data user berhasil dihapus.");
-                loadDataUser(""); // Refresh tabel
-            }
+            JOptionPane.showMessageDialog(this, "Data user berhasil dihapus.");
+            loadDataUser(""); // Refresh tabel
+            
         } catch (HeadlessException | SQLException e) {
             JOptionPane.showMessageDialog(this, "Gagal menghapus: " + e.getMessage());
         }

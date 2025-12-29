@@ -4,9 +4,11 @@
  */
 package Resepsionis;
 
+import Database.KoneksiDatabase;
 import Main.JFrame_Login;
 import java.awt.CardLayout;
 import java.awt.Image;
+import java.sql.Connection;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -22,9 +24,10 @@ public class JFrame_Main_Resepsionis extends javax.swing.JFrame {
     
     private final ImageIcon clinicIcon = new ImageIcon(getClass().getResource("/gambarKlinik.png"));
     
-    /**
-     * Creates new form JFrame_Main_Admin
-     */
+    // Atribut
+    private String namaResepsionis = "Nama Default Resepsionis"; // Default value
+    
+    // Constructor Default
     public JFrame_Main_Resepsionis() {
         initComponents(); // Baris ini sudah ada, dibuat oleh NetBeans
         
@@ -52,7 +55,7 @@ public class JFrame_Main_Resepsionis extends javax.swing.JFrame {
         });
         
         // 1. Inisialisasi semua panel halaman
-        JPanel_Dashboard_Resepsionis panelDashboard = new JPanel_Dashboard_Resepsionis();
+        JPanel_Dashboard_Resepsionis panelDashboard = new JPanel_Dashboard_Resepsionis(this.namaResepsionis);
         JPanel_Manajemen_Pasien panelPasien = new JPanel_Manajemen_Pasien();
         JPanel_Informasi_Dokter panelDokter = new JPanel_Informasi_Dokter();
         JPanel_Manajemen_Jadwal panelJadwal = new JPanel_Manajemen_Jadwal();
@@ -72,6 +75,21 @@ public class JFrame_Main_Resepsionis extends javax.swing.JFrame {
         
 //        java.awt.CardLayout cl = (java.awt.CardLayout) panelContent.getLayout();
 //        cl.show(panelContent, "cardDashboard");
+    }
+    
+    // Constructor Login
+    public JFrame_Main_Resepsionis(int userId, String paramNamaResepsionis) {
+        this();
+        
+        this.namaResepsionis = paramNamaResepsionis;
+        
+        // Cara Paling Aman (Re-add Dashboard):
+        JPanel_Dashboard_Resepsionis panelDashboardBaru = new JPanel_Dashboard_Resepsionis(paramNamaResepsionis);
+        panelContent.add(panelDashboardBaru, "cardDashboard");
+        
+        // Refresh tampilan
+        CardLayout cl = (CardLayout) panelContent.getLayout();
+        cl.show(panelContent, "cardDashboard");
     }
 
     /**
@@ -240,7 +258,7 @@ public class JFrame_Main_Resepsionis extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(panelSidebarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(panelSidebarLayout.createSequentialGroup()
-                        .addGap(14, 14, 14)
+                        .addGap(16, 16, 16)
                         .addGroup(panelSidebarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(btn_logout)
                             .addGroup(panelSidebarLayout.createSequentialGroup()
@@ -261,7 +279,7 @@ public class JFrame_Main_Resepsionis extends javax.swing.JFrame {
         panelSidebarLayout.setVerticalGroup(
             panelSidebarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panelSidebarLayout.createSequentialGroup()
-                .addGap(29, 29, 29)
+                .addGap(24, 24, 24)
                 .addGroup(panelSidebarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
                     .addComponent(labelIconKlinik, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(labelJudulKlinik, javax.swing.GroupLayout.PREFERRED_SIZE, 58, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -271,13 +289,13 @@ public class JFrame_Main_Resepsionis extends javax.swing.JFrame {
                 .addComponent(btnDashboard, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(btnRegistrasiKunjungan, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(btnManajemenPasien, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(btnManajemenJadwal, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(btnInformasiDokter, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(18, 18, Short.MAX_VALUE)
                 .addComponent(btn_logout, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(24, 24, 24))
         );

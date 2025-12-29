@@ -5,6 +5,7 @@
 package Main;
 
 import Apoteker.JFrameMainApoteker;
+import Database.KoneksiDatabase;
 import Resepsionis.JFrame_Main_Resepsionis;
 import Dokter.JFrame_Main_Dokter;
 import Kasir.JFrame_Main_Kasir;
@@ -15,7 +16,6 @@ import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
-import Database.KoneksiDatabase;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -25,9 +25,9 @@ import at.favre.lib.crypto.bcrypt.BCrypt;
 
 public class JFrame_Login extends javax.swing.JFrame {
     
-//    Deklarasi atribut
-//    KoneksiDatabase koneksi;
-    Connection conn;
+    // Atribut
+    Connection conn = KoneksiDatabase.getConnection();
+    
     private boolean isPasswordVisible = false;
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(JFrame_Login.class.getName());
     
@@ -44,7 +44,6 @@ public class JFrame_Login extends javax.swing.JFrame {
         initComponents();
         this.setLocationRelativeTo(null); 
         
-        this.conn = Database.KoneksiDatabase.getConnection();
         // Menambahkan placeholder text
         txt_username.putClientProperty("JTextField.placeholderText", "Masukkan username...");
         txt_password.putClientProperty("JTextField.placeholderText", "Masukkan password...");
@@ -223,7 +222,7 @@ public class JFrame_Login extends javax.swing.JFrame {
 
         try {
             // Prepare dan eksekusi query ke DB
-            PreparedStatement pstmt = conn.prepareStatement(sql);
+            PreparedStatement pstmt = this.conn.prepareStatement(sql);
             pstmt.setString(1, username);
             ResultSet result = pstmt.executeQuery();
 
@@ -244,7 +243,7 @@ public class JFrame_Login extends javax.swing.JFrame {
                     //  Pengecekan role serta navigasinya
                     switch (role.toLowerCase()) {
                         case "resepsionis" -> {
-                            JFrame_Main_Resepsionis tampil = new JFrame_Main_Resepsionis();
+                            JFrame_Main_Resepsionis tampil = new JFrame_Main_Resepsionis(userId, namaLengkap);
                           tampil.setVisible(true);
                         }
                         case "dokter" -> {

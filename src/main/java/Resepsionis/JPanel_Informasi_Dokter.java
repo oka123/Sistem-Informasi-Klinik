@@ -4,6 +4,7 @@
  */
 package Resepsionis;
 
+import Database.KoneksiDatabase;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -17,6 +18,9 @@ import java.sql.SQLException;
  */
 public final class JPanel_Informasi_Dokter extends javax.swing.JPanel {
     
+    // Atribut
+    Connection conn = KoneksiDatabase.getConnection();
+    
     /**
      * Creates new form JPanel_Manajemen_Dokter
      */
@@ -24,7 +28,7 @@ public final class JPanel_Informasi_Dokter extends javax.swing.JPanel {
         initComponents();
         
         txtCari.putClientProperty("JTextField.placeholderText", "Cari dokter...");
-                
+        
         tblDokter.getTableHeader().setFont(new java.awt.Font("SansSerif", java.awt.Font.BOLD, 12));
         tblDokter.getTableHeader().setOpaque(false);
         tblDokter.getTableHeader().setBackground(new java.awt.Color(32, 136, 203)); // Warna biru
@@ -56,8 +60,8 @@ public final class JPanel_Informasi_Dokter extends javax.swing.JPanel {
         sql += "ORDER BY u.nama_lengkap ASC"; // Urutkan berdasarkan nama
 
         // 3. Eksekusi Database
-        try (Connection conn = Database.KoneksiDatabase.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+        
+        try (PreparedStatement stmt = this.conn.prepareStatement(sql)) {
 
             // Isi parameter tanda tanya (?) jika ada pencarian
             if (searchTerm != null && !searchTerm.trim().isEmpty()) {
@@ -78,7 +82,8 @@ public final class JPanel_Informasi_Dokter extends javax.swing.JPanel {
                     model.addRow(row);
                 }
             }
-        
+
+
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(this, "Gagal memuat data dokter: " + e.getMessage());
             e.printStackTrace();
@@ -101,6 +106,7 @@ public final class JPanel_Informasi_Dokter extends javax.swing.JPanel {
         scrollPaneTabel = new javax.swing.JScrollPane();
         tblDokter = new javax.swing.JTable();
         txtCari = new javax.swing.JTextField();
+        btn_refresh = new javax.swing.JButton();
 
         setBackground(new java.awt.Color(255, 255, 255));
 
@@ -116,8 +122,6 @@ public final class JPanel_Informasi_Dokter extends javax.swing.JPanel {
         btnCari.setFont(new java.awt.Font("sansserif", 1, 24)); // NOI18N
         btnCari.setForeground(new java.awt.Color(0, 0, 0));
         btnCari.setText("🔍");
-        btnCari.setBorder(null);
-        btnCari.setBorderPainted(false);
         btnCari.setContentAreaFilled(false);
         btnCari.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         btnCari.setPreferredSize(new java.awt.Dimension(40, 40));
@@ -169,6 +173,17 @@ public final class JPanel_Informasi_Dokter extends javax.swing.JPanel {
             }
         });
 
+        btn_refresh.setBackground(new java.awt.Color(0, 123, 255));
+        btn_refresh.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
+        btn_refresh.setForeground(new java.awt.Color(255, 255, 255));
+        btn_refresh.setText("🔄 Refresh");
+        btn_refresh.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btn_refresh.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_refreshActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout panelKontrolLayout = new javax.swing.GroupLayout(panelKontrol);
         panelKontrol.setLayout(panelKontrolLayout);
         panelKontrolLayout.setHorizontalGroup(
@@ -176,9 +191,10 @@ public final class JPanel_Informasi_Dokter extends javax.swing.JPanel {
             .addGroup(panelKontrolLayout.createSequentialGroup()
                 .addGap(0, 0, 0)
                 .addGroup(panelKontrolLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(scrollPaneTabel, javax.swing.GroupLayout.DEFAULT_SIZE, 836, Short.MAX_VALUE)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelKontrolLayout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
+                    .addComponent(scrollPaneTabel, javax.swing.GroupLayout.DEFAULT_SIZE, 837, Short.MAX_VALUE)
+                    .addGroup(panelKontrolLayout.createSequentialGroup()
+                        .addComponent(btn_refresh, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(txtCari, javax.swing.GroupLayout.PREFERRED_SIZE, 250, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnCari, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)))
@@ -187,10 +203,11 @@ public final class JPanel_Informasi_Dokter extends javax.swing.JPanel {
         panelKontrolLayout.setVerticalGroup(
             panelKontrolLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panelKontrolLayout.createSequentialGroup()
-                .addGap(0, 0, 0)
-                .addGroup(panelKontrolLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
-                    .addComponent(txtCari, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnCari, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(panelKontrolLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(panelKontrolLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                        .addComponent(txtCari, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(btnCari, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(btn_refresh, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addComponent(scrollPaneTabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, Short.MAX_VALUE))
@@ -201,17 +218,13 @@ public final class JPanel_Informasi_Dokter extends javax.swing.JPanel {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addGap(24, 24, 24)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(24, 24, 24)
-                        .addComponent(jSeparator1))
+                    .addComponent(jSeparator1)
+                    .addComponent(panelKontrol, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
-                        .addGap(24, 24, 24)
-                        .addComponent(panelKontrol, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
-                        .addGap(24, 24, 24)
                         .addComponent(lblJudul)
-                        .addGap(0, 574, Short.MAX_VALUE)))
+                        .addGap(0, 575, Short.MAX_VALUE)))
                 .addGap(24, 24, 24))
         );
         layout.setVerticalGroup(
@@ -223,7 +236,7 @@ public final class JPanel_Informasi_Dokter extends javax.swing.JPanel {
                 .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(panelKontrol, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap(24, Short.MAX_VALUE))
+                .addGap(24, 24, 24))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -236,6 +249,11 @@ public final class JPanel_Informasi_Dokter extends javax.swing.JPanel {
         loadDataDokter(searchTerm);
     }//GEN-LAST:event_btnCariActionPerformed
 
+    private void btn_refreshActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_refreshActionPerformed
+        // TODO add your handling code here:
+        loadDataDokter("");
+    }//GEN-LAST:event_btn_refreshActionPerformed
+
     private void txtCariActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtCariActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_txtCariActionPerformed
@@ -243,6 +261,7 @@ public final class JPanel_Informasi_Dokter extends javax.swing.JPanel {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCari;
+    private javax.swing.JButton btn_refresh;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JLabel lblJudul;
     private javax.swing.JPanel panelKontrol;

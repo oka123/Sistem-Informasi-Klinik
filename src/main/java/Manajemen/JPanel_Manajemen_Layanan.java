@@ -21,6 +21,7 @@ import javax.swing.table.DefaultTableModel;
 public class JPanel_Manajemen_Layanan extends javax.swing.JPanel implements Manajemen {
     
     // Atribut
+    Connection conn = KoneksiDatabase.getConnection();
 
     // Constructor
     public JPanel_Manajemen_Layanan() {
@@ -45,22 +46,19 @@ public class JPanel_Manajemen_Layanan extends javax.swing.JPanel implements Mana
             }
             sql += " ORDER BY nama_layanan ASC";
 
-            try {
-                Connection conn = KoneksiDatabase.getConnection();
-                try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            try (PreparedStatement pstmt = this.conn.prepareStatement(sql)) {
 
-                    if (key != null && !key.trim().isEmpty()) {
-                        pstmt.setString(1, "%" + key + "%");
-                    }
+                if (key != null && !key.trim().isEmpty()) {
+                    pstmt.setString(1, "%" + key + "%");
+                }
 
-                    try (ResultSet rs = pstmt.executeQuery()) {
-                        while (rs.next()) {
-                            dataList.add(new Object[]{
-                                rs.getInt("layanan_id"),
-                                rs.getString("nama_layanan"),
-                                rs.getDouble("biaya")
-                            });
-                        }
+                try (ResultSet rs = pstmt.executeQuery()) {
+                    while (rs.next()) {
+                        dataList.add(new Object[]{
+                            rs.getInt("layanan_id"),
+                            rs.getString("nama_layanan"),
+                            rs.getDouble("biaya")
+                        });
                     }
                 }
             } catch (SQLException e) {
@@ -93,15 +91,12 @@ public class JPanel_Manajemen_Layanan extends javax.swing.JPanel implements Mana
     @Override
     public void hapusLayanan (int idLayanan) {
         String sql = "DELETE FROM layanan WHERE layanan_id = ?";
-        try {
-            Connection conn = KoneksiDatabase.getConnection();
-            try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-                    pstmt.setInt(1, idLayanan);
-                    pstmt.executeUpdate();
-                    
-                    JOptionPane.showMessageDialog(this, "Data layanan berhasil dihapus.");
-                    loadDataLayanan("");
-            }
+        try (PreparedStatement pstmt = this.conn.prepareStatement(sql)) {
+            pstmt.setInt(1, idLayanan);
+            pstmt.executeUpdate();
+
+            JOptionPane.showMessageDialog(this, "Data layanan berhasil dihapus.");
+            loadDataLayanan("");
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(this, "Gagal menghapus: " + e.getMessage());
         }

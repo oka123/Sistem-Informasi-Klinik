@@ -17,6 +17,7 @@ import javax.swing.text.PlainDocument;
 
 public class JDialog_Form_Dokter extends javax.swing.JDialog implements Manajemen {
     // Atribut
+    Connection conn = KoneksiDatabase.getConnection();
     private Integer idDokterToEdit = null;
     String pesanError = "";
     
@@ -53,24 +54,20 @@ public class JDialog_Form_Dokter extends javax.swing.JDialog implements Manajeme
                      "FROM dokter d " +
                      "JOIN user u ON d.user_id = u.user_id " +
                      "WHERE d.dokter_id = ?";
-                     
-        try {
-            Connection conn = KoneksiDatabase.getConnection();  // Koneksi dibuka di sini
 
-            try (PreparedStatement pstmt = conn.prepareStatement(sql)) {  // PreparedStatement ditangani oleh try-with-resources
-                pstmt.setInt(1, this.idDokterToEdit);
-                ResultSet rs = pstmt.executeQuery();
+        try (PreparedStatement pstmt = this.conn.prepareStatement(sql)) {  // PreparedStatement ditangani oleh try-with-resources
+            pstmt.setInt(1, this.idDokterToEdit);
+            ResultSet rs = pstmt.executeQuery();
 
-                if (rs.next()) {
-                    txtNamaLengkap.setText(rs.getString("nama_lengkap"));
-                    txtUsername.setText(rs.getString("username"));
-                    txtPassword.setText("");
-                    comboSpesialisasi.setSelectedItem(rs.getString("spesialisasi"));
-                    txtAlamat.setText(rs.getString("alamat"));
-                    txtNoTelepon.setText(rs.getString("no_telepon"));
-                }
+            if (rs.next()) {
+                txtNamaLengkap.setText(rs.getString("nama_lengkap"));
+                txtUsername.setText(rs.getString("username"));
+                txtPassword.setText("");
+                comboSpesialisasi.setSelectedItem(rs.getString("spesialisasi"));
+                txtAlamat.setText(rs.getString("alamat"));
+                txtNoTelepon.setText(rs.getString("no_telepon"));
             }
-            
+        
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(this, "Gagal memuat data: " + e.getMessage());
         }
@@ -426,33 +423,31 @@ public class JDialog_Form_Dokter extends javax.swing.JDialog implements Manajeme
             return;
         }
 
-        Connection conn = null;
         try {
-            conn = KoneksiDatabase.getConnection();
-            conn.setAutoCommit(false); 
+            this.conn.setAutoCommit(false); 
 
             if (idDokterToEdit == null) {
                 // --- Tambah Data ---
-                tambahDokter(conn, nama, username, passwordChars, spesialisasi, telp, alamat);
+                tambahDokter(this.conn, nama, username, passwordChars, spesialisasi, telp, alamat);
             } else {
                 // --- Edit Data ---
-                editDokter(conn, nama, username, passwordChars, spesialisasi, telp, alamat);
+                editDokter(this.conn, nama, username, passwordChars, spesialisasi, telp, alamat);
             }
 
-            conn.commit(); 
+            this.conn.commit(); 
             this.dispose();
 
         } catch (Exception e) {
             try { 
-                if (conn != null) conn.rollback(); 
+                if (this.conn != null) this.conn.rollback(); 
             } catch(SQLException ex){
                 ex.printStackTrace();
             } 
             JOptionPane.showMessageDialog(this, "Gagal menyimpan: " + e.getMessage());
         } finally {
             try { 
-                if (conn != null) { 
-                    conn.setAutoCommit(true);
+                if (this.conn != null) { 
+                    this.conn.setAutoCommit(true);
                 } 
             } catch(SQLException ex){
                 ex.printStackTrace();

@@ -4,6 +4,7 @@
  */
 package Resepsionis;
 import Database.KoneksiDatabase;
+import java.awt.HeadlessException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -15,6 +16,9 @@ import javax.swing.JOptionPane;
  * @author USER
  */
 public final class JPanel_Manajemen_Jadwal extends javax.swing.JPanel {
+    
+    // Atribut
+    Connection conn = KoneksiDatabase.getConnection();
     
     /**
      * Creates new form JPanel_Manajemen_Jadwal
@@ -57,8 +61,7 @@ public final class JPanel_Manajemen_Jadwal extends javax.swing.JPanel {
         sql += "ORDER BY j.hari, j.jam_mulai ASC";
 
         // 4. Eksekusi Query
-        try (Connection conn = KoneksiDatabase.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+        try (PreparedStatement stmt = this.conn.prepareStatement(sql)) {
 
             if (isFilterActive) {
                 stmt.setString(1, searchTerm);
@@ -81,6 +84,7 @@ public final class JPanel_Manajemen_Jadwal extends javax.swing.JPanel {
                     model.addRow(row);
                 }
             }
+
         } catch (SQLException e) {
             javax.swing.JOptionPane.showMessageDialog(this, "Gagal memuat jadwal: " + e.getMessage());
         }
@@ -252,8 +256,8 @@ public final class JPanel_Manajemen_Jadwal extends javax.swing.JPanel {
                 .addGap(24, 24, 24)
                 .addComponent(lblJudul)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(25, 25, 25)
                 .addComponent(panelKontrol, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(24, Short.MAX_VALUE))
         );
@@ -322,9 +326,8 @@ public final class JPanel_Manajemen_Jadwal extends javax.swing.JPanel {
         if (pilihan == JOptionPane.YES_OPTION) {
             // 6. Lakukan operasi database
             String sql = "DELETE FROM jadwal_praktik WHERE jadwal_id = ?";
-
-            try (Connection conn = KoneksiDatabase.getConnection();
-                 PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            
+            try (PreparedStatement pstmt = this.conn.prepareStatement(sql)) {
 
                 pstmt.setString(1, idJadwal);
 
@@ -347,7 +350,8 @@ public final class JPanel_Manajemen_Jadwal extends javax.swing.JPanel {
                             JOptionPane.INFORMATION_MESSAGE);
                 }
 
-            } catch (Exception e) {
+
+            } catch (HeadlessException | SQLException e) {
                 JOptionPane.showMessageDialog(this, 
                         "Gagal menghapus data: " + e.getMessage(), 
                         "Error Database", 

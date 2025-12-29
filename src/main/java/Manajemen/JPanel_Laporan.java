@@ -40,6 +40,7 @@ import javax.swing.SwingUtilities;
 public class JPanel_Laporan extends javax.swing.JPanel implements Manajemen {
     
     // Atribut
+    Connection conn = KoneksiDatabase.getConnection();
     private final NumberFormat formatRupiah;
     private String tempTotalText = "";
            
@@ -177,8 +178,7 @@ public class JPanel_Laporan extends javax.swing.JPanel implements Manajemen {
 //                     "LEFT JOIN user u ON p.user_kasir_id = u.user_id " +
 //                     "WHERE DATE(p.tanggal_bayar) BETWEEN ? AND ?";
 //
-//        try (Connection conn = new KoneksiDatabase().getConnection();
-//            PreparedStatement pstmt = conn.prepareStatement(sql)) {
+//        try (PreparedStatement pstmt = this.conn.prepareStatement(sql)) {
 //            
 //            pstmt.setDate(1, dari);
 //            pstmt.setDate(2, sampai);
@@ -226,8 +226,7 @@ public class JPanel_Laporan extends javax.swing.JPanel implements Manajemen {
 //                     "JOIN user u ON d.user_id = u.user_id " + // Ambil nama dokter dari tabel user
 //                     "WHERE DATE(k.tanggal_kunjungan) BETWEEN ? AND ?";
 //
-//        try (Connection conn = new KoneksiDatabase().getConnection();
-//             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+//        try (PreparedStatement pstmt = this.conn.prepareStatement(sql)) {
 //            
 //            pstmt.setDate(1, dari);
 //            pstmt.setDate(2, sampai);
@@ -269,8 +268,7 @@ public class JPanel_Laporan extends javax.swing.JPanel implements Manajemen {
 //                     "GROUP BY o.obat_id, o.nama_obat, o.satuan, o.stok " +
 //                     "ORDER BY total_qty DESC";
 //
-//        try (Connection conn = new KoneksiDatabase().getConnection();
-//            PreparedStatement pstmt = conn.prepareStatement(sql)) {
+//        try (PreparedStatement pstmt = this.conn.prepareStatement(sql)) {
 //            
 //            pstmt.setDate(1, dari);
 //            pstmt.setDate(2, sampai);
@@ -313,9 +311,7 @@ public class JPanel_Laporan extends javax.swing.JPanel implements Manajemen {
                      "LEFT JOIN user u ON p.user_kasir_id = u.user_id " +
                      "WHERE DATE(p.tanggal_bayar) BETWEEN ? AND ?";
 
-        try {
-            Connection conn = Database.KoneksiDatabase.getConnection();
-            PreparedStatement pstmt = conn.prepareStatement(sql);
+        try (PreparedStatement pstmt = this.conn.prepareStatement(sql)) {
             pstmt.setDate(1, dari);
             pstmt.setDate(2, sampai);
             ResultSet rs = pstmt.executeQuery();
@@ -358,9 +354,7 @@ public class JPanel_Laporan extends javax.swing.JPanel implements Manajemen {
                      "JOIN user u ON d.user_id = u.user_id " + 
                      "WHERE DATE(k.tanggal_kunjungan) BETWEEN ? AND ?";
 
-        try {
-            Connection conn = Database.KoneksiDatabase.getConnection();
-            PreparedStatement pstmt = conn.prepareStatement(sql);
+        try (PreparedStatement pstmt = this.conn.prepareStatement(sql)) {
             pstmt.setDate(1, dari);
             pstmt.setDate(2, sampai);
             ResultSet rs = pstmt.executeQuery();
@@ -396,9 +390,7 @@ public class JPanel_Laporan extends javax.swing.JPanel implements Manajemen {
                      "GROUP BY o.obat_id, o.nama_obat, o.satuan, o.stok " +
                      "ORDER BY total_qty DESC";
 
-        try {
-            Connection conn = Database.KoneksiDatabase.getConnection();
-            PreparedStatement pstmt = conn.prepareStatement(sql);
+        try (PreparedStatement pstmt = this.conn.prepareStatement(sql)) {
             pstmt.setDate(1, dari);
             pstmt.setDate(2, sampai);
             ResultSet rs = pstmt.executeQuery();
@@ -662,23 +654,19 @@ public class JPanel_Laporan extends javax.swing.JPanel implements Manajemen {
                          "GROUP BY DATE(tanggal_bayar) " +
                          "ORDER BY tgl ASC";
 
-            try {
-                Connection conn = KoneksiDatabase.getConnection();  // Koneksi dibuka di sini
+            try (PreparedStatement pstmt = this.conn.prepareStatement(sql)) {  // PreparedStatement ditangani oleh try-with-resources
+                pstmt.setDate(1, sqlDari);
+                pstmt.setDate(2, sqlSampai);
+                ResultSet rs = pstmt.executeQuery();
 
-                try (PreparedStatement pstmt = conn.prepareStatement(sql)) {  // PreparedStatement ditangani oleh try-with-resources
-                    pstmt.setDate(1, sqlDari);
-                    pstmt.setDate(2, sqlSampai);
-                    ResultSet rs = pstmt.executeQuery();
-
-                    while (rs.next()) {
-                        String tanggal = rs.getString("tgl");
-                        double total = rs.getDouble("total");
-                        dataset.addValue(total, "Pendapatan", tanggal);
-                    }
-
-                    success = true;  // Set success jika data berhasil diproses
+                while (rs.next()) {
+                    String tanggal = rs.getString("tgl");
+                    double total = rs.getDouble("total");
+                    dataset.addValue(total, "Pendapatan", tanggal);
                 }
 
+                success = true;  // Set success jika data berhasil diproses
+            
             } catch (SQLException e) {
                 errorMsg = e.getMessage();
             }
@@ -730,8 +718,7 @@ public class JPanel_Laporan extends javax.swing.JPanel implements Manajemen {
 //                     "GROUP BY DATE(tanggal_bayar) " +
 //                     "ORDER BY tgl ASC";
 //
-//        try (Connection conn = new Database.KoneksiDatabase().getConnection();
-//             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+//        try (PreparedStatement pstmt = this.conn.prepareStatement(sql)) {
 //
 //            pstmt.setDate(1, sqlDari);
 //            pstmt.setDate(2, sqlSampai);
