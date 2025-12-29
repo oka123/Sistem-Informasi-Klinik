@@ -63,6 +63,7 @@ Dokter\JFrame_Main_Dokter$2.class
 Manajemen\JDialog_Form_Dokter$2.class
 Kasir\JFrame_Main_Kasir.class
 Main\JFrame_Login$4.class
+Resepsionis\JPanel_Informasi_Dokter$3.class
 Resepsionis\JPanel_Manajemen_Jadwal$2.class
 Resepsionis\JDialog_Form_Jadwal$DokterItem.class
 Manajemen\JDialog_Form_User$3$1.class
@@ -116,6 +117,7 @@ Manajemen\JFrame_Main_Manajemen$3.class
 Manajemen\JFrame_Main_Manajemen$9.class
 Manajemen\JDialog_Form_User$3.class
 Main\JFrame_Login.class
+Resepsionis\JPanel_Informasi_Dokter$2.class
 Resepsionis\JDialog_Form_Pasien$6.class
 Apoteker\SistemFarmasiApoteker.class
 Resepsionis\JPanel_Manajemen_Jadwal$1.class
