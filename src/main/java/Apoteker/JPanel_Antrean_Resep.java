@@ -1,5 +1,7 @@
 package Apoteker;
 
+
+
 import java.awt.Frame;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
@@ -160,6 +162,7 @@ public class JPanel_Antrean_Resep extends javax.swing.JPanel {
             jTable1.getColumnModel().getColumn(0).setResizable(false);
             jTable1.getColumnModel().getColumn(1).setResizable(false);
             jTable1.getColumnModel().getColumn(2).setResizable(false);
+<<<<<<< HEAD
         }
 
         add(jScrollPane2, java.awt.BorderLayout.CENTER);
@@ -183,6 +186,8 @@ public class JPanel_Antrean_Resep extends javax.swing.JPanel {
             jTable1.getColumnModel().getColumn(1).setResizable(false);
             jTable1.getColumnModel().getColumn(2).setResizable(false);
             jTable1.getColumnModel().getColumn(3).setResizable(false);
+=======
+>>>>>>> 907995d (final (kayaknya))
         }
 
 <<<<<<< HEAD
@@ -192,8 +197,9 @@ public class JPanel_Antrean_Resep extends javax.swing.JPanel {
         add(jScrollPane2, java.awt.BorderLayout.CENTER);
 
         tblAntreanResep.setBackground(new java.awt.Color(255, 255, 255));
+        tblAntreanResep.setFont(new java.awt.Font("Segoe UI", 0, 36)); // NOI18N
         tblAntreanResep.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        tblAntreanResep.setText("Antrean Resep Belum Diambil");
+        tblAntreanResep.setText("Antrean Resep");
         add(tblAntreanResep, java.awt.BorderLayout.PAGE_START);
 >>>>>>> 4a77825 ()
 

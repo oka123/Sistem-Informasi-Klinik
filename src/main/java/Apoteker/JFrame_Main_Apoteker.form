@@ -88,10 +88,13 @@
 >>>>>>> 0a4dd43 ()
 =======
                   <EmptySpace min="-2" pref="22" max="-2" attributes="0"/>
-                  <Group type="103" groupAlignment="1" attributes="0">
-                      <Component id="jLabel1" min="-2" pref="121" max="-2" attributes="0"/>
-                      <Component id="btnManajemenObat" min="-2" max="-2" attributes="0"/>
-                      <Component id="btnAntreanResep" min="-2" pref="121" max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <Component id="btn_logout" min="-2" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="1" max="-2" attributes="0">
+                          <Component id="jLabel1" max="32767" attributes="0"/>
+                          <Component id="btnManajemenObat" max="32767" attributes="0"/>
+                          <Component id="btnAntreanResep" max="32767" attributes="0"/>
+                      </Group>
                   </Group>
                   <EmptySpace pref="23" max="32767" attributes="0"/>
 >>>>>>> 4a77825 ()
@@ -108,12 +111,18 @@
                   <EmptySpace type="separate" max="-2" attributes="0"/>
                   <Component id="btnManajemenObat" min="-2" pref="33" max="-2" attributes="0"/>
 <<<<<<< HEAD
+<<<<<<< HEAD
                   <EmptySpace pref="164" max="32767" attributes="0"/>
                   <Component id="btn_logout" min="-2" pref="40" max="-2" attributes="0"/>
                   <EmptySpace min="-2" pref="49" max="-2" attributes="0"/>
 =======
                   <EmptySpace pref="253" max="32767" attributes="0"/>
 >>>>>>> 0a4dd43 ()
+=======
+                  <EmptySpace pref="164" max="32767" attributes="0"/>
+                  <Component id="btn_logout" min="-2" pref="40" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="49" max="-2" attributes="0"/>
+>>>>>>> 907995d (final (kayaknya))
               </Group>
           </Group>
         </DimensionLayout>
