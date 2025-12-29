@@ -16,6 +16,7 @@ import javax.swing.text.PlainDocument;
 
 public class JDialog_Form_Layanan extends javax.swing.JDialog implements Manajemen {
     // Atribut
+    Connection conn = KoneksiDatabase.getConnection();
     private Integer idLayanan = null;
     
     // Constructor
@@ -42,17 +43,14 @@ public class JDialog_Form_Layanan extends javax.swing.JDialog implements Manajem
     
     private void loadDataLayananForEdit() {
         String sql = "SELECT * FROM layanan WHERE layanan_id = ?";
-        try {
-            Connection conn = KoneksiDatabase.getConnection();  // Koneksi dibuka di sini
 
-            try (PreparedStatement pstmt = conn.prepareStatement(sql)) {  // PreparedStatement ditangani oleh try-with-resources
-                pstmt.setInt(1, idLayanan);
-                ResultSet rs = pstmt.executeQuery();
+        try (PreparedStatement pstmt = this.conn.prepareStatement(sql)) {  // PreparedStatement ditangani oleh try-with-resources
+            pstmt.setInt(1, idLayanan);
+            ResultSet rs = pstmt.executeQuery();
 
-                if (rs.next()) {
-                    txtNamaLayanan.setText(rs.getString("nama_layanan"));
-                    txtBiaya.setText(String.valueOf(rs.getDouble("biaya")));
-                }
+            if (rs.next()) {
+                txtNamaLayanan.setText(rs.getString("nama_layanan"));
+                txtBiaya.setText(String.valueOf(rs.getDouble("biaya")));
             }
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(this, "Gagal memuat data: " + e.getMessage());
@@ -248,15 +246,12 @@ public class JDialog_Form_Layanan extends javax.swing.JDialog implements Manajem
         try {
             // 3. Validasi & Parsing Angka
             double biaya = Double.parseDouble(biayaStr);
-            
-            // 4. Dapatkan Koneksi
-            Connection conn = KoneksiDatabase.getConnection();
-            
+                        
             // 5. Pilih Jalur (Tambah atau Edit)
             if (idLayanan == null) {
-                tambahLayanan(conn, nama, biaya);
+                tambahLayanan(this.conn, nama, biaya);
             } else {
-                editLayanan(conn, nama, biaya);
+                editLayanan(this.conn, nama, biaya);
             }
 
             JOptionPane.showMessageDialog(this, "Data berhasil disimpan.");

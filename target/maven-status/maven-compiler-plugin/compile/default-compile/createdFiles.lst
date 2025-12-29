@@ -67,6 +67,7 @@ Resepsionis\JDialog_Form_Pasien$2.class
 Manajemen\JFrame_Main_Manajemen.class
 Manajemen\JPanel_Manajemen_User$3.class
 Resepsionis\JPanel_Registrasi_Kunjungan$3.class
+Resepsionis\JPanel_Dashboard_Resepsionis$3.class
 Resepsionis\JPanel_Manajemen_Pasien$4.class
 Resepsionis\JPanel_Registrasi_Kunjungan.class
 Resepsionis\JPanel_Manajemen_Jadwal$4.class
@@ -98,7 +99,6 @@ Manajemen\JPanel_Laporan$2.class
 Manajemen\JFrame_Main_Manajemen$5.class
 Manajemen\JPanel_Manajemen_User$1.class
 Resepsionis\JPanel_Registrasi_Kunjungan$1.class
-Resepsionis\JDialog_Form_Pasien$7.class
 Main\JFrame_Login$1.class
 Manajemen\JPanel_Dashboard_Manajemen.class
 Resepsionis\JPanel_Manajemen_Pasien$6.class

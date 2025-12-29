@@ -22,6 +22,7 @@ import javax.swing.table.DefaultTableModel;
 public final class JPanel_Manajemen_Dokter extends javax.swing.JPanel implements Manajemen {
     
     // Atribut
+    Connection conn = KoneksiDatabase.getConnection();
     
     // Constructor
     public JPanel_Manajemen_Dokter() {
@@ -54,10 +55,7 @@ public final class JPanel_Manajemen_Dokter extends javax.swing.JPanel implements
             
             sql += " ORDER BY u.nama_lengkap ASC"; // Urutkan abjad nama
 
-            try {
-                Connection conn = KoneksiDatabase.getConnection();
-                PreparedStatement pstmt = conn.prepareStatement(sql);
-
+            try (PreparedStatement pstmt = this.conn.prepareStatement(sql)) {
                 if (isSearch) {
                     String pola = "%" + key + "%";
                     pstmt.setString(1, pola);
@@ -130,8 +128,7 @@ public final class JPanel_Manajemen_Dokter extends javax.swing.JPanel implements
 //        
 //        sql += " ORDER BY u.nama_lengkap ASC"; // Urutkan abjad nama
 //
-//        try (Connection conn = new KoneksiDatabase().getConnection();
-//             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+//        try (PreparedStatement pstmt = this.conn.prepareStatement(sql)) {
 //
 //            if (isSearch) {
 //                String pola = "%" + key + "%";
@@ -161,15 +158,13 @@ public final class JPanel_Manajemen_Dokter extends javax.swing.JPanel implements
     // Method Hapus dengan Transaksi (Hapus Dokter dulu, baru User)
     @Override
     public void hapusDokterDanUser(int idDokter) {
-        Connection conn = null;
         try {
-            conn = KoneksiDatabase.getConnection();
-            conn.setAutoCommit(false); 
+            this.conn.setAutoCommit(false); 
 
             // Ambil user_id (Query pakai int)
             String sqlGetUserId = "SELECT user_id FROM dokter WHERE dokter_id = ?";
             int userId = -1;
-            try (PreparedStatement pstmtGet = conn.prepareStatement(sqlGetUserId)) {
+            try (PreparedStatement pstmtGet = this.conn.prepareStatement(sqlGetUserId)) {
                 pstmtGet.setInt(1, idDokter); // SET INT
                 ResultSet rs = pstmtGet.executeQuery();
                 if (rs.next()) {
@@ -179,7 +174,7 @@ public final class JPanel_Manajemen_Dokter extends javax.swing.JPanel implements
 
             // Hapus dokter (Query pakai int)
             String sqlDelDokter = "DELETE FROM dokter WHERE dokter_id = ?";
-            try (PreparedStatement pstmtDelD = conn.prepareStatement(sqlDelDokter)) {
+            try (PreparedStatement pstmtDelD = this.conn.prepareStatement(sqlDelDokter)) {
                 pstmtDelD.setInt(1, idDokter); // SET INT
                 pstmtDelD.executeUpdate();
             }
@@ -187,21 +182,21 @@ public final class JPanel_Manajemen_Dokter extends javax.swing.JPanel implements
             // Hapus user
             if (userId != -1) {
                 String sqlDelUser = "DELETE FROM user WHERE user_id = ?";
-                try (PreparedStatement pstmtDelU = conn.prepareStatement(sqlDelUser)) {
+                try (PreparedStatement pstmtDelU = this.conn.prepareStatement(sqlDelUser)) {
                     pstmtDelU.setInt(1, userId);
                     pstmtDelU.executeUpdate();
                 }
             }
 
-            conn.commit(); 
+            this.conn.commit(); 
             JOptionPane.showMessageDialog(this, "Data dokter berhasil dihapus.");
             loadDataDokter("");
 
         } catch (HeadlessException | SQLException e) {
-            try { if (conn != null) conn.rollback(); } catch(SQLException ex){} 
+            try { if (this.conn != null) this.conn.rollback(); } catch(SQLException ex){} 
             JOptionPane.showMessageDialog(this, "Gagal menghapus: " + e.getMessage());
         } finally {
-            try { if (conn != null) { conn.setAutoCommit(true); } } catch(SQLException ex){}
+            try { if (this.conn != null) { this.conn.setAutoCommit(true); } } catch(SQLException ex){}
         }
     }
         

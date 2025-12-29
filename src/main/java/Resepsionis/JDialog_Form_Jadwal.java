@@ -4,6 +4,7 @@
  */
 package Resepsionis;
 
+import Database.KoneksiDatabase;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -35,14 +36,9 @@ public class JDialog_Form_Jadwal extends javax.swing.JDialog {
         }
     }
     
+    // Atribut
+    Connection conn = KoneksiDatabase.getConnection();
     
-    
-    
-    
-    
-    
-    
-
     /**
      * Creates new form JDialog_Form_Jadwal
      */
@@ -57,6 +53,8 @@ public class JDialog_Form_Jadwal extends javax.swing.JDialog {
         initCustomComponents();
         loadComboBoxDokter();
         
+        txtIDJadwal.setText("auto");
+        txtIDJadwal.setEnabled(false);
         
         javax.swing.JSpinner.DateEditor editorMulai = new javax.swing.JSpinner.DateEditor(spinnerJamMulai, "HH:mm");
         spinnerJamMulai.setEditor(editorMulai);
@@ -67,6 +65,8 @@ public class JDialog_Form_Jadwal extends javax.swing.JDialog {
         spinnerJamSelesai.setEditor(editorSelesai);
         spinnerJamSelesai.setValue(new java.util.Date());
         
+        txtIDJadwal.setText("auto");
+        txtIDJadwal.setEnabled(false);
         
         javax.swing.JSpinner.DateEditor editorMulai = new javax.swing.JSpinner.DateEditor(spinnerJamMulai, "HH:mm");
         spinnerJamMulai.setEditor(editorMulai);
@@ -76,9 +76,7 @@ public class JDialog_Form_Jadwal extends javax.swing.JDialog {
         javax.swing.JSpinner.DateEditor editorSelesai = new javax.swing.JSpinner.DateEditor(spinnerJamSelesai, "HH:mm");
         spinnerJamSelesai.setEditor(editorSelesai);
         spinnerJamSelesai.setValue(new java.util.Date());
-
-        // Set ID Jadwal (misal: auto-generate)
-        txtIDJadwal.setText(generateNewJadwalID());
+        
     }
     
     public JDialog_Form_Jadwal(java.awt.Frame parent, boolean modal, JPanel_Manajemen_Jadwal panelManajemen, String idJadwal) {
@@ -119,70 +117,68 @@ public class JDialog_Form_Jadwal extends javax.swing.JDialog {
         String sql = "SELECT d.dokter_id, u.nama_lengkap " +
                      "FROM dokter d JOIN user u ON d.user_id = u.user_id " +
                      "ORDER BY u.nama_lengkap ASC";
+        
+        try {
+            try (Statement stmt = this.conn.createStatement();
+                 ResultSet rs = stmt.executeQuery(sql);) {
 
-        try (Connection conn = Database.KoneksiDatabase.getConnection();
-             Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
+                while (rs.next()) {
+                    String id = rs.getString("dokter_id");
+                    String nama = rs.getString("nama_lengkap");
+                    comboDokter.addItem(new DokterItem(id, nama));
+                }
 
-            while (rs.next()) {
-                String id = rs.getString("dokter_id");
-                String nama = rs.getString("nama_lengkap");
-                comboDokter.addItem(new DokterItem(id, nama));
             }
-
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(this, "Gagal memuat dokter: " + e.getMessage());
         }
     }
     
-    private String generateNewJadwalID() {
-        // Logika Anda, misal "J-001"
-        return "J001"; // Placeholder
-    }
 
     private void loadDataForEdit() {
         // Pastikan query menggunakan nama kolom yang benar (jadwal_id)
         String sql = "SELECT * FROM jadwal_praktik WHERE jadwal_id = ?";
+        
+        try {
+            
+            try (PreparedStatement stmt = this.conn.prepareStatement(sql)) {
 
-        try (Connection conn = Database.KoneksiDatabase.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+                stmt.setString(1, idJadwalToEdit); // Variabel ID yang dikirim dari tabel
 
-            stmt.setString(1, idJadwalToEdit); // Variabel ID yang dikirim dari tabel
+                try (ResultSet rs = stmt.executeQuery()) {
+                    if (rs.next()) {
+                        // 1. SET HARI (Mudah, tinggal string)
+                        String hariDB = rs.getString("hari");
+                        comboHari.setSelectedItem(hariDB);
 
-            try (ResultSet rs = stmt.executeQuery()) {
-                if (rs.next()) {
-                    // 1. SET HARI (Mudah, tinggal string)
-                    String hariDB = rs.getString("hari");
-                    comboHari.setSelectedItem(hariDB);
+                        // 2. SET JAM (Perlu parsing dari String "09:00:00" ke Date)
+                        java.text.SimpleDateFormat formatJam = new java.text.SimpleDateFormat("HH:mm:ss");
+                        try {
+                            String jamMulaiStr = rs.getString("jam_mulai");
+                            String jamSelesaiStr = rs.getString("jam_selesai");
 
-                    // 2. SET JAM (Perlu parsing dari String "09:00:00" ke Date)
-                    java.text.SimpleDateFormat formatJam = new java.text.SimpleDateFormat("HH:mm:ss");
-                    try {
-                        String jamMulaiStr = rs.getString("jam_mulai");
-                        String jamSelesaiStr = rs.getString("jam_selesai");
+                            spinnerJamMulai.setValue(formatJam.parse(jamMulaiStr));
+                            spinnerJamSelesai.setValue(formatJam.parse(jamSelesaiStr));
+                        } catch (SQLException | ParseException e) {
+                            System.out.println("Error parsing jam: " + e.getMessage());
+                        }
 
-                        spinnerJamMulai.setValue(formatJam.parse(jamMulaiStr));
-                        spinnerJamSelesai.setValue(formatJam.parse(jamSelesaiStr));
-                    } catch (SQLException | ParseException e) {
-                        System.out.println("Error parsing jam: " + e.getMessage());
-                    }
+                        // 3. SET DOKTER (Agak Tricky)
+                        // Kita harus mencari DokterItem di dalam ComboBox yang ID-nya cocok
+                        String idDokterDB = rs.getString("dokter_id");
 
-                    // 3. SET DOKTER (Agak Tricky)
-                    // Kita harus mencari DokterItem di dalam ComboBox yang ID-nya cocok
-                    String idDokterDB = rs.getString("dokter_id");
-
-                    // Loop semua isi ComboBox untuk cari yang cocok
-                    for (int i = 0; i < comboDokter.getItemCount(); i++) {
-                        DokterItem item = (DokterItem) comboDokter.getItemAt(i);
-                        if (item.id.equals(idDokterDB)) {
-                            comboDokter.setSelectedIndex(i);
-                            break; // Ketemu, berhenti looping
+                        // Loop semua isi ComboBox untuk cari yang cocok
+                        for (int i = 0; i < comboDokter.getItemCount(); i++) {
+                            DokterItem item = (DokterItem) comboDokter.getItemAt(i);
+                            if (item.id.equals(idDokterDB)) {
+                                comboDokter.setSelectedIndex(i);
+                                break; // Ketemu, berhenti looping
+                            }
                         }
                     }
                 }
             }
-        } catch (Exception e) {
-            javax.swing.JOptionPane.showMessageDialog(this, "Gagal memuat data edit: " + e.getMessage());
+        } catch (SQLException e) {
             javax.swing.JOptionPane.showMessageDialog(this, "Gagal memuat data edit: " + e.getMessage());
         }
     }
@@ -402,79 +398,25 @@ public class JDialog_Form_Jadwal extends javax.swing.JDialog {
             // Gunakan jadwal_id sebagai kunci update
             sql = "UPDATE jadwal_praktik SET dokter_id=?, hari=?, jam_mulai=?, jam_selesai=? WHERE jadwal_id=?";
         }
-
-        try (Connection conn = Database.KoneksiDatabase.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-
-            stmt.setString(1, dokterDipilih.id);
-            stmt.setString(2, hari);
-            stmt.setString(3, jamMulai);
-            stmt.setString(4, jamSelesai);
-            
-            if (idJadwalToEdit != null) {
-                stmt.setString(5, idJadwalToEdit); 
-            }
-            
-            stmt.executeUpdate();
-
-            JOptionPane.showMessageDialog(this, "Jadwal berhasil ditambahkan!");
-            this.dispose(); // Tutup Form Dialog
-        DokterItem dokterDipilih = (DokterItem) comboDokter.getSelectedItem();
-        String hari = comboHari.getSelectedItem().toString();
-    
-        // Ambil Jam dari JSpinner (Asumsi pakai SpinnerDateModel)
-        // Jika pakai JTextField, cukup: txtJamMulai.getText()
-        java.util.Date dateMulai = (java.util.Date) spinnerJamMulai.getValue();
-        java.util.Date dateSelesai = (java.util.Date) spinnerJamSelesai.getValue();
-    
-        // Format ke String "HH:mm:ss" untuk MySQL
-        java.text.SimpleDateFormat formatJam = new java.text.SimpleDateFormat("HH:mm:ss");
-        String jamMulai = formatJam.format(dateMulai);
-        String jamSelesai = formatJam.format(dateSelesai);
-    
-        // 2. Validasi Sederhana
-        if (dokterDipilih == null) {
-            JOptionPane.showMessageDialog(this, "Pilih dokter terlebih dahulu!");
-            return;
-        }
-    
-        // Cek apakah jam selesai lebih awal dari jam mulai (Logika terbalik)
-        if (dateSelesai.before(dateMulai)) {
-             JOptionPane.showMessageDialog(this, "Jam Selesai tidak boleh lebih awal dari Jam Mulai!");
-             return;
-        }
-
-        // 3. Proses Simpan Database
-        String sql;
         
-        if (idJadwalToEdit == null) {
-        // --- MODE TAMBAH BARU ---
-            sql = "INSERT INTO jadwal_praktik (dokter_id, hari, jam_mulai, jam_selesai) VALUES (?, ?, ?, ?)";
-        } else {
-            // --- MODE EDIT (UPDATE) ---
-            // Gunakan jadwal_id sebagai kunci update
-            sql = "UPDATE jadwal_praktik SET dokter_id=?, hari=?, jam_mulai=?, jam_selesai=? WHERE jadwal_id=?";
-        }
+        try {
+            try (PreparedStatement stmt = this.conn.prepareStatement(sql)) {
 
-        try (Connection conn = Database.KoneksiDatabase.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+                stmt.setString(1, dokterDipilih.id);
+                stmt.setString(2, hari);
+                stmt.setString(3, jamMulai);
+                stmt.setString(4, jamSelesai);
 
-            stmt.setString(1, dokterDipilih.id);
-            stmt.setString(2, hari);
-            stmt.setString(3, jamMulai);
-            stmt.setString(4, jamSelesai);
-            
-            if (idJadwalToEdit != null) {
-                stmt.setString(5, idJadwalToEdit); 
+                if (idJadwalToEdit != null) {
+                    stmt.setString(5, idJadwalToEdit); 
+                }
+
+                stmt.executeUpdate();
+
+                JOptionPane.showMessageDialog(this, "Jadwal berhasil ditambahkan!");
+                this.dispose(); // Tutup Form Dialog
+
             }
-            
-            stmt.executeUpdate();
-
-            JOptionPane.showMessageDialog(this, "Jadwal berhasil ditambahkan!");
-            this.dispose(); // Tutup Form Dialog
-
-        } catch (SQLException e) {
-            JOptionPane.showMessageDialog(this, "Gagal menyimpan jadwal: " + e.getMessage());
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(this, "Gagal menyimpan jadwal: " + e.getMessage());
         }

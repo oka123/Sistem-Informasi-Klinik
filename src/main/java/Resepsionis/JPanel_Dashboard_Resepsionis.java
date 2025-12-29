@@ -4,9 +4,14 @@
  */
 package Resepsionis;
 
+import Database.KoneksiDatabase;
 import java.awt.CardLayout;
 import java.awt.Container;
 import java.awt.Image;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import javax.swing.ImageIcon;
 import javax.swing.SwingUtilities;
 
@@ -20,12 +25,23 @@ public class JPanel_Dashboard_Resepsionis extends javax.swing.JPanel {
     private final ImageIcon doctorIcon = new ImageIcon(getClass().getResource("/doctor.png"));
     private final ImageIcon calendarIcon = new ImageIcon(getClass().getResource("/calendar.png"));
     
+    // Atribut
+    Connection conn = KoneksiDatabase.getConnection();
+    
     /**
      * Creates new form JPanel_Dashboard_Admin
+     * @param namaResepsionis
      */
-    public JPanel_Dashboard_Resepsionis() {
+    public JPanel_Dashboard_Resepsionis(String namaResepsionis) {
         initComponents();
-        loadStatistik();
+        
+        // Set Teks Selamat Datang dengan Nama
+        if (namaResepsionis != null && !namaResepsionis.isEmpty()) {
+            lblWelcome.setText("Selamat datang kembali, " + namaResepsionis + "! Ini adalah ringkasan klinik hari ini.");
+        } else {
+            lblWelcome.setText("Selamat datang kembali, Nama Default Manajemen! Ini adalah ringkasan klinik hari ini.");
+        }
+        
         // Menjadwalkan update gambar setelah ukuran tombol tersedia
         SwingUtilities.invokeLater(() -> {
             // Sesuaikan ukuran gambar
@@ -33,14 +49,10 @@ public class JPanel_Dashboard_Resepsionis extends javax.swing.JPanel {
             lblIconDokter.setIcon(new ImageIcon(doctorIcon.getImage().getScaledInstance(lblIconDokter.getWidth(), lblIconDokter.getHeight(), Image.SCALE_SMOOTH)));
             lblIconKunjungan.setIcon(new ImageIcon(calendarIcon.getImage().getScaledInstance(lblIconKunjungan.getWidth(), lblIconKunjungan.getHeight(), Image.SCALE_SMOOTH)));
         });
-        loadDashboardData();
+        
+        loadStatistik();    
     }
     
-    public void loadDashboardData() {
-        // Contoh (angka_dari_db harus berupa String)
-//        lblJumlahPasien.setText(angka_dari_db_pasien);
-//        lblJumlahDokter.setText(angka_dari_db_dokter);
-    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -70,6 +82,7 @@ public class JPanel_Dashboard_Resepsionis extends javax.swing.JPanel {
         jSeparator2 = new javax.swing.JSeparator();
         btnAksesTambahPasien = new javax.swing.JButton();
         btnAksesLihatJadwal = new javax.swing.JButton();
+        refreshButton = new javax.swing.JLabel();
 
         setBackground(new java.awt.Color(255, 255, 255));
 
@@ -228,6 +241,16 @@ public class JPanel_Dashboard_Resepsionis extends javax.swing.JPanel {
             }
         });
 
+        refreshButton.setFont(new java.awt.Font("SansSerif", 1, 28)); // NOI18N
+        refreshButton.setForeground(new java.awt.Color(0, 0, 0));
+        refreshButton.setText("🔄");
+        refreshButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        refreshButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                refreshButtonMouseClicked(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -235,9 +258,12 @@ public class JPanel_Dashboard_Resepsionis extends javax.swing.JPanel {
             .addGroup(layout.createSequentialGroup()
                 .addGap(24, 24, 24)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 824, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 815, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(lblWelcome)
-                    .addComponent(lblJudul)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(lblJudul)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(refreshButton))
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                         .addComponent(jSeparator2, javax.swing.GroupLayout.Alignment.LEADING)
                         .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -257,12 +283,14 @@ public class JPanel_Dashboard_Resepsionis extends javax.swing.JPanel {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(24, 24, 24)
-                .addComponent(lblJudul)
-                .addGap(12, 12, 12)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(lblJudul)
+                    .addComponent(refreshButton))
+                .addGap(7, 7, 7)
                 .addComponent(lblWelcome)
-                .addGap(18, 18, 18)
-                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(cardTotalPasien, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(cardDokterAktif, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -275,7 +303,7 @@ public class JPanel_Dashboard_Resepsionis extends javax.swing.JPanel {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnAksesTambahPasien, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnAksesLihatJadwal, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(24, 24, 24))
+                .addContainerGap(24, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -301,6 +329,11 @@ public class JPanel_Dashboard_Resepsionis extends javax.swing.JPanel {
         cl.show(parent, "cardJadwal");
     }//GEN-LAST:event_btnAksesLihatJadwalActionPerformed
 
+    private void refreshButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_refreshButtonMouseClicked
+        // TODO add your handling code here:
+        this.loadStatistik();
+    }//GEN-LAST:event_refreshButtonMouseClicked
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAksesLihatJadwal;
@@ -322,43 +355,42 @@ public class JPanel_Dashboard_Resepsionis extends javax.swing.JPanel {
     private javax.swing.JLabel lblTitleKunjungan;
     private javax.swing.JLabel lblTitlePasien;
     private javax.swing.JLabel lblWelcome;
+    private javax.swing.JLabel refreshButton;
     // End of variables declaration//GEN-END:variables
 
-public void loadStatistik(){
+public void loadStatistik() {
     
-    try{
-      java.sql.Connection conn = Database.KoneksiDatabase.getConnection();
-      java.sql.Statement stmt = conn.createStatement();
-      java.sql.ResultSet rs;
     
-      rs = stmt.executeQuery("SELECT COUNT(*) FROM pasien");
-              
-      if(rs.next()){
+    try (Statement stmt = conn.createStatement()) {
+
+        ResultSet rs;
+        rs = stmt.executeQuery("SELECT COUNT(*) FROM pasien");
+
+        if(rs.next()){
             int jumlahPasien = rs.getInt(1);
 
             lblJumlahPasien.setText(String.valueOf(jumlahPasien));
-        
+
         }
-        
+
         rs = stmt.executeQuery("SELECT COUNT(*) FROM dokter");
-        
+
         if(rs.next()){
             int jumlahDokter = rs.getInt(1);
-            
+
             lblJumlahDokter.setText(String.valueOf(jumlahDokter));
         }
-        
+
         rs = stmt.executeQuery("SELECT COUNT(*) FROM kunjungan WHERE DATE(tanggal_kunjungan) = CURDATE()");
-        
+
         if(rs.next()){
             int jumlahKunjungan = rs.getInt(1);
-            
+
             lblJumlahKunjungan.setText(String.valueOf(jumlahKunjungan));
         }
-        
-        
-        conn.close();
-    }catch (Exception e){
+
+
+    } catch (SQLException e){
         System.out.println("Error Dashboard: " + e.getMessage());
     }
     

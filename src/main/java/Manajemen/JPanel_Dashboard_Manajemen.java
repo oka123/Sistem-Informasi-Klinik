@@ -23,6 +23,7 @@ import javax.swing.SwingUtilities;
 // Abstraction (implements)
 public class JPanel_Dashboard_Manajemen extends javax.swing.JPanel implements Manajemen {
     // Atribut
+    Connection conn = KoneksiDatabase.getConnection();
     
     // Icon
     private final ImageIcon kunjunganIcon = new ImageIcon(getClass().getResource("/Kunjungan.png"));
@@ -74,8 +75,7 @@ public class JPanel_Dashboard_Manajemen extends javax.swing.JPanel implements Ma
         ThreadPoolManager.getInstance().submit(() -> {
 //            KoneksiDatabase koneksi = new KoneksiDatabase();
             try {
-                Connection conn = KoneksiDatabase.getConnection();
-                if (conn != null) {
+                if (this.conn != null) {
                     // Variabel penampung hasil
                     String txtKunjungan = "0";
                     String txtPendapatan = "Rp 0";
@@ -83,21 +83,21 @@ public class JPanel_Dashboard_Manajemen extends javax.swing.JPanel implements Ma
 
                     // A. Hitung Kunjungan
                     String sqlKunjungan = "SELECT COUNT(*) AS total FROM kunjungan WHERE DATE(tanggal_kunjungan) = CURDATE()";
-                    try (PreparedStatement ps = conn.prepareStatement(sqlKunjungan); 
+                    try (PreparedStatement ps = this.conn.prepareStatement(sqlKunjungan); 
                             ResultSet rs = ps.executeQuery()) {
                         if (rs.next()) txtKunjungan = String.valueOf(rs.getLong("total"));
                     }
 
                     // B. Hitung Pendapatan
                     String sqlPendapatan = "SELECT SUM(total_bayar) AS total FROM pembayaran WHERE DATE(tanggal_bayar) = CURDATE()";
-                    try (PreparedStatement ps = conn.prepareStatement(sqlPendapatan); 
+                    try (PreparedStatement ps = this.conn.prepareStatement(sqlPendapatan); 
                             ResultSet rs = ps.executeQuery()) {
                         if (rs.next()) txtPendapatan = formatRupiah(rs.getDouble("total"));
                     }
 
                     // C. Hitung Pasien
                     String sqlPasien = "SELECT COUNT(*) AS total FROM pasien";
-                    try (PreparedStatement ps = conn.prepareStatement(sqlPasien); 
+                    try (PreparedStatement ps = this.conn.prepareStatement(sqlPasien); 
                             ResultSet rs = ps.executeQuery()) {
                         if (rs.next()) txtPasien = String.valueOf(rs.getLong("total"));
                     }
@@ -130,22 +130,21 @@ public class JPanel_Dashboard_Manajemen extends javax.swing.JPanel implements Ma
 //        koneksi = new KoneksiDatabase();
 //        
 //        try {
-//            conn = koneksi.getConnection();
-//            if (conn != null) {
+//            if (this.conn != null) {
 //                // Hitung Kunjungan Hari Ini
 //                // Asumsi: tabel 'kunjungan', kolom 'tanggal_kunjungan'
 //                String sqlKunjungan = "SELECT COUNT(*) AS total FROM kunjungan WHERE DATE(tanggal_kunjungan) = CURDATE()";
-//                setLabelFromQuery(conn, sqlKunjungan, lblJumlahKunjungan, false);
+//                setLabelFromQuery(this.conn, sqlKunjungan, lblJumlahKunjungan, false);
 //
 //                // Hitung Total Pendapatan Hari Ini
 //                // Asumsi: tabel 'pembayaran', kolom 'total_bayar', 'tanggal_bayar'
 //                String sqlPendapatan = "SELECT SUM(total_bayar) AS total FROM pembayaran WHERE DATE(tanggal_bayar) = CURDATE()";
-//                setLabelFromQuery(conn, sqlPendapatan, lblTotalPendapatan, true);
+//                setLabelFromQuery(this.conn, sqlPendapatan, lblTotalPendapatan, true);
 //
 //                // Hitung Total Pasien Terdaftar
 //                // Asumsi: tabel 'pasien'
 //                String sqlPasien = "SELECT COUNT(*) AS total FROM pasien";
-//                setLabelFromQuery(conn, sqlPasien, lblJumlahPasien, false);
+//                setLabelFromQuery(this.conn, sqlPasien, lblJumlahPasien, false);
 //            }
 //        } catch (SQLException e) {
 //            JOptionPane.showMessageDialog(this, "Gagal memuat data dashboard: " + e.getMessage());
@@ -154,8 +153,8 @@ public class JPanel_Dashboard_Manajemen extends javax.swing.JPanel implements Ma
     }
     
     // Method bantuan untuk menjalankan query dan set text ke label
-//    private void setLabelFromQuery(Connection conn, String sql, javax.swing.JLabel label, boolean isCurrency) {
-//        try (PreparedStatement pstmt = conn.prepareStatement(sql);
+//    private void setLabelFromQuery(Connection this.conn, String sql, javax.swing.JLabel label, boolean isCurrency) {
+//        try (PreparedStatement pstmt = this.conn.prepareStatement(sql);
 //             ResultSet rs = pstmt.executeQuery()) {
 //            
 //            if (rs.next()) {

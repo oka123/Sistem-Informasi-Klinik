@@ -5,6 +5,7 @@
 package Resepsionis;
 
 import Database.KoneksiDatabase;
+import java.awt.HeadlessException;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -18,6 +19,9 @@ import javax.swing.JOptionPane;
  * @author USER
  */
 public class JPanel_Registrasi_Kunjungan extends javax.swing.JPanel {
+    
+    // Atribut
+    Connection conn = KoneksiDatabase.getConnection();
     
     private String selectedPasienId = null; // Menyimpan ID pasien yg ditemukan
     
@@ -420,6 +424,7 @@ public class JPanel_Registrasi_Kunjungan extends javax.swing.JPanel {
         btnCariPasien.setFont(new java.awt.Font("SansSerif", 0, 14)); // NOI18N
         btnCariPasien.setForeground(java.awt.Color.white);
         btnCariPasien.setText("🔍  Cari");
+        btnCariPasien.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         btnCariPasien.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnCariPasienActionPerformed(evt);
@@ -558,7 +563,7 @@ public class JPanel_Registrasi_Kunjungan extends javax.swing.JPanel {
         panelStep1Layout.setVerticalGroup(
             panelStep1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panelStep1Layout.createSequentialGroup()
-                .addGap(15, 15, 15)
+                .addGap(12, 12, 12)
                 .addGroup(panelStep1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(txtCariPasien, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -606,14 +611,14 @@ public class JPanel_Registrasi_Kunjungan extends javax.swing.JPanel {
                     .addComponent(jLabel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(panelStep2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(cbDokter, javax.swing.GroupLayout.PREFERRED_SIZE, 688, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(cbPoli, javax.swing.GroupLayout.PREFERRED_SIZE, 688, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(cbDokter, javax.swing.GroupLayout.PREFERRED_SIZE, 300, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(cbPoli, javax.swing.GroupLayout.PREFERRED_SIZE, 300, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         panelStep2Layout.setVerticalGroup(
             panelStep2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panelStep2Layout.createSequentialGroup()
-                .addContainerGap(23, Short.MAX_VALUE)
+                .addContainerGap(24, Short.MAX_VALUE)
                 .addGroup(panelStep2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addContainerGap(23, Short.MAX_VALUE)
                 .addGroup(panelStep2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -624,7 +629,7 @@ public class JPanel_Registrasi_Kunjungan extends javax.swing.JPanel {
                 .addGroup(panelStep2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(cbDokter, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(27, 27, 27))
+                .addGap(24, 24, 24))
         );
 
         PanelEstimasi.setLayout(new java.awt.GridBagLayout());
@@ -652,6 +657,7 @@ public class JPanel_Registrasi_Kunjungan extends javax.swing.JPanel {
         btnDaftarkan.setFont(new java.awt.Font("SansSerif", 1, 16)); // NOI18N
         btnDaftarkan.setForeground(java.awt.Color.white);
         btnDaftarkan.setText("✚  Daftarkan Pasien ke Antrean");
+        btnDaftarkan.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         btnDaftarkan.setEnabled(false);
         btnDaftarkan.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -725,13 +731,13 @@ public class JPanel_Registrasi_Kunjungan extends javax.swing.JPanel {
                 .addComponent(panelStep1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(panelStep2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(41, 41, 41)
+                .addGap(18, 18, 18)
                 .addComponent(PanelEstimasi, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(btnDaftarkan, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(24, 24, 24)
+                .addGap(18, 18, 18)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 472, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(24, Short.MAX_VALUE))
         );
@@ -777,7 +783,7 @@ public class JPanel_Registrasi_Kunjungan extends javax.swing.JPanel {
 
     // 3. Konfirmasi (Opsional, biar aman)
     int pilihan = javax.swing.JOptionPane.showConfirmDialog(this, 
-            "Daftarkan pasien " + label_nama.getText() + "\nKe " + dokter.nama + "?",
+            "Daftarkan pasien " + label_nama.getText() + "\nKe Dokter " + dokter.nama + "?",
             "Konfirmasi Pendaftaran", 
             javax.swing.JOptionPane.YES_NO_OPTION);
     // 2. Ambil Data dari Form
@@ -812,26 +818,25 @@ public class JPanel_Registrasi_Kunjungan extends javax.swing.JPanel {
     String sql = "INSERT INTO kunjungan (pasien_id, dokter_id, user_resepsionis_id, tanggal_kunjungan, status_kunjungan) " +
                  "VALUES (?, ?, ?, NOW(), 'Menunggu')";
 
-    try (Connection conn = Database.KoneksiDatabase.getConnection();
-         PreparedStatement stmt = conn.prepareStatement(sql)) {
+    try (PreparedStatement stmt = this.conn.prepareStatement(sql)) {
 
         // Set Parameter Tanda Tanya (?)
         stmt.setString(1, pasienId);      // Pasien ID
         stmt.setString(2, dokterId);      // Dokter ID
         stmt.setString(3, resepsionisId); // Resepsionis ID
-        
+
         // Eksekusi
         int berhasil = stmt.executeUpdate();
 
         if (berhasil > 0) {
             javax.swing.JOptionPane.showMessageDialog(this, "Pasien berhasil didaftarkan ke antrean!", "Sukses", javax.swing.JOptionPane.INFORMATION_MESSAGE);
-            
+
             // --- PENTING: Refresh Tabel Bawah ---
             loadDataAntrean(); 
             // ------------------------------------
             //refresh angka estimasi
             tampilkanEstimasiAntrean();
-            
+
             // Reset Form biar bersih
             txtCariPasien.setText("");
             // Kosongkan label detail pasien jika perlu
@@ -839,7 +844,7 @@ public class JPanel_Registrasi_Kunjungan extends javax.swing.JPanel {
             selectedPasienId = null; // Reset ID terpilih
         }
 
-    } catch (Exception e) {
+    } catch (HeadlessException | SQLException e) {
         javax.swing.JOptionPane.showMessageDialog(this, "Gagal menyimpan ke database: " + e.getMessage(), "Error Database", javax.swing.JOptionPane.ERROR_MESSAGE);
         e.printStackTrace(); // Cek error di output bawah NetBeans
     }
@@ -915,8 +920,7 @@ public class JPanel_Registrasi_Kunjungan extends javax.swing.JPanel {
         // Query: Cari berdasarkan ID ATAU Nama yang mirip
         String sql = "SELECT * FROM pasien WHERE pasien_id = ? OR nama_pasien LIKE ?";
 
-        try (Connection conn = Database.KoneksiDatabase.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+        try (PreparedStatement stmt = this.conn.prepareStatement(sql)) {
 
              // Parameter 1: Cari ID Pasien (Persis)
              stmt.setString(1, keyword);
@@ -924,7 +928,7 @@ public class JPanel_Registrasi_Kunjungan extends javax.swing.JPanel {
              stmt.setString(2, "%" + keyword + "%");
 
              ResultSet rs = stmt.executeQuery();
-        
+
             if (rs.next()) {
                 // --- JIKA DATA DITEMUKAN ---
 
@@ -949,8 +953,8 @@ public class JPanel_Registrasi_Kunjungan extends javax.swing.JPanel {
 
                 // Opsional: Beri warna hijau pada teks agar terlihat 'Found'
                 label_nama.setForeground(new java.awt.Color(0, 153, 51));
-                
-                
+
+
                 panelInfoPasien.setVisible(true); // Munculkan detail pasien
                 panelStep2.setEnabled(true);      // Aktifkan panel dokter
                 cbDokter.setEnabled(true);     // Aktifkan combo box
@@ -963,6 +967,7 @@ public class JPanel_Registrasi_Kunjungan extends javax.swing.JPanel {
                 resetFormPasien();
                 JOptionPane.showMessageDialog(this, "Data pasien tidak ditemukan!", "Info", JOptionPane.INFORMATION_MESSAGE);
             }
+
         
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(this, "Error Database: " + e.getMessage());
@@ -995,15 +1000,13 @@ public class JPanel_Registrasi_Kunjungan extends javax.swing.JPanel {
                  "ORDER BY k.kunjungan_id DESC"; // Yang baru daftar ada di atas
 
     // 3. Eksekusi Query
-    try (Connection conn = Database.KoneksiDatabase.getConnection();
-         PreparedStatement stmt = conn.prepareStatement(sql);
+    try (PreparedStatement stmt = this.conn.prepareStatement(sql);
          ResultSet rs = stmt.executeQuery()) {
-
         while (rs.next()) {
             // Kita format ID Kunjungan jadi format Antrean, misal "ANT-001"
             String idRaw = rs.getString("kunjungan_id");
             String noAntrean = "ANT-" + idRaw; 
-            
+
             Object[] row = {
                 noAntrean,
                 rs.getString("nama_pasien"),
@@ -1013,7 +1016,6 @@ public class JPanel_Registrasi_Kunjungan extends javax.swing.JPanel {
             };
             model.addRow(row);
         }
-        
     } catch (SQLException e) {
         javax.swing.JOptionPane.showMessageDialog(this, "Gagal memuat antrean: " + e.getMessage());
     }
@@ -1025,17 +1027,15 @@ public class JPanel_Registrasi_Kunjungan extends javax.swing.JPanel {
       // Ambil data spesialisasi yang unik (DISTINCT)
       String sql = "SELECT DISTINCT spesialisasi FROM dokter ORDER BY spesialisasi";
 
-      try (Connection conn = KoneksiDatabase.getConnection();
-          Statement stmt = conn.createStatement();
-          ResultSet rs = stmt.executeQuery(sql);) {
-          
-          while (rs.next()) {
-              String spes = rs.getString("spesialisasi");
-              if (spes != null && !spes.isEmpty()) {
-                  cbPoli.addItem(spes);
-              }
-          }
+    try (Statement stmt = this.conn.createStatement();
+        ResultSet rs = stmt.executeQuery(sql);) {
 
+        while (rs.next()) {
+            String spes = rs.getString("spesialisasi");
+            if (spes != null && !spes.isEmpty()) {
+                cbPoli.addItem(spes);
+            }
+        }
       } catch (SQLException e) {
         // Tangani SQL Exception secara spesifik untuk debugging
         javax.swing.JOptionPane.showMessageDialog(this, "Gagal memuat poli: " + e.getMessage());
@@ -1058,23 +1058,23 @@ public class JPanel_Registrasi_Kunjungan extends javax.swing.JPanel {
                   "JOIN user u ON d.user_id = u.user_id " +
                   "WHERE d.spesialisasi = ? " +
                   "ORDER BY u.nama_lengkap ASC";
+     
+    try (PreparedStatement stmt = this.conn.prepareStatement(sql)) {
 
-     try (Connection conn = KoneksiDatabase.getConnection();
-          PreparedStatement stmt = conn.prepareStatement(sql)) {
+        stmt.setString(1, poliDipilih);
 
-         stmt.setString(1, poliDipilih);
+        try (ResultSet rs = stmt.executeQuery()) {
+            while (rs.next()) {
+                String id = rs.getString("dokter_id");
+                String nama = rs.getString("nama_lengkap");
 
-         try (ResultSet rs = stmt.executeQuery()) {
-             while (rs.next()) {
-                 String id = rs.getString("dokter_id");
-                 String nama = rs.getString("nama_lengkap");
+                // Masukkan ke ComboBox sebagai Objek
+                cbDokter.addItem(new DokterItem(id, nama));
+            }
+        }
 
-                 // Masukkan ke ComboBox sebagai Objek
-                 cbDokter.addItem(new DokterItem(id, nama));
-             }
-         }
-
-     } catch (Exception e) {
+    
+     } catch (SQLException e) {
          javax.swing.JOptionPane.showMessageDialog(this, "Gagal memuat dokter: " + e.getMessage());
      }
      
@@ -1084,29 +1084,27 @@ public class JPanel_Registrasi_Kunjungan extends javax.swing.JPanel {
   private void tampilkanEstimasiAntrean() {
     // Logic: Hitung jumlah kunjungan HARI INI
     String sql = "SELECT COUNT(*) AS total FROM kunjungan WHERE DATE(tanggal_kunjungan) = CURDATE()";
-    
-    try (Connection conn = Database.KoneksiDatabase.getConnection();
-         Statement stmt = conn.createStatement();
+
+    try (Statement stmt = this.conn.createStatement();
          ResultSet rs = stmt.executeQuery(sql)) {
-        
+
         if (rs.next()) {
             int totalHariIni = rs.getInt("total");
             int antreanBerikutnya = totalHariIni + 1;
-            
+
             // Tampilkan di Panel Estimasi (Saya asumsikan Anda punya JLabel di sana)
             // Jika belum ada Label, buat JLabel baru di panel bawah bernama 'lblEstimasi'
             // Format contoh: "Antrean Berikutnya: Nomor 5"
-            
+
             // Update Label Judul di panel bawah (lblEstimasi atau sejenisnya)
             // Pastikan Anda sudah memberi nama variabel pada JLabel di panel hitam bawah tersebut
             // Contoh nama variabel: lblAngkaAntrean
-            
+
             //label_antrean.setText("Nomor Antrean Berikutnya: " + antreanBerikutnya);
             // Set teks HANYA angkanya saja
             label_antrean.setText(String.valueOf(antreanBerikutnya));
         }
-        
-    } catch (Exception e) {
+    } catch (SQLException e) {
         e.printStackTrace();
     }
 }
@@ -1119,19 +1117,17 @@ public class JPanel_Registrasi_Kunjungan extends javax.swing.JPanel {
     String idBersih = idKunjunganRaw.replaceAll("[^0-9]", ""); // Hanya ambil angka
     
     String sql = "UPDATE kunjungan SET status_kunjungan = ? WHERE kunjungan_id = ?";
-    
-    try (Connection conn = Database.KoneksiDatabase.getConnection();
-         PreparedStatement stmt = conn.prepareStatement(sql)) {
-        
+
+    try (PreparedStatement stmt = this.conn.prepareStatement(sql)) {
+
         stmt.setString(1, statusBaru);
         stmt.setString(2, idBersih);
-        
+
         stmt.executeUpdate();
-        
+
         // Refresh tabel agar status berubah
         loadDataAntrean(); 
-        
-    } catch (Exception e) {
+    } catch (SQLException e) {
         javax.swing.JOptionPane.showMessageDialog(this, "Gagal update status: " + e.getMessage());
     }
 }
@@ -1139,16 +1135,14 @@ public class JPanel_Registrasi_Kunjungan extends javax.swing.JPanel {
   private void hapusAntrean(String idKunjunganRaw) {
     String idBersih = idKunjunganRaw.replaceAll("[^0-9]", "");
     String sql = "DELETE FROM kunjungan WHERE kunjungan_id = ?";
-    
-    try (Connection conn = Database.KoneksiDatabase.getConnection();
-         PreparedStatement stmt = conn.prepareStatement(sql)) {
-        
+
+    try (PreparedStatement stmt = this.conn.prepareStatement(sql)) {
+
         stmt.setString(1, idBersih);
         stmt.executeUpdate();
         loadDataAntrean(); // Refresh
         tampilkanEstimasiAntrean(); // Refresh angka estimasi juga
-        
-    } catch (Exception e) {
+    } catch (SQLException e) {
         javax.swing.JOptionPane.showMessageDialog(this, "Gagal hapus: " + e.getMessage());
     }
 }
