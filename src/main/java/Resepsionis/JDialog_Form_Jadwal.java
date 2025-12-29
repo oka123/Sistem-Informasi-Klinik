@@ -4,11 +4,12 @@
  */
 package Resepsionis;
 
-//import java.awt.HeadlessException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
+import java.text.ParseException;
 import javax.swing.JOptionPane;
 
 /**
@@ -17,7 +18,6 @@ import javax.swing.JOptionPane;
  */
 public class JDialog_Form_Jadwal extends javax.swing.JDialog {
     
-    private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(JDialog_Form_Jadwal.class.getName());
     
     class DokterItem {
         public String id;
@@ -38,23 +38,34 @@ public class JDialog_Form_Jadwal extends javax.swing.JDialog {
     
     
     
+    
+    
+    
+    
 
     /**
      * Creates new form JDialog_Form_Jadwal
      */
     private String idJadwalToEdit = null;
     // Tambahkan juga referensi ke panel tabel (opsional tapi berguna)
-    private JPanel_Manajemen_Jadwal panelManajemen;
-    private java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("HH:mm");
     
     public JDialog_Form_Jadwal(java.awt.Frame parent, boolean modal, JPanel_Manajemen_Jadwal panelManajemen) {
         super(parent, modal);
         initComponents();
-        this.panelManajemen = panelManajemen; // Simpan referensi panel
 
         // Panggil method kustomisasi
         initCustomComponents();
         loadComboBoxDokter();
+        
+        
+        javax.swing.JSpinner.DateEditor editorMulai = new javax.swing.JSpinner.DateEditor(spinnerJamMulai, "HH:mm");
+        spinnerJamMulai.setEditor(editorMulai);
+        spinnerJamMulai.setValue(new java.util.Date()); // Set jam sekarang
+
+        // Setting Format Spinner Jam Selesai
+        javax.swing.JSpinner.DateEditor editorSelesai = new javax.swing.JSpinner.DateEditor(spinnerJamSelesai, "HH:mm");
+        spinnerJamSelesai.setEditor(editorSelesai);
+        spinnerJamSelesai.setValue(new java.util.Date());
         
         
         javax.swing.JSpinner.DateEditor editorMulai = new javax.swing.JSpinner.DateEditor(spinnerJamMulai, "HH:mm");
@@ -110,7 +121,7 @@ public class JDialog_Form_Jadwal extends javax.swing.JDialog {
                      "ORDER BY u.nama_lengkap ASC";
 
         try (Connection conn = Database.KoneksiDatabase.getConnection();
-             java.sql.Statement stmt = conn.createStatement();
+             Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
 
             while (rs.next()) {
@@ -133,12 +144,12 @@ public class JDialog_Form_Jadwal extends javax.swing.JDialog {
         // Pastikan query menggunakan nama kolom yang benar (jadwal_id)
         String sql = "SELECT * FROM jadwal_praktik WHERE jadwal_id = ?";
 
-        try (java.sql.Connection conn = Database.KoneksiDatabase.getConnection();
-             java.sql.PreparedStatement stmt = conn.prepareStatement(sql)) {
+        try (Connection conn = Database.KoneksiDatabase.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setString(1, idJadwalToEdit); // Variabel ID yang dikirim dari tabel
 
-            try (java.sql.ResultSet rs = stmt.executeQuery()) {
+            try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
                     // 1. SET HARI (Mudah, tinggal string)
                     String hariDB = rs.getString("hari");
@@ -152,7 +163,7 @@ public class JDialog_Form_Jadwal extends javax.swing.JDialog {
 
                         spinnerJamMulai.setValue(formatJam.parse(jamMulaiStr));
                         spinnerJamSelesai.setValue(formatJam.parse(jamSelesaiStr));
-                    } catch (Exception e) {
+                    } catch (SQLException | ParseException e) {
                         System.out.println("Error parsing jam: " + e.getMessage());
                     }
 
@@ -171,6 +182,7 @@ public class JDialog_Form_Jadwal extends javax.swing.JDialog {
                 }
             }
         } catch (Exception e) {
+            javax.swing.JOptionPane.showMessageDialog(this, "Gagal memuat data edit: " + e.getMessage());
             javax.swing.JOptionPane.showMessageDialog(this, "Gagal memuat data edit: " + e.getMessage());
         }
     }
@@ -195,6 +207,7 @@ public class JDialog_Form_Jadwal extends javax.swing.JDialog {
         jLabel6 = new javax.swing.JLabel();
         btnSimpan = new javax.swing.JButton();
         btnBatal = new javax.swing.JButton();
+        comboDokter = new javax.swing.JComboBox();
         comboDokter = new javax.swing.JComboBox();
         comboHari = new javax.swing.JComboBox<>();
         spinnerJamMulai = new javax.swing.JSpinner();
@@ -263,8 +276,10 @@ public class JDialog_Form_Jadwal extends javax.swing.JDialog {
 
         comboDokter.setFont(new java.awt.Font("SansSerif", 0, 14)); // NOI18N
         comboDokter.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Dokter1", "Dokter2", "Dokter3" }));
+        comboDokter.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Dokter1", "Dokter2", "Dokter3" }));
 
         comboHari.setFont(new java.awt.Font("SansSerif", 0, 14)); // NOI18N
+        comboHari.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu" }));
         comboHari.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu" }));
 
         javax.swing.GroupLayout panelFormLayout = new javax.swing.GroupLayout(panelForm);
@@ -404,10 +419,66 @@ public class JDialog_Form_Jadwal extends javax.swing.JDialog {
 
             JOptionPane.showMessageDialog(this, "Jadwal berhasil ditambahkan!");
             this.dispose(); // Tutup Form Dialog
+        DokterItem dokterDipilih = (DokterItem) comboDokter.getSelectedItem();
+        String hari = comboHari.getSelectedItem().toString();
+    
+        // Ambil Jam dari JSpinner (Asumsi pakai SpinnerDateModel)
+        // Jika pakai JTextField, cukup: txtJamMulai.getText()
+        java.util.Date dateMulai = (java.util.Date) spinnerJamMulai.getValue();
+        java.util.Date dateSelesai = (java.util.Date) spinnerJamSelesai.getValue();
+    
+        // Format ke String "HH:mm:ss" untuk MySQL
+        java.text.SimpleDateFormat formatJam = new java.text.SimpleDateFormat("HH:mm:ss");
+        String jamMulai = formatJam.format(dateMulai);
+        String jamSelesai = formatJam.format(dateSelesai);
+    
+        // 2. Validasi Sederhana
+        if (dokterDipilih == null) {
+            JOptionPane.showMessageDialog(this, "Pilih dokter terlebih dahulu!");
+            return;
+        }
+    
+        // Cek apakah jam selesai lebih awal dari jam mulai (Logika terbalik)
+        if (dateSelesai.before(dateMulai)) {
+             JOptionPane.showMessageDialog(this, "Jam Selesai tidak boleh lebih awal dari Jam Mulai!");
+             return;
+        }
+
+        // 3. Proses Simpan Database
+        String sql;
+        
+        if (idJadwalToEdit == null) {
+        // --- MODE TAMBAH BARU ---
+            sql = "INSERT INTO jadwal_praktik (dokter_id, hari, jam_mulai, jam_selesai) VALUES (?, ?, ?, ?)";
+        } else {
+            // --- MODE EDIT (UPDATE) ---
+            // Gunakan jadwal_id sebagai kunci update
+            sql = "UPDATE jadwal_praktik SET dokter_id=?, hari=?, jam_mulai=?, jam_selesai=? WHERE jadwal_id=?";
+        }
+
+        try (Connection conn = Database.KoneksiDatabase.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, dokterDipilih.id);
+            stmt.setString(2, hari);
+            stmt.setString(3, jamMulai);
+            stmt.setString(4, jamSelesai);
+            
+            if (idJadwalToEdit != null) {
+                stmt.setString(5, idJadwalToEdit); 
+            }
+            
+            stmt.executeUpdate();
+
+            JOptionPane.showMessageDialog(this, "Jadwal berhasil ditambahkan!");
+            this.dispose(); // Tutup Form Dialog
 
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(this, "Gagal menyimpan jadwal: " + e.getMessage());
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(this, "Gagal menyimpan jadwal: " + e.getMessage());
         }
+      
       
     }//GEN-LAST:event_btnSimpanActionPerformed
 
@@ -424,6 +495,7 @@ public class JDialog_Form_Jadwal extends javax.swing.JDialog {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnBatal;
     private javax.swing.JButton btnSimpan;
+    private javax.swing.JComboBox comboDokter;
     private javax.swing.JComboBox comboDokter;
     private javax.swing.JComboBox<String> comboHari;
     private javax.swing.JLabel jLabel1;

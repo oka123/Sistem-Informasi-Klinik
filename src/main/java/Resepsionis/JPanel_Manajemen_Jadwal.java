@@ -6,11 +6,9 @@ package Resepsionis;
 import Database.KoneksiDatabase;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-//import java.sql.ResultSet;
-//import javax.swing.table.DefaultTableModel;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import javax.swing.JOptionPane;
-import javax.swing.SwingUtilities;
-import java.awt.Frame;
 
 /**
  *
@@ -31,7 +29,11 @@ public final class JPanel_Manajemen_Jadwal extends javax.swing.JPanel {
         tblJadwal.getTableHeader().setForeground(new java.awt.Color(255,255,255)); // Teks putih
 
         loadDataJadwal("Semua Hari");
+        loadDataJadwal("Semua Hari");
     }
+    
+    
+    
     
     
     
@@ -59,14 +61,14 @@ public final class JPanel_Manajemen_Jadwal extends javax.swing.JPanel {
         sql += "ORDER BY j.hari, j.jam_mulai ASC";
 
         // 4. Eksekusi Query
-        try (java.sql.Connection conn = Database.KoneksiDatabase.getConnection();
-             java.sql.PreparedStatement stmt = conn.prepareStatement(sql)) {
+        try (Connection conn = KoneksiDatabase.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             if (isFilterActive) {
                 stmt.setString(1, searchTerm);
             }
 
-            try (java.sql.ResultSet rs = stmt.executeQuery()) {
+            try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
                     // Format Jam agar tampil HH:mm (tanpa detik) - Opsional
                     String jamMulai = rs.getString("jam_mulai").substring(0, 5); 
@@ -83,7 +85,7 @@ public final class JPanel_Manajemen_Jadwal extends javax.swing.JPanel {
                     model.addRow(row);
                 }
             }
-        } catch (java.sql.SQLException e) {
+        } catch (SQLException e) {
             javax.swing.JOptionPane.showMessageDialog(this, "Gagal memuat jadwal: " + e.getMessage());
         }
     }
@@ -204,7 +206,7 @@ public final class JPanel_Manajemen_Jadwal extends javax.swing.JPanel {
         panelKontrolLayout.setHorizontalGroup(
             panelKontrolLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panelKontrolLayout.createSequentialGroup()
-                .addContainerGap()
+                .addGap(0, 0, 0)
                 .addGroup(panelKontrolLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(scrollPaneTabel)
                     .addGroup(panelKontrolLayout.createSequentialGroup()
@@ -217,7 +219,7 @@ public final class JPanel_Manajemen_Jadwal extends javax.swing.JPanel {
                         .addComponent(jLabel1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(comboFilterHari, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap())
+                .addGap(0, 0, 0))
         );
         panelKontrolLayout.setVerticalGroup(
             panelKontrolLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -232,6 +234,7 @@ public final class JPanel_Manajemen_Jadwal extends javax.swing.JPanel {
                         .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(18, 18, 18)
                 .addComponent(scrollPaneTabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(scrollPaneTabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
@@ -239,29 +242,25 @@ public final class JPanel_Manajemen_Jadwal extends javax.swing.JPanel {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addGap(24, 24, 24)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jSeparator1))
+                    .addComponent(jSeparator1)
+                    .addComponent(panelKontrol, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(panelKontrol, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
-                        .addGap(17, 17, 17)
                         .addComponent(lblJudul)
-                        .addGap(0, 537, Short.MAX_VALUE)))
-                .addContainerGap())
+                        .addGap(0, 512, Short.MAX_VALUE)))
+                .addGap(24, 24, 24))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(18, 18, 18)
+                .addGap(24, 24, 24)
                 .addComponent(lblJudul)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGap(18, 18, 18)
                 .addComponent(panelKontrol, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(188, Short.MAX_VALUE))
+                .addContainerGap(24, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -269,6 +268,9 @@ public final class JPanel_Manajemen_Jadwal extends javax.swing.JPanel {
         // TODO add your handling code here:
         JDialog_Form_Jadwal formJadwal = new JDialog_Form_Jadwal(null, true, this);
         formJadwal.setVisible(true);
+        String filterSaatIni = comboFilterHari.getSelectedItem().toString();
+        
+        loadDataJadwal(filterSaatIni);
         String filterSaatIni = comboFilterHari.getSelectedItem().toString();
         
         loadDataJadwal(filterSaatIni);
@@ -293,6 +295,9 @@ public final class JPanel_Manajemen_Jadwal extends javax.swing.JPanel {
 
         JDialog_Form_Jadwal formJadwal = new JDialog_Form_Jadwal(null, true, this, idJadwal);
         formJadwal.setVisible(true);
+        
+        String filterSaatIni = comboFilterHari.getSelectedItem().toString();
+        loadDataJadwal(filterSaatIni);
         
         String filterSaatIni = comboFilterHari.getSelectedItem().toString();
         loadDataJadwal(filterSaatIni);
@@ -329,7 +334,39 @@ public final class JPanel_Manajemen_Jadwal extends javax.swing.JPanel {
         if (pilihan == JOptionPane.YES_OPTION) {
             // 6. Lakukan operasi database
             String sql = "DELETE FROM jadwal_praktik WHERE jadwal_id = ?";
+            String sql = "DELETE FROM jadwal_praktik WHERE jadwal_id = ?";
 
+            try (Connection conn = KoneksiDatabase.getConnection();
+                 PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+                pstmt.setString(1, idJadwal);
+
+                // 7. Eksekusi delete
+                int rowsAffected = pstmt.executeUpdate();
+
+                if (rowsAffected > 0) {
+                    JOptionPane.showMessageDialog(this, 
+                            "Data jadwal berhasil dihapus.", 
+                            "Sukses", 
+                            JOptionPane.INFORMATION_MESSAGE);
+
+                    // 8. Muat ulang data (dan bersihkan pencarian)
+                       String filterSaatIni = comboFilterHari.getSelectedItem().toString();
+                       loadDataJadwal(filterSaatIni);
+                } else {
+                    JOptionPane.showMessageDialog(this, 
+                            "Data jadwal tidak ditemukan (mungkin sudah dihapus).", 
+                            "Info", 
+                            JOptionPane.INFORMATION_MESSAGE);
+                }
+
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(this, 
+                        "Gagal menghapus data: " + e.getMessage(), 
+                        "Error Database", 
+                        JOptionPane.ERROR_MESSAGE);
+//                e.printStackTrace();
+            }
             try (Connection conn = KoneksiDatabase.getConnection();
                  PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
@@ -366,6 +403,10 @@ public final class JPanel_Manajemen_Jadwal extends javax.swing.JPanel {
 
     private void comboFilterHariActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboFilterHariActionPerformed
         // TODO add your handling code here:
+        String hariDipilih = comboFilterHari.getSelectedItem().toString();
+    
+        // Panggil method load tadi
+        loadDataJadwal(hariDipilih);
         String hariDipilih = comboFilterHari.getSelectedItem().toString();
     
         // Panggil method load tadi

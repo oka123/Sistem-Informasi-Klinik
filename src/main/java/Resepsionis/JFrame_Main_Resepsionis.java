@@ -39,6 +39,18 @@ public class JFrame_Main_Resepsionis extends javax.swing.JFrame {
 
         
         
+        
+        
+//        // --- 1. SIAPKAN PANEL REGISTRASI (DENGAN SCROLL) ---
+//        JPanel_Registrasi_Kunjungan panelReg = new JPanel_Registrasi_Kunjungan();
+//
+//        // Bungkus Panel Registrasi ke dalam JScrollPane
+//        javax.swing.JScrollPane scrollReg = new javax.swing.JScrollPane(panelReg);
+//        scrollReg.setBorder(null); // Hilangkan border biar rapi
+//        scrollReg.getVerticalScrollBar().setUnitIncrement(20); // Scroll biar cepat
+
+        
+        
         // Memusatkan jendela (ini mungkin sudah Anda tambahkan)
         this.setLocationRelativeTo(null); 
 
@@ -72,6 +84,9 @@ public class JFrame_Main_Resepsionis extends javax.swing.JFrame {
         
 //        java.awt.CardLayout cl = (java.awt.CardLayout) panelContent.getLayout();
 //        cl.show(panelContent, "cardDashboard");
+        
+//        java.awt.CardLayout cl = (java.awt.CardLayout) panelContent.getLayout();
+//        cl.show(panelContent, "cardDashboard");
     }
 
     /**
@@ -93,6 +108,7 @@ public class JFrame_Main_Resepsionis extends javax.swing.JFrame {
         btnManajemenJadwal = new javax.swing.JButton();
         btn_logout = new javax.swing.JButton();
         btnRegistrasiKunjungan = new javax.swing.JButton();
+        jScrollPane1 = new javax.swing.JScrollPane();
         panelContent = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -271,6 +287,7 @@ public class JFrame_Main_Resepsionis extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(btnRegistrasiKunjungan, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
+                .addGap(18, 18, 18)
                 .addComponent(btnManajemenPasien, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(btnManajemenJadwal, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -283,6 +300,7 @@ public class JFrame_Main_Resepsionis extends javax.swing.JFrame {
 
         panelContent.setBackground(new java.awt.Color(255, 255, 255));
         panelContent.setLayout(new java.awt.CardLayout());
+        jScrollPane1.setViewportView(panelContent);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -291,12 +309,12 @@ public class JFrame_Main_Resepsionis extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addComponent(panelSidebar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(panelContent, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(jScrollPane1))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(panelContent, javax.swing.GroupLayout.DEFAULT_SIZE, 537, Short.MAX_VALUE)
             .addComponent(panelSidebar, javax.swing.GroupLayout.DEFAULT_SIZE, 537, Short.MAX_VALUE)
+            .addComponent(jScrollPane1)
         );
 
         pack();
@@ -404,6 +422,9 @@ public class JFrame_Main_Resepsionis extends javax.swing.JFrame {
 //       java.awt.CardLayout cl = (java.awt.CardLayout) panelContent.getLayout();
 //        cl.show(panelContent, "cardRegistrasi");
         
+//       java.awt.CardLayout cl = (java.awt.CardLayout) panelContent.getLayout();
+//        cl.show(panelContent, "cardRegistrasi");
+        
     }//GEN-LAST:event_btnRegistrasiKunjunganActionPerformed
     
     /**
@@ -438,6 +459,7 @@ public class JFrame_Main_Resepsionis extends javax.swing.JFrame {
     private javax.swing.JButton btnManajemenPasien;
     private javax.swing.JButton btnRegistrasiKunjungan;
     private javax.swing.JButton btn_logout;
+    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JLabel labelIconKlinik;
     private javax.swing.JLabel labelJudulKlinik;

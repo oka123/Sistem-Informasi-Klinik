@@ -4,12 +4,14 @@
  */
 package Resepsionis;
 
+import Database.KoneksiDatabase;
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import javax.swing.JOptionPane;
-import javax.swing.JSpinner;
 
 /**
  *
@@ -17,7 +19,6 @@ import javax.swing.JSpinner;
  */
 public class JPanel_Registrasi_Kunjungan extends javax.swing.JPanel {
     
-    private String loggedInResepsionisId;
     private String selectedPasienId = null; // Menyimpan ID pasien yg ditemukan
     
     /**
@@ -81,8 +82,81 @@ public class JPanel_Registrasi_Kunjungan extends javax.swing.JPanel {
     }
     
     
+    // Kelas helper untuk JComboBox
+    class DokterItem {
+        String id;
+        String nama;
+
+        public DokterItem(String id, String nama) {
+            this.id = id;
+            this.nama = nama;
+        }
+
+        @Override
+        public String toString() {
+            return nama; // Ini yang akan tampil di layar
+        }
+    }
+    
+    // Class Khusus untuk Mewarnai Baris Tabel
+    class StatusRenderer extends javax.swing.table.DefaultTableCellRenderer {
+
+        @Override
+        public java.awt.Component getTableCellRendererComponent(javax.swing.JTable table, Object value, 
+                boolean isSelected, boolean hasFocus, int row, int column) {
+
+            java.awt.Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+
+            // 1. Ambil Status dari Kolom ke-4 (Index 4 adalah kolom Status di query kita sebelumnya)
+            // Pastikan index kolom status benar. Di method loadDataAntrean, urutannya:
+            // 0: No, 1: Nama, 2: Poli, 3: Dokter, 4: Status
+            Object statusObj = table.getValueAt(row, 4); 
+            String status = (statusObj != null) ? statusObj.toString() : "";
+
+            // 2. Tentukan Warna Berdasarkan Status
+            if ("Selesai".equalsIgnoreCase(status)) {
+                c.setBackground(new java.awt.Color(200, 255, 200)); // Hijau Muda
+                c.setForeground(java.awt.Color.BLACK);
+            } else if ("Diperiksa".equalsIgnoreCase(status)) {
+                c.setBackground(new java.awt.Color(255, 255, 200)); // Kuning Muda
+                c.setForeground(java.awt.Color.BLACK);
+            } else if ("Batal".equalsIgnoreCase(status)) {
+                c.setBackground(new java.awt.Color(255, 200, 200)); // Merah Muda
+                c.setForeground(java.awt.Color.BLACK);
+            } else {
+                // Status "Menunggu" atau default
+                c.setBackground(java.awt.Color.WHITE);
+                c.setForeground(java.awt.Color.BLACK);
+            }
+
+            // 3. Jaga agar warna seleksi (saat diklik) tetap biru
+            if (isSelected) {
+                c.setBackground(table.getSelectionBackground());
+                c.setForeground(table.getSelectionForeground());
+            }
+
+            return c;
+        }
+    }
+    
+    
     public JPanel_Registrasi_Kunjungan() {
         initComponents();
+        
+        loadDataAntrean();
+        loadDataPoli();
+        tampilkanEstimasiAntrean();
+        
+        //Memastikan label estimasi anrean di tengah
+        label_antrean.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        
+        // --- PASANG PEWARNA TABEL ---
+        // Kita pasang renderer ini ke SEMUA kolom (0 sampai 4)
+        StatusRenderer renderer = new StatusRenderer();
+        for (int i = 0; i < tblAntrean.getColumnCount(); i++) {
+            tblAntrean.getColumnModel().getColumn(i).setCellRenderer(renderer);
+        }
+        
         
         loadDataAntrean();
         loadDataPoli();
@@ -166,10 +240,70 @@ public class JPanel_Registrasi_Kunjungan extends javax.swing.JPanel {
     }
     
     
+        
+        // --- FITUR KLIK KANAN PADA TABEL ---
+        javax.swing.JPopupMenu popupMenu = new javax.swing.JPopupMenu();
+        javax.swing.JMenuItem itemDiperiksa = new javax.swing.JMenuItem("Set Status: Diperiksa");
+        javax.swing.JMenuItem itemSelesai = new javax.swing.JMenuItem("Set Status: Selesai");
+        javax.swing.JMenuItem itemBatal = new javax.swing.JMenuItem("Batalkan Antrean/Hapus Pasien");
+
+        popupMenu.add(itemDiperiksa);
+        popupMenu.add(itemSelesai);
+        popupMenu.addSeparator(); // Garis pemisah
+        popupMenu.add(itemBatal);
+
+        // 1. Aksi Menu "Diperiksa"
+        itemDiperiksa.addActionListener(e -> {
+            int row = tblAntrean.getSelectedRow();
+            if (row != -1) {
+                String id = tblAntrean.getValueAt(row, 0).toString(); // Ambil No. Antrean
+                updateStatusKunjungan(id, "Diperiksa");
+            }
+        });
+
+        // 2. Aksi Menu "Selesai"
+        itemSelesai.addActionListener(e -> {
+            int row = tblAntrean.getSelectedRow();
+            if (row != -1) {
+                String id = tblAntrean.getValueAt(row, 0).toString();
+                updateStatusKunjungan(id, "Selesai");
+            }
+        });
+
+        // 3. Aksi Menu "Batal" (Hapus data atau set batal)
+        itemBatal.addActionListener(e -> {
+            int row = tblAntrean.getSelectedRow();
+            if (row != -1) {
+                String id = tblAntrean.getValueAt(row, 0).toString();
+                int jawab = javax.swing.JOptionPane.showConfirmDialog(this, "Yakin batalkan antrean " + id + "?");
+                if (jawab == javax.swing.JOptionPane.YES_OPTION) {
+                    // Kita gunakan method updateStatusKunjungan tapi kita ubah querynya nanti kalau mau DELETE
+                    // Untuk sekarang kita set status jadi "Batal" (Pastikan ENUM di DB mendukung 'Batal')
+                    // Jika tidak, hapus saja:
+                     hapusAntrean(id); // Kita buat method hapus di bawah
+                }
+            }
+        });
+
+        // Pasang Mouse Listener ke Tabel
+        tblAntrean.setComponentPopupMenu(popupMenu);
+        tblAntrean.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mousePressed(java.awt.event.MouseEvent e) {
+                // Agar baris otomatis terpilih saat klik kanan
+                if (javax.swing.SwingUtilities.isRightMouseButton(e)) {
+                    int row = tblAntrean.rowAtPoint(e.getPoint());
+                    tblAntrean.setRowSelectionInterval(row, row);
+                }
+            }
+        });
+        
+    }
+    
+    
     
     public JPanel_Registrasi_Kunjungan(String resepsionisId) {
         initComponents();
-        this.loggedInResepsionisId = resepsionisId;
 
         initForm(); // Panggil method kustom
     }
@@ -183,6 +317,8 @@ public class JPanel_Registrasi_Kunjungan extends javax.swing.JPanel {
         // 2. Format JSpinner
 //        JSpinner.NumberEditor editor = new JSpinner.NumberEditor(spinnerBiayaJasa, "#,##0");
 //        spinnerBiayaJasa.setEditor(editor);
+//        JSpinner.NumberEditor editor = new JSpinner.NumberEditor(spinnerBiayaJasa, "#,##0");
+//        spinnerBiayaJasa.setEditor(editor);
 
         // 3. Muat data dokter ke JComboBox
         loadDokterComboBox();
@@ -190,7 +326,10 @@ public class JPanel_Registrasi_Kunjungan extends javax.swing.JPanel {
         // 4. Tambahkan listener ke comboDokter
         cbDokter.addActionListener(e -> {
             DokterItem item = (DokterItem) cbDokter.getSelectedItem();
+        cbDokter.addActionListener(e -> {
+            DokterItem item = (DokterItem) cbDokter.getSelectedItem();
             if (item != null) {
+//                label_dokter.setText(item.spesialisasi);
 //                label_dokter.setText(item.spesialisasi);
             }
         });
@@ -213,6 +352,7 @@ public class JPanel_Registrasi_Kunjungan extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
         java.awt.GridBagConstraints gridBagConstraints;
+        java.awt.GridBagConstraints gridBagConstraints;
 
         jSeparator1 = new javax.swing.JSeparator();
         lblJudul = new javax.swing.JLabel();
@@ -224,9 +364,15 @@ public class JPanel_Registrasi_Kunjungan extends javax.swing.JPanel {
         panelInfoPasien = new javax.swing.JPanel();
         labelID = new javax.swing.JLabel();
         label_id = new javax.swing.JLabel();
+        labelID = new javax.swing.JLabel();
+        label_id = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
         label_nama = new javax.swing.JLabel();
+        label_nama = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
+        label_tgl_lahir = new javax.swing.JLabel();
+        jLabel8 = new javax.swing.JLabel();
+        label_alamat = new javax.swing.JLabel();
         label_tgl_lahir = new javax.swing.JLabel();
         jLabel8 = new javax.swing.JLabel();
         label_alamat = new javax.swing.JLabel();
@@ -238,7 +384,15 @@ public class JPanel_Registrasi_Kunjungan extends javax.swing.JPanel {
         PanelEstimasi = new javax.swing.JPanel();
         label_judul = new javax.swing.JLabel();
         label_antrean = new javax.swing.JLabel();
+        cbDokter = new javax.swing.JComboBox();
+        cbPoli = new javax.swing.JComboBox<>();
+        PanelEstimasi = new javax.swing.JPanel();
+        label_judul = new javax.swing.JLabel();
+        label_antrean = new javax.swing.JLabel();
         btnDaftarkan = new javax.swing.JButton();
+        jSeparator2 = new javax.swing.JSeparator();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        tblAntrean = new javax.swing.JTable();
         jSeparator2 = new javax.swing.JSeparator();
         jScrollPane1 = new javax.swing.JScrollPane();
         tblAntrean = new javax.swing.JTable();
@@ -274,12 +428,19 @@ public class JPanel_Registrasi_Kunjungan extends javax.swing.JPanel {
 
         panelInfoPasien.setBackground(new java.awt.Color(245, 245, 245));
         panelInfoPasien.setBorder(javax.swing.BorderFactory.createTitledBorder("Detail Data Pasien"));
+        panelInfoPasien.setBorder(javax.swing.BorderFactory.createTitledBorder("Detail Data Pasien"));
         panelInfoPasien.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
 
         labelID.setFont(new java.awt.Font("SansSerif", 0, 14)); // NOI18N
         labelID.setForeground(java.awt.Color.black);
         labelID.setText("ID Pasien:");
+        labelID.setFont(new java.awt.Font("SansSerif", 0, 14)); // NOI18N
+        labelID.setForeground(java.awt.Color.black);
+        labelID.setText("ID Pasien:");
 
+        label_id.setFont(new java.awt.Font("SansSerif", 0, 14)); // NOI18N
+        label_id.setForeground(java.awt.Color.black);
+        label_id.setText("-");
         label_id.setFont(new java.awt.Font("SansSerif", 0, 14)); // NOI18N
         label_id.setForeground(java.awt.Color.black);
         label_id.setText("-");
@@ -288,6 +449,9 @@ public class JPanel_Registrasi_Kunjungan extends javax.swing.JPanel {
         jLabel5.setForeground(java.awt.Color.black);
         jLabel5.setText("Nama:");
 
+        label_nama.setFont(new java.awt.Font("SansSerif", 0, 14)); // NOI18N
+        label_nama.setForeground(java.awt.Color.black);
+        label_nama.setText("-");
         label_nama.setFont(new java.awt.Font("SansSerif", 0, 14)); // NOI18N
         label_nama.setForeground(java.awt.Color.black);
         label_nama.setText("-");
@@ -307,6 +471,17 @@ public class JPanel_Registrasi_Kunjungan extends javax.swing.JPanel {
         label_alamat.setFont(new java.awt.Font("SansSerif", 0, 14)); // NOI18N
         label_alamat.setForeground(java.awt.Color.black);
         label_alamat.setText("-");
+        label_tgl_lahir.setFont(new java.awt.Font("SansSerif", 0, 14)); // NOI18N
+        label_tgl_lahir.setForeground(java.awt.Color.black);
+        label_tgl_lahir.setText("-");
+
+        jLabel8.setFont(new java.awt.Font("SansSerif", 0, 14)); // NOI18N
+        jLabel8.setForeground(java.awt.Color.black);
+        jLabel8.setText("Alamat");
+
+        label_alamat.setFont(new java.awt.Font("SansSerif", 0, 14)); // NOI18N
+        label_alamat.setForeground(java.awt.Color.black);
+        label_alamat.setText("-");
 
         javax.swing.GroupLayout panelInfoPasienLayout = new javax.swing.GroupLayout(panelInfoPasien);
         panelInfoPasien.setLayout(panelInfoPasienLayout);
@@ -315,11 +490,18 @@ public class JPanel_Registrasi_Kunjungan extends javax.swing.JPanel {
             .addGroup(panelInfoPasienLayout.createSequentialGroup()
                 .addGroup(panelInfoPasienLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(labelID)
+                    .addComponent(labelID)
                     .addComponent(jLabel5)
+                    .addComponent(jLabel6)
+                    .addComponent(jLabel8))
                     .addComponent(jLabel6)
                     .addComponent(jLabel8))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(panelInfoPasienLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(label_id, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(label_nama, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(label_tgl_lahir, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(label_alamat, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addComponent(label_id, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(label_nama, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(label_tgl_lahir, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -333,13 +515,21 @@ public class JPanel_Registrasi_Kunjungan extends javax.swing.JPanel {
                 .addGroup(panelInfoPasienLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(labelID, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(label_id, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(labelID, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(label_id, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(panelInfoPasienLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(label_nama, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(label_nama, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(panelInfoPasienLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(label_tgl_lahir, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(panelInfoPasienLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(label_alamat, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(label_tgl_lahir, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(panelInfoPasienLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -380,9 +570,11 @@ public class JPanel_Registrasi_Kunjungan extends javax.swing.JPanel {
         );
 
         panelStep2.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("SansSerif", 1, 14))); // NOI18N
+        panelStep2.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("SansSerif", 1, 14))); // NOI18N
         panelStep2.setEnabled(false);
 
         jLabel4.setFont(new java.awt.Font("SansSerif", 0, 14)); // NOI18N
+        jLabel4.setText("Pilih Poli");
         jLabel4.setText("Pilih Poli");
 
         jLabel7.setFont(new java.awt.Font("SansSerif", 0, 14)); // NOI18N
@@ -391,9 +583,13 @@ public class JPanel_Registrasi_Kunjungan extends javax.swing.JPanel {
         cbDokter.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Dokter Kliniks", "Wahyu Triadi", "Amelia Devi" }));
 
         cbPoli.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Poli Umum", "Poli Gigi", "Poli Anak", "Poli Mata", "Poli THT" }));
-        cbPoli.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cbPoliActionPerformed(evt);
+        cbPoli.addPopupMenuListener(new javax.swing.event.PopupMenuListener() {
+            public void popupMenuCanceled(javax.swing.event.PopupMenuEvent evt) {
+            }
+            public void popupMenuWillBecomeInvisible(javax.swing.event.PopupMenuEvent evt) {
+                cbPoliPopupMenuWillBecomeInvisible(evt);
+            }
+            public void popupMenuWillBecomeVisible(javax.swing.event.PopupMenuEvent evt) {
             }
         });
 
@@ -406,18 +602,23 @@ public class JPanel_Registrasi_Kunjungan extends javax.swing.JPanel {
                 .addGroup(panelStep2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, 173, Short.MAX_VALUE)
                     .addComponent(jLabel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, 173, Short.MAX_VALUE)
+                    .addComponent(jLabel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(panelStep2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(cbDokter, javax.swing.GroupLayout.PREFERRED_SIZE, 688, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(cbPoli, javax.swing.GroupLayout.PREFERRED_SIZE, 688, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(15, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         panelStep2Layout.setVerticalGroup(
             panelStep2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panelStep2Layout.createSequentialGroup()
                 .addContainerGap(23, Short.MAX_VALUE)
                 .addGroup(panelStep2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addContainerGap(23, Short.MAX_VALUE)
+                .addGroup(panelStep2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(cbPoli, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(cbPoli, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(panelStep2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -429,7 +630,6 @@ public class JPanel_Registrasi_Kunjungan extends javax.swing.JPanel {
         PanelEstimasi.setLayout(new java.awt.GridBagLayout());
 
         label_judul.setFont(new java.awt.Font("SansSerif", 1, 16)); // NOI18N
-        label_judul.setForeground(new java.awt.Color(255, 255, 255));
         label_judul.setText("Estimasi Nomor Antrean Berikutnya");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -474,36 +674,48 @@ public class JPanel_Registrasi_Kunjungan extends javax.swing.JPanel {
         ));
         jScrollPane1.setViewportView(tblAntrean);
 
+        jScrollPane1.setBorder(javax.swing.BorderFactory.createTitledBorder("Daftar Antrean Pasien Hari Ini"));
+
+        tblAntrean.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null}
+            },
+            new String [] {
+                "No Antrean", "Nama Pasien", "Poli", "Dokter Tujuan", "Status"
+            }
+        ));
+        jScrollPane1.setViewportView(tblAntrean);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addGap(24, 24, 24)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jSeparator2)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                    .addComponent(PanelEstimasi, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(panelStep1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jSeparator1)
+                    .addComponent(panelStep2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(btnDaftarkan))
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jScrollPane1)
-                            .addComponent(panelStep1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jSeparator1, javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(panelStep2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addGap(0, 0, Short.MAX_VALUE)
-                                .addComponent(btnDaftarkan))
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(11, 11, 11)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel1)
-                                    .addComponent(lblJudul))
-                                .addGap(0, 0, Short.MAX_VALUE)))
-                        .addContainerGap())
-                    .addComponent(PanelEstimasi, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                            .addComponent(jLabel1)
+                            .addComponent(lblJudul))
+                        .addGap(0, 0, Short.MAX_VALUE)))
+                .addGap(24, 24, 24))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(17, 17, 17)
+                .addGap(24, 24, 24)
                 .addComponent(lblJudul)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jLabel1)
@@ -515,18 +727,20 @@ public class JPanel_Registrasi_Kunjungan extends javax.swing.JPanel {
                 .addComponent(panelStep2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(41, 41, 41)
                 .addComponent(PanelEstimasi, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(18, 18, 18)
+                .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
                 .addComponent(btnDaftarkan, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 72, Short.MAX_VALUE)
+                .addGap(24, 24, 24)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 472, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(24, 24, 24))
+                .addContainerGap(24, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnCariPasienActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCariPasienActionPerformed
         // TODO add your handling code here:
+        cariPasien();
+       
         cariPasien();
        
         // }
@@ -538,7 +752,34 @@ public class JPanel_Registrasi_Kunjungan extends javax.swing.JPanel {
         javax.swing.JOptionPane.showMessageDialog(this, "Kesalahan: Harap pilih pasien terlebih dahulu dari hasil pencarian.");
         return;
     }
+       // 1. Validasi: Pastikan pasien sudah dipilih
+    if (this.selectedPasienId == null || this.selectedPasienId.isEmpty()) {
+        javax.swing.JOptionPane.showMessageDialog(this, "Kesalahan: Harap pilih pasien terlebih dahulu dari hasil pencarian.");
+        return;
+    }
 
+    // 2. Ambil Data dari Form
+    String pasienId = this.selectedPasienId;
+    
+    // PENTING: Pastikan Anda punya variabel ini. Jika belum login, ganti sementara dengan "1" (ID Admin default)
+    // String resepsionisId = this.loggedInResepsionisId; 
+    String resepsionisId = "1"; // <-- GANTI INI NANTI dengan ID user yang login
+    
+    // Ambil Dokter (Gunakan class DokterPilihan yang baru kita buat)
+    if (cbDokter.getSelectedItem() == null) {
+        javax.swing.JOptionPane.showMessageDialog(this, "Pilih dokter tujuan!");
+        return;
+    }
+    
+    // Casting ke DokterPilihan (sesuai perbaikan sebelumnya)
+    DokterItem dokter = (DokterItem) cbDokter.getSelectedItem();
+    String dokterId = dokter.id;
+
+    // 3. Konfirmasi (Opsional, biar aman)
+    int pilihan = javax.swing.JOptionPane.showConfirmDialog(this, 
+            "Daftarkan pasien " + label_nama.getText() + "\nKe " + dokter.nama + "?",
+            "Konfirmasi Pendaftaran", 
+            javax.swing.JOptionPane.YES_NO_OPTION);
     // 2. Ambil Data dari Form
     String pasienId = this.selectedPasienId;
     
@@ -571,8 +812,8 @@ public class JPanel_Registrasi_Kunjungan extends javax.swing.JPanel {
     String sql = "INSERT INTO kunjungan (pasien_id, dokter_id, user_resepsionis_id, tanggal_kunjungan, status_kunjungan) " +
                  "VALUES (?, ?, ?, NOW(), 'Menunggu')";
 
-    try (java.sql.Connection conn = Database.KoneksiDatabase.getConnection();
-         java.sql.PreparedStatement stmt = conn.prepareStatement(sql)) {
+    try (Connection conn = Database.KoneksiDatabase.getConnection();
+         PreparedStatement stmt = conn.prepareStatement(sql)) {
 
         // Set Parameter Tanda Tanya (?)
         stmt.setString(1, pasienId);      // Pasien ID
@@ -604,33 +845,25 @@ public class JPanel_Registrasi_Kunjungan extends javax.swing.JPanel {
     }
     }//GEN-LAST:event_btnDaftarkanActionPerformed
 
-    private void cbPoliActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbPoliActionPerformed
+    private void cbPoliPopupMenuWillBecomeInvisible(javax.swing.event.PopupMenuEvent evt) {//GEN-FIRST:event_cbPoliPopupMenuWillBecomeInvisible
         // TODO add your handling code here:
-        // Cek apakah ada item yang dipilih (menghindari error saat loading awal)
         if (cbPoli.getSelectedItem() != null) {
             String poli = cbPoli.getSelectedItem().toString();
             loadDokterByPoli(poli);
         }
-       
-    }//GEN-LAST:event_cbPoliActionPerformed
+    }//GEN-LAST:event_cbPoliPopupMenuWillBecomeInvisible
     
-    private void resetForm() {
-        txtCariPasien.setText("");
-        panelInfoPasien.setVisible(false);
-        panelStep2.setEnabled(false);
-        btnDaftarkan.setEnabled(false);
-        cbDokter.setSelectedIndex(0);
-//        spinnerBiayaJasa.setValue(50000);
-        this.selectedPasienId = null;
-    }
     
     
     
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel PanelEstimasi;
+    private javax.swing.JPanel PanelEstimasi;
     private javax.swing.JButton btnCariPasien;
     private javax.swing.JButton btnDaftarkan;
+    private javax.swing.JComboBox cbDokter;
+    private javax.swing.JComboBox<String> cbPoli;
     private javax.swing.JComboBox cbDokter;
     private javax.swing.JComboBox<String> cbPoli;
     private javax.swing.JLabel jLabel1;
@@ -641,7 +874,17 @@ public class JPanel_Registrasi_Kunjungan extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JLabel jLabel8;
+    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSeparator jSeparator1;
+    private javax.swing.JSeparator jSeparator2;
+    private javax.swing.JLabel labelID;
+    private javax.swing.JLabel label_alamat;
+    private javax.swing.JLabel label_antrean;
+    private javax.swing.JLabel label_id;
+    private javax.swing.JLabel label_judul;
+    private javax.swing.JLabel label_nama;
+    private javax.swing.JLabel label_tgl_lahir;
     private javax.swing.JSeparator jSeparator2;
     private javax.swing.JLabel labelID;
     private javax.swing.JLabel label_alamat;
@@ -654,6 +897,7 @@ public class JPanel_Registrasi_Kunjungan extends javax.swing.JPanel {
     private javax.swing.JPanel panelInfoPasien;
     private javax.swing.JPanel panelStep1;
     private javax.swing.JPanel panelStep2;
+    private javax.swing.JTable tblAntrean;
     private javax.swing.JTable tblAntrean;
     private javax.swing.JTextField txtCariPasien;
     // End of variables declaration//GEN-END:variables
@@ -694,7 +938,7 @@ public class JPanel_Registrasi_Kunjungan extends javax.swing.JPanel {
                 label_alamat.setText(rs.getString("alamat"));
 
                 // 3. Hitung Usia (Opsional tapi bagus)
-                java.sql.Date tglLahir = rs.getDate("tanggal_lahir");
+                Date tglLahir = rs.getDate("tanggal_lahir");
                 if (tglLahir != null) {
                     // Konversi tanggal ke string + hitung tahun (logika sederhana)
                     String tglStr = new java.text.SimpleDateFormat("dd MMMM yyyy").format(tglLahir);
@@ -751,9 +995,9 @@ public class JPanel_Registrasi_Kunjungan extends javax.swing.JPanel {
                  "ORDER BY k.kunjungan_id DESC"; // Yang baru daftar ada di atas
 
     // 3. Eksekusi Query
-    try (java.sql.Connection conn = Database.KoneksiDatabase.getConnection();
-         java.sql.PreparedStatement stmt = conn.prepareStatement(sql);
-         java.sql.ResultSet rs = stmt.executeQuery()) {
+    try (Connection conn = Database.KoneksiDatabase.getConnection();
+         PreparedStatement stmt = conn.prepareStatement(sql);
+         ResultSet rs = stmt.executeQuery()) {
 
         while (rs.next()) {
             // Kita format ID Kunjungan jadi format Antrean, misal "ANT-001"
@@ -770,7 +1014,7 @@ public class JPanel_Registrasi_Kunjungan extends javax.swing.JPanel {
             model.addRow(row);
         }
         
-    } catch (java.sql.SQLException e) {
+    } catch (SQLException e) {
         javax.swing.JOptionPane.showMessageDialog(this, "Gagal memuat antrean: " + e.getMessage());
     }
 }  
@@ -781,10 +1025,10 @@ public class JPanel_Registrasi_Kunjungan extends javax.swing.JPanel {
       // Ambil data spesialisasi yang unik (DISTINCT)
       String sql = "SELECT DISTINCT spesialisasi FROM dokter ORDER BY spesialisasi";
 
-      try (java.sql.Connection conn = Database.KoneksiDatabase.getConnection();
-           java.sql.Statement stmt = conn.createStatement();
-           java.sql.ResultSet rs = stmt.executeQuery(sql)) {
-
+      try (Connection conn = KoneksiDatabase.getConnection();
+          Statement stmt = conn.createStatement();
+          ResultSet rs = stmt.executeQuery(sql);) {
+          
           while (rs.next()) {
               String spes = rs.getString("spesialisasi");
               if (spes != null && !spes.isEmpty()) {
@@ -792,10 +1036,18 @@ public class JPanel_Registrasi_Kunjungan extends javax.swing.JPanel {
               }
           }
 
-      } catch (Exception e) {
-          javax.swing.JOptionPane.showMessageDialog(this, "Gagal memuat poli: " + e.getMessage());
-      }
-  }
+      } catch (SQLException e) {
+        // Tangani SQL Exception secara spesifik untuk debugging
+        javax.swing.JOptionPane.showMessageDialog(this, "Gagal memuat poli: " + e.getMessage());
+        } catch (Exception e) {
+            // Tangani pengecualian umum lainnya
+            javax.swing.JOptionPane.showMessageDialog(this, "Terjadi kesalahan: " + e.getMessage());
+        }
+      if (cbPoli.getSelectedItem() != null) {
+            String poli = cbPoli.getSelectedItem().toString();
+            loadDokterByPoli(poli);
+        }
+    }
     
     private void loadDokterByPoli(String poliDipilih) {
      cbDokter.removeAllItems();
@@ -807,12 +1059,12 @@ public class JPanel_Registrasi_Kunjungan extends javax.swing.JPanel {
                   "WHERE d.spesialisasi = ? " +
                   "ORDER BY u.nama_lengkap ASC";
 
-     try (java.sql.Connection conn = Database.KoneksiDatabase.getConnection();
-          java.sql.PreparedStatement stmt = conn.prepareStatement(sql)) {
+     try (Connection conn = KoneksiDatabase.getConnection();
+          PreparedStatement stmt = conn.prepareStatement(sql)) {
 
          stmt.setString(1, poliDipilih);
 
-         try (java.sql.ResultSet rs = stmt.executeQuery()) {
+         try (ResultSet rs = stmt.executeQuery()) {
              while (rs.next()) {
                  String id = rs.getString("dokter_id");
                  String nama = rs.getString("nama_lengkap");
@@ -833,9 +1085,9 @@ public class JPanel_Registrasi_Kunjungan extends javax.swing.JPanel {
     // Logic: Hitung jumlah kunjungan HARI INI
     String sql = "SELECT COUNT(*) AS total FROM kunjungan WHERE DATE(tanggal_kunjungan) = CURDATE()";
     
-    try (java.sql.Connection conn = Database.KoneksiDatabase.getConnection();
-         java.sql.Statement stmt = conn.createStatement();
-         java.sql.ResultSet rs = stmt.executeQuery(sql)) {
+    try (Connection conn = Database.KoneksiDatabase.getConnection();
+         Statement stmt = conn.createStatement();
+         ResultSet rs = stmt.executeQuery(sql)) {
         
         if (rs.next()) {
             int totalHariIni = rs.getInt("total");
@@ -868,8 +1120,8 @@ public class JPanel_Registrasi_Kunjungan extends javax.swing.JPanel {
     
     String sql = "UPDATE kunjungan SET status_kunjungan = ? WHERE kunjungan_id = ?";
     
-    try (java.sql.Connection conn = Database.KoneksiDatabase.getConnection();
-         java.sql.PreparedStatement stmt = conn.prepareStatement(sql)) {
+    try (Connection conn = Database.KoneksiDatabase.getConnection();
+         PreparedStatement stmt = conn.prepareStatement(sql)) {
         
         stmt.setString(1, statusBaru);
         stmt.setString(2, idBersih);
@@ -888,8 +1140,8 @@ public class JPanel_Registrasi_Kunjungan extends javax.swing.JPanel {
     String idBersih = idKunjunganRaw.replaceAll("[^0-9]", "");
     String sql = "DELETE FROM kunjungan WHERE kunjungan_id = ?";
     
-    try (java.sql.Connection conn = Database.KoneksiDatabase.getConnection();
-         java.sql.PreparedStatement stmt = conn.prepareStatement(sql)) {
+    try (Connection conn = Database.KoneksiDatabase.getConnection();
+         PreparedStatement stmt = conn.prepareStatement(sql)) {
         
         stmt.setString(1, idBersih);
         stmt.executeUpdate();
