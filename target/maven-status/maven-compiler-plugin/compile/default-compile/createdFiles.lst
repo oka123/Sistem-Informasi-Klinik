@@ -150,7 +150,10 @@ Manajemen\JFrame_Main_Manajemen$3.class
 Manajemen\JFrame_Main_Manajemen$9.class
 Manajemen\JDialog_Form_User$3.class
 Main\JFrame_Login.class
+<<<<<<< HEAD
 Resepsionis\JPanel_Informasi_Dokter$2.class
+=======
+>>>>>>> 8bf5d2b (Finalz)
 Resepsionis\JDialog_Form_Pasien$6.class
 Apoteker\SistemFarmasiApoteker.class
 Resepsionis\JPanel_Manajemen_Jadwal$1.class
