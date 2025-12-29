@@ -9,7 +9,6 @@ import Main.JFrame_Login;
 import Main.ThreadPoolManager;
 import java.awt.CardLayout;
 import java.awt.Image;
-import java.sql.SQLException;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;

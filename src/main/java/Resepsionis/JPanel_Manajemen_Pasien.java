@@ -6,12 +6,13 @@ package Resepsionis;
 import Database.KoneksiDatabase;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-//import java.sql.ResultSet;
-//import javax.swing.table.DefaultTableModel;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
-import java.awt.Frame;
 import java.awt.Image;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.SQLIntegrityConstraintViolationException;
+import java.sql.Statement;
 import javax.swing.ImageIcon;
 
 /**
@@ -20,23 +21,12 @@ import javax.swing.ImageIcon;
  */
 public final class JPanel_Manajemen_Pasien extends javax.swing.JPanel {
     
-    private final ImageIcon searchIcon = new ImageIcon(getClass().getResource("/search.png"));
-    
     /**
      * Creates new form JPanel_Manajemen_Pasien
      */
     public JPanel_Manajemen_Pasien() {
         initComponents();
-        
-        // Menjadwalkan update gambar setelah ukuran tombol tersedia
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                // Sesuaikan ukuran gambar
-                btnCari.setIcon(new ImageIcon(searchIcon.getImage().getScaledInstance(btnCari.getWidth(), btnCari.getHeight(), Image.SCALE_SMOOTH)));
-            }
-        });
-        
+              
         txtCari.putClientProperty("JTextField.placeholderText", "Cari pasien...");
         
         tblPasien.getTableHeader().setFont(new java.awt.Font("Segoe UI", java.awt.Font.BOLD, 12));
@@ -44,62 +34,68 @@ public final class JPanel_Manajemen_Pasien extends javax.swing.JPanel {
         tblPasien.getTableHeader().setBackground(new java.awt.Color(32, 136, 203)); // Warna biru
         tblPasien.getTableHeader().setForeground(new java.awt.Color(255,255,255)); // Teks putih
 
-//        loadDataToTable(null);
+        loadDataToTable();
     }
     public void loadDataToTable() {
-        
+        loadDataToTable(null);  
     }
     public void loadDataToTable(String searchTerm) {
-//        // 1. Dapatkan model tabel
-//        DefaultTableModel model = (DefaultTableModel) tblPasien.getModel();
-//
-//        // 2. Kosongkan tabel (hapus baris lama)
-//        model.setRowCount(0);
-//
-//        // 3. Buat query SQL dasar
-//        String sql = "SELECT * FROM pasien";
-//
-//        // 4. Tambahkan kondisi WHERE jika ada searchTerm
-//        if (searchTerm != null && !searchTerm.trim().isEmpty()) {
-//            sql += " WHERE nama_pasien LIKE ? OR pasien_id LIKE ?";
-//        }
-//
-//        // 5. Gunakan try-with-resources untuk koneksi
-//        try (Connection conn = Koneksi.getConnection(); // Asumsi Anda punya kelas Koneksi
-//             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-//
-//            // 6. Set parameter pencarian jika ada
-//            if (searchTerm != null && !searchTerm.trim().isEmpty()) {
-//                String likeTerm = "%" + searchTerm + "%";
-//                pstmt.setString(1, likeTerm);
-//                pstmt.setString(2, likeTerm);
-//            }
-//
-//            // 7. Eksekusi query
-//            try (ResultSet rs = pstmt.executeQuery()) {
-//                // 8. Looping hasil dan tambahkan ke model tabel
-//                while (rs.next()) {
-//                    model.addRow(new Object[]{
-//                        rs.getString("pasien_id"),
-//                        rs.getString("nama_pasien"),
-//                        rs.getDate("tanggal_lahir"), // Asumsi tipe data DATE
-//                        rs.getString("jenis_kelamin"),
-//                        rs.getString("alamat"),
-//                        rs.getString("no_telepon")
-//                    });
-//                }
-//            }
-//
-//        } catch (Exception e) {
-//            JOptionPane.showMessageDialog(this, 
-//                    "Gagal memuat data pasien: " + e.getMessage(), 
-//                    "Error Database", 
-//                    JOptionPane.ERROR_MESSAGE);
-//            e.printStackTrace(); // Tampilkan error di console untuk debug
-//        }
-    }
+        
+           javax.swing.table.DefaultTableModel model = (javax.swing.table.DefaultTableModel) tblPasien.getModel();
+            model.setRowCount(0); // Bersihkan tabel
+
+            // 1. Buat Query yang dinamis
+            String sql = "SELECT * FROM pasien";
+            if (searchTerm != null && !searchTerm.trim().isEmpty()) {
+             sql += " WHERE nama_pasien LIKE ? OR pasien_id LIKE ?";
+           }
+        sql += " ORDER BY pasien_id DESC"; // Tambahkan pengurutan
+
+        try (Connection conn = KoneksiDatabase.getConnection();
+         PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            // 2. Jika ada kata kunci pencarian, masukkan ke parameter
+            if (searchTerm != null && !searchTerm.trim().isEmpty()) {
+                String likeValue = "%" + searchTerm + "%";
+                stmt.setString(1, likeValue);
+                stmt.setString(2, likeValue);
+        }
+
+        try (ResultSet rs = stmt.executeQuery()) {
+            while (rs.next()) {
+                Object[] row = {
+                    rs.getString("pasien_id"),
+                    rs.getString("nama_pasien"),
+                    rs.getDate("tanggal_lahir"),
+                    rs.getString("jenis_kelamin"),
+                    rs.getString("alamat"),
+                    rs.getString("no_telepon"),
+                    rs.getString("golongan_darah"),
+                    rs.getString("pekerjaan"),
+                    rs.getString("nama_kerabat"),
+                    rs.getString("no_telp_kerabat"),
+                    rs.getString("status_pernikahan")
+                    
+                };
+                model.addRow(row);
+            }
+            }
+         } catch (SQLException e) {
+        JOptionPane.showMessageDialog(this, "Gagal memuat tabel: " + e.getMessage());
+        e.printStackTrace();
+        }
+
+
+
+     }
+    
+    
 
     /**
+     * 
+     * 
+     * 
+     * 
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
      * regenerated by the Form Editor.
@@ -118,6 +114,9 @@ public final class JPanel_Manajemen_Pasien extends javax.swing.JPanel {
         scrollPaneTabel = new javax.swing.JScrollPane();
         tblPasien = new javax.swing.JTable();
         txtCari = new javax.swing.JTextField();
+        lblJudul1 = new javax.swing.JLabel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        tabel_riwayat_kunjungan = new javax.swing.JTable();
 
         setBackground(new java.awt.Color(255, 255, 255));
 
@@ -163,9 +162,11 @@ public final class JPanel_Manajemen_Pasien extends javax.swing.JPanel {
         });
 
         btnCari.setBackground(new java.awt.Color(75, 167, 87));
-        btnCari.setFont(new java.awt.Font("sansserif", 1, 14)); // NOI18N
-        btnCari.setForeground(new java.awt.Color(255, 255, 255));
-        btnCari.setIcon(new javax.swing.ImageIcon(getClass().getResource("/search.png"))); // NOI18N
+        btnCari.setFont(new java.awt.Font("sansserif", 1, 24)); // NOI18N
+        btnCari.setForeground(new java.awt.Color(0, 0, 0));
+        btnCari.setText("🔍");
+        btnCari.setBorder(null);
+        btnCari.setBorderPainted(false);
         btnCari.setContentAreaFilled(false);
         btnCari.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         btnCari.addActionListener(new java.awt.event.ActionListener() {
@@ -177,27 +178,27 @@ public final class JPanel_Manajemen_Pasien extends javax.swing.JPanel {
         tblPasien.setFont(new java.awt.Font("SansSerif", 0, 12)); // NOI18N
         tblPasien.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {"P001", "ABCD", "20-12-2001", "Laki-laki", "Jl. Abc", "0813"},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null}
+                {"P001", "ABCD", "20-12-2001", "Laki-laki", "Jl. Abc", "0813", null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null}
             },
             new String [] {
-                "ID Pasien", "Nama Lengkap", "Tanggal Lahir", "Jenis Kelamin", "Alamat", "No. Telepon"
+                "ID Pasien", "Nama Lengkap", "Tanggal Lahir", "Jenis Kelamin", "Alamat", "No. Telepon", "Golongan Darah", "Pekerjaan", "Nama Kerabat", "No. Telp Kerabat", "Status"
             }
         ));
         tblPasien.setGridColor(new java.awt.Color(224, 224, 224));
@@ -205,16 +206,44 @@ public final class JPanel_Manajemen_Pasien extends javax.swing.JPanel {
         tblPasien.setSelectionBackground(new java.awt.Color(50, 120, 220));
         tblPasien.setSelectionForeground(new java.awt.Color(255, 255, 255));
         tblPasien.setShowGrid(true);
+        tblPasien.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tblPasienMouseClicked(evt);
+            }
+        });
         scrollPaneTabel.setViewportView(tblPasien);
+
+        txtCari.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtCariActionPerformed(evt);
+            }
+        });
+
+        lblJudul1.setFont(new java.awt.Font("sansserif", 1, 20)); // NOI18N
+        lblJudul1.setForeground(new java.awt.Color(51, 51, 51));
+        lblJudul1.setText("Riwayat Pasien");
+
+        tabel_riwayat_kunjungan.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "No", "Tanggal Kunjungan", "Nama Dokter", "Poli"
+            }
+        ));
+        jScrollPane1.setViewportView(tabel_riwayat_kunjungan);
 
         javax.swing.GroupLayout panelKontrolLayout = new javax.swing.GroupLayout(panelKontrol);
         panelKontrol.setLayout(panelKontrolLayout);
         panelKontrolLayout.setHorizontalGroup(
             panelKontrolLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panelKontrolLayout.createSequentialGroup()
-                .addContainerGap()
+                .addGap(0, 0, 0)
                 .addGroup(panelKontrolLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(scrollPaneTabel, javax.swing.GroupLayout.DEFAULT_SIZE, 842, Short.MAX_VALUE)
+                    .addComponent(scrollPaneTabel, javax.swing.GroupLayout.DEFAULT_SIZE, 837, Short.MAX_VALUE)
                     .addGroup(panelKontrolLayout.createSequentialGroup()
                         .addComponent(btnTambah)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -224,8 +253,12 @@ public final class JPanel_Manajemen_Pasien extends javax.swing.JPanel {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(txtCari, javax.swing.GroupLayout.PREFERRED_SIZE, 250, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnCari, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap())
+                        .addComponent(btnCari, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(panelKontrolLayout.createSequentialGroup()
+                        .addComponent(lblJudul1)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addComponent(jScrollPane1))
+                .addGap(0, 0, 0))
         );
         panelKontrolLayout.setVerticalGroup(
             panelKontrolLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -234,14 +267,16 @@ public final class JPanel_Manajemen_Pasien extends javax.swing.JPanel {
                     .addGroup(panelKontrolLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(btnTambah, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(btnEdit, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(btnHapus, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(txtCari, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(panelKontrolLayout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(btnCari, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(18, 18, 18)
+                        .addComponent(btnHapus, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(txtCari, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(btnCari, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(27, 27, 27)
                 .addComponent(scrollPaneTabel, javax.swing.GroupLayout.PREFERRED_SIZE, 445, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(22, 22, 22))
+                .addGap(24, 24, 24)
+                .addComponent(lblJudul1)
+                .addGap(18, 18, 18)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 479, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
@@ -251,27 +286,27 @@ public final class JPanel_Manajemen_Pasien extends javax.swing.JPanel {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
+                        .addGap(24, 24, 24)
                         .addComponent(jSeparator1))
                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
-                        .addContainerGap()
+                        .addGap(24, 24, 24)
                         .addComponent(panelKontrol, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
-                        .addGap(17, 17, 17)
+                        .addGap(24, 24, 24)
                         .addComponent(lblJudul)
-                        .addGap(0, 569, Short.MAX_VALUE)))
-                .addContainerGap())
+                        .addGap(0, 563, Short.MAX_VALUE)))
+                .addGap(24, 24, 24))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(18, 18, 18)
+                .addGap(24, 24, 24)
                 .addComponent(lblJudul)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(panelKontrol, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
+                .addComponent(panelKontrol, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(24, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -285,33 +320,22 @@ public final class JPanel_Manajemen_Pasien extends javax.swing.JPanel {
     }//GEN-LAST:event_btnTambahActionPerformed
 
     private void btnEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditActionPerformed
-        // TODO add your handling code here:
-        // 1. Dapatkan baris yang dipilih
-        int selectedRow = tblPasien.getSelectedRow();
+        
 
-        // 2. Cek apakah ada baris yang dipilih
-        if (selectedRow == -1) {
-            JOptionPane.showMessageDialog(this, 
-                    "Pilih data pasien yang ingin Anda edit terlebih dahulu.", 
-                    "Peringatan", 
-                    JOptionPane.WARNING_MESSAGE);
-//            return; // Hentikan eksekusi
-        }
-
-        // 3. Ambil ID Pasien dari kolom pertama (index 0)
-        String idPasienToEdit = tblPasien.getValueAt(selectedRow, 0).toString();
-
-        // 4. Dapatkan frame induk (cara paling aman)
-        Frame parentFrame = (Frame) SwingUtilities.getWindowAncestor(this);
-
-        // 5. Buat dan tampilkan JDialog_Form_Pasien dalam mode EDIT
-        //    (Asumsi Anda punya constructor ini)
-        JDialog_Form_Pasien formEdit = new JDialog_Form_Pasien(parentFrame, true, this, idPasienToEdit);
-        formEdit.setVisible(true);
-
-        // 6. Setelah form ditutup, muat ulang data di tabel
-        //    Kita kirim txtCari.getText() agar pencarian tetap aktif jika ada
-        loadDataToTable(txtCari.getText());
+            int baris = tblPasien.getSelectedRow();
+    
+            if (baris != -1) {
+            // Ambil ID Pasien dari kolom 0 tabel
+            String idPasien = tblPasien.getValueAt(baris, 0).toString();
+        
+            // Buka Dialog dengan constructor Edit (Constructor ke-2)
+            // 'this' merujuk pada Panel, 'parent' biasanya diambil dari Frame utama
+            java.awt.Frame parent = (java.awt.Frame) javax.swing.SwingUtilities.getWindowAncestor(this);
+            JDialog_Form_Pasien dialog = new JDialog_Form_Pasien(parent, true, this, idPasien);
+            dialog.setVisible(true);
+            } else {
+            JOptionPane.showMessageDialog(this, "Silahkan pilih data pada tabel terlebih dahulu!");
+            }
     }//GEN-LAST:event_btnEditActionPerformed
 
     private void btnHapusActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnHapusActionPerformed
@@ -340,44 +364,48 @@ public final class JPanel_Manajemen_Pasien extends javax.swing.JPanel {
                 JOptionPane.YES_NO_OPTION,
                 JOptionPane.WARNING_MESSAGE
         );
-
-        // 5. Cek jika pengguna menekan "Ya"
-        if (pilihan == JOptionPane.YES_OPTION) {
-            // 6. Lakukan operasi database
-            String sql = "DELETE FROM pasien WHERE pasien_id = ?";
-
-//            try (Connection conn = KoneksiDatabase.getConnection();
-//                 PreparedStatement pstmt = conn.prepareStatement(sql)) {
-//
-//                pstmt.setString(1, idPasien);
-//
-//                // 7. Eksekusi delete
-//                int rowsAffected = pstmt.executeUpdate();
-//
-//                if (rowsAffected > 0) {
-//                    JOptionPane.showMessageDialog(this, 
-//                            "Data pasien berhasil dihapus.", 
-//                            "Sukses", 
-//                            JOptionPane.INFORMATION_MESSAGE);
-//
-//                    // 8. Muat ulang data (dan bersihkan pencarian)
-//                    txtCari.setText(""); // Bersihkan field pencarian
-////                    loadDataToTable(null); // Muat ulang semua data
-//                } else {
-//                    JOptionPane.showMessageDialog(this, 
-//                            "Data pasien tidak ditemukan (mungkin sudah dihapus).", 
-//                            "Info", 
-//                            JOptionPane.INFORMATION_MESSAGE);
-//                }
-//
-//            } catch (Exception e) {
-//                JOptionPane.showMessageDialog(this, 
-//                        "Gagal menghapus data: " + e.getMessage(), 
-//                        "Error Database", 
-//                        JOptionPane.ERROR_MESSAGE);
-////                e.printStackTrace();
-//            }
+        
+        
+        // 4. Jika user klik YES, baru eksekusi hapus
+    if (pilihan == JOptionPane.YES_OPTION) {
+        String sql = "DELETE FROM pasien WHERE pasien_id = ?";
+        
+        try (Connection conn = KoneksiDatabase.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            
+            stmt.setString(1, idPasien);
+            
+            int rowsAffected = stmt.executeUpdate();
+            
+            if (rowsAffected > 0) {
+                JOptionPane.showMessageDialog(this, "Data pasien berhasil dihapus!");
+                
+                // 5. Refresh tabel agar data yang dihapus hilang dari tampilan
+                loadDataToTable(); 
+                
+                // Opsional: Bersihkan field pencarian jika ada
+                txtCari.setText("");
+            }
+            
+        } catch (SQLIntegrityConstraintViolationException e) {
+            // ERROR KHUSUS: Jika pasien sudah punya riwayat kunjungan (Foreign Key)
+            JOptionPane.showMessageDialog(this, """
+                                                Gagal menghapus data!
+                                                Pasien ini memiliki riwayat kunjungan/resep.
+                                                Hapus data kunjungan terkait terlebih dahulu.""", 
+                "Terproteksi Database", 
+                JOptionPane.ERROR_MESSAGE);
+                
+        } catch (SQLException e) {
+            // Error database umum lainnya
+            JOptionPane.showMessageDialog(this, 
+                "Terjadi kesalahan database: " + e.getMessage(), 
+                "Error", 
+                JOptionPane.ERROR_MESSAGE);
         }
+    }
+
+        
     }//GEN-LAST:event_btnHapusActionPerformed
 
     private void btnCariActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCariActionPerformed
@@ -389,17 +417,87 @@ public final class JPanel_Manajemen_Pasien extends javax.swing.JPanel {
         loadDataToTable(searchTerm);
     }//GEN-LAST:event_btnCariActionPerformed
 
+    private void tblPasienMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblPasienMouseClicked
+        // TODO add your handling code here:
+        int baris = tblPasien.getSelectedRow();
+    
+        if (baris != -1) {
+            // 2. Ambil ID Pasien dari kolom ke-0 (sesuaikan dengan posisi kolom ID di tabel Anda)
+            // Pastikan kolom ke-0 adalah ID Pasien (103, 102, dst pada gambar)
+            String idPasien = tblPasien.getValueAt(baris, 0).toString();
+
+            // 3. Panggil method untuk isi tabel bawah
+            tampilkanRiwayatPasien(idPasien);
+        }
+        
+    }//GEN-LAST:event_tblPasienMouseClicked
+
+    private void txtCariActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtCariActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtCariActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCari;
     private javax.swing.JButton btnEdit;
     private javax.swing.JButton btnHapus;
     private javax.swing.JButton btnTambah;
+    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JLabel lblJudul;
+    private javax.swing.JLabel lblJudul1;
     private javax.swing.JPanel panelKontrol;
     private javax.swing.JScrollPane scrollPaneTabel;
+    private javax.swing.JTable tabel_riwayat_kunjungan;
     private javax.swing.JTable tblPasien;
     private javax.swing.JTextField txtCari;
     // End of variables declaration//GEN-END:variables
+
+
+
+private void tampilkanRiwayatPasien(String idPasien) {
+    // 1. Siapkan Model Tabel
+    javax.swing.table.DefaultTableModel model = new javax.swing.table.DefaultTableModel();
+    model.addColumn("No");
+    model.addColumn("Tanggal Kunjungan");
+    model.addColumn("Nama Dokter");
+    model.addColumn("Poli"); 
+
+    try {
+        int no = 1;
+        
+        // 2. Query SQL dengan DOUBLE JOIN (Kunjungan -> Dokter -> User)
+        String sql = "SELECT k.tanggal_kunjungan, u.nama_lengkap, d.spesialisasi " + 
+                     "FROM kunjungan k " +
+                     "JOIN dokter d ON k.dokter_id = d.dokter_id " +
+                     "JOIN user u ON d.user_id = u.user_id " +
+                     "WHERE k.pasien_id = '" + idPasien + "' " +
+                     "ORDER BY k.tanggal_kunjungan DESC";
+
+        Connection conn = KoneksiDatabase.getConnection();
+        Statement stm = conn.createStatement();
+        ResultSet res = stm.executeQuery(sql);
+
+        // 3. Masukkan data ke tabel
+        while (res.next()) {
+            model.addRow(new Object[]{
+                no++,
+                res.getString("tanggal_kunjungan"),
+                res.getString("nama_lengkap"), // Ini mengambil dari tabel user
+                res.getString("spesialisasi")     // Asumsi kolom poli ada di tabel dokter
+            });
+        }
+        
+        tabel_riwayat_kunjungan.setModel(model);
+        
+        // Atur lebar kolom (Opsional)
+        tabel_riwayat_kunjungan.getColumnModel().getColumn(0).setPreferredWidth(30);
+        tabel_riwayat_kunjungan.getColumnModel().getColumn(1).setPreferredWidth(120);
+        
+    } catch (SQLException e) {
+        System.out.println("Error Load Riwayat: " + e.getMessage());
+        javax.swing.JOptionPane.showMessageDialog(this, "Gagal memuat riwayat: " + e.getMessage());
+    }
+}
+
 }

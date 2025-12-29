@@ -6,11 +6,9 @@ package Resepsionis;
 import Database.KoneksiDatabase;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-//import java.sql.ResultSet;
-//import javax.swing.table.DefaultTableModel;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import javax.swing.JOptionPane;
-import javax.swing.SwingUtilities;
-import java.awt.Frame;
 
 /**
  *
@@ -30,65 +28,62 @@ public final class JPanel_Manajemen_Jadwal extends javax.swing.JPanel {
         tblJadwal.getTableHeader().setBackground(new java.awt.Color(32, 136, 203)); // Warna biru
         tblJadwal.getTableHeader().setForeground(new java.awt.Color(255,255,255)); // Teks putih
 
-        loadDataJadwal();
+        loadDataJadwal("Semua Hari");
     }
-    public void loadDataJadwal() {
-        
-    }
+    
+    
+    
     public void loadDataJadwal(String searchTerm) {
-//        // 1. Dapatkan model tabel
-//        DefaultTableModel model = (DefaultTableModel) tblJadwal.getModel();
-//
-//        // 2. Kosongkan tabel (hapus baris lama)
-//        model.setRowCount(0);
-//
-//        try {
-            // Ambil filter hari
-//            String filterHari = comboFilterHari.getSelectedItem().toString();
-//
-//            // Query dasar dengan JOIN
-//            String sql = "SELECT j.id_jadwal, d.nama_dokter, d.spesialisasi, j.hari, j.jam_mulai, j.jam_selesai " +
-//                         "FROM jadwal j " +
-//                         "JOIN dokter d ON j.id_dokter = d.id_dokter ";
-//
-//            // Tambahkan filter jika bukan "Semua Hari"
-//            if (!filterHari.equals("Semua Hari")) {
-//                sql += "WHERE j.hari = '" + filterHari + "'";
-//            }
-//
-    //        // 5. Gunakan try-with-resources untuk koneksi
-    //        try (Connection conn = Koneksi.getConnection(); // Asumsi Anda punya kelas Koneksi
-    //             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-    //
-    //            // 6. Set parameter pencarian jika ada
-    //            if (searchTerm != null && !searchTerm.trim().isEmpty()) {
-    //                String likeTerm = "%" + searchTerm + "%";
-    //                pstmt.setString(1, likeTerm);
-    //                pstmt.setString(2, likeTerm);
-    //            }
-    //
-    //            // 7. Eksekusi query
-    //            try (ResultSet rs = pstmt.executeQuery()) {
-    //                // 8. Looping hasil dan tambahkan ke model tabel
-    //                while (rs.next()) {
-//                            model.addRow(new Object[]{
-//                                rs.getString("id_jadwal"),
-//                                rs.getString("nama_dokter"),
-//                                rs.getString("spesialisasi"),
-//                                rs.getString("hari"),
-//                                rs.getString("jam_mulai"),
-//                                rs.getString("jam_selesai")
-//                            });
-//                        }
-    //            }
-    //
-    //        } catch (Exception e) {
-    //            JOptionPane.showMessageDialog(this, 
-    //                    "Gagal memuat data jadwal: " + e.getMessage(), 
-    //                    "Error Database", 
-    //                    JOptionPane.ERROR_MESSAGE);
-    //            e.printStackTrace(); // Tampilkan error di console untuk debug
-    //        }
+//       // 1. Siapkan Model Tabel
+        javax.swing.table.DefaultTableModel model = (javax.swing.table.DefaultTableModel) tblJadwal.getModel();
+        model.setRowCount(0); // Bersihkan data lama
+
+        // 2. Query TRIPLE JOIN (Jadwal -> Dokter -> User)
+        // Tujuannya: Mengambil nama lengkap dokter dari tabel user berdasarkan jadwal
+        String sql = "SELECT j.jadwal_id, u.nama_lengkap, d.spesialisasi, j.hari, j.jam_mulai, j.jam_selesai " +
+                     "FROM jadwal_praktik j " +
+                     "JOIN dokter d ON j.dokter_id = d.dokter_id " +
+                     "JOIN user u ON d.user_id = u.user_id ";
+
+        // 3. Logika Filter Hari
+        // Jika filter BUKAN "Semua Hari", tambahkan kondisi WHERE
+        boolean isFilterActive = searchTerm != null && !searchTerm.equalsIgnoreCase("Semua Hari");
+
+        if (isFilterActive) {
+            sql += "WHERE j.hari = ? ";
+        }
+
+        // Urutkan biar rapi (Senin, Selasa... secara alfabet atau jam)
+        sql += "ORDER BY j.hari, j.jam_mulai ASC";
+
+        // 4. Eksekusi Query
+        try (Connection conn = KoneksiDatabase.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            if (isFilterActive) {
+                stmt.setString(1, searchTerm);
+            }
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    // Format Jam agar tampil HH:mm (tanpa detik) - Opsional
+                    String jamMulai = rs.getString("jam_mulai").substring(0, 5); 
+                    String jamSelesai = rs.getString("jam_selesai").substring(0, 5);
+
+                    Object[] row = {
+                        rs.getInt("jadwal_id"),
+                        rs.getString("nama_lengkap"),  // Dari tabel User
+                        rs.getString("spesialisasi"),  // Dari tabel Dokter
+                        rs.getString("hari"),
+                        jamMulai,
+                        jamSelesai
+                    };
+                    model.addRow(row);
+                }
+            }
+        } catch (SQLException e) {
+            javax.swing.JOptionPane.showMessageDialog(this, "Gagal memuat jadwal: " + e.getMessage());
+        }
     }
 
     /**
@@ -207,7 +202,7 @@ public final class JPanel_Manajemen_Jadwal extends javax.swing.JPanel {
         panelKontrolLayout.setHorizontalGroup(
             panelKontrolLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panelKontrolLayout.createSequentialGroup()
-                .addContainerGap()
+                .addGap(0, 0, 0)
                 .addGroup(panelKontrolLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(scrollPaneTabel)
                     .addGroup(panelKontrolLayout.createSequentialGroup()
@@ -220,7 +215,7 @@ public final class JPanel_Manajemen_Jadwal extends javax.swing.JPanel {
                         .addComponent(jLabel1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(comboFilterHari, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap())
+                .addGap(0, 0, 0))
         );
         panelKontrolLayout.setVerticalGroup(
             panelKontrolLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -234,8 +229,7 @@ public final class JPanel_Manajemen_Jadwal extends javax.swing.JPanel {
                         .addComponent(comboFilterHari, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(18, 18, 18)
-                .addComponent(scrollPaneTabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(30, 30, 30))
+                .addComponent(scrollPaneTabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
@@ -243,29 +237,25 @@ public final class JPanel_Manajemen_Jadwal extends javax.swing.JPanel {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addGap(24, 24, 24)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jSeparator1))
+                    .addComponent(jSeparator1)
+                    .addComponent(panelKontrol, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(panelKontrol, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
-                        .addGap(17, 17, 17)
                         .addComponent(lblJudul)
-                        .addGap(0, 537, Short.MAX_VALUE)))
-                .addContainerGap())
+                        .addGap(0, 512, Short.MAX_VALUE)))
+                .addGap(24, 24, 24))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(18, 18, 18)
+                .addGap(24, 24, 24)
                 .addComponent(lblJudul)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(panelKontrol, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
+                .addGap(18, 18, 18)
+                .addComponent(panelKontrol, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(24, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -273,7 +263,9 @@ public final class JPanel_Manajemen_Jadwal extends javax.swing.JPanel {
         // TODO add your handling code here:
         JDialog_Form_Jadwal formJadwal = new JDialog_Form_Jadwal(null, true, this);
         formJadwal.setVisible(true);
-        loadDataJadwal();
+        String filterSaatIni = comboFilterHari.getSelectedItem().toString();
+        
+        loadDataJadwal(filterSaatIni);
     }//GEN-LAST:event_btnTambahActionPerformed
 
     private void btnEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditActionPerformed
@@ -295,7 +287,9 @@ public final class JPanel_Manajemen_Jadwal extends javax.swing.JPanel {
 
         JDialog_Form_Jadwal formJadwal = new JDialog_Form_Jadwal(null, true, this, idJadwal);
         formJadwal.setVisible(true);
-        loadDataJadwal();
+        
+        String filterSaatIni = comboFilterHari.getSelectedItem().toString();
+        loadDataJadwal(filterSaatIni);
     }//GEN-LAST:event_btnEditActionPerformed
 
     private void btnHapusActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnHapusActionPerformed
@@ -327,45 +321,48 @@ public final class JPanel_Manajemen_Jadwal extends javax.swing.JPanel {
         // 5. Cek jika pengguna menekan "Ya"
         if (pilihan == JOptionPane.YES_OPTION) {
             // 6. Lakukan operasi database
-            String sql = "DELETE FROM jadwal WHERE jadwal_id = ?";
+            String sql = "DELETE FROM jadwal_praktik WHERE jadwal_id = ?";
 
-//            try (Connection conn = KoneksiDatabase.getConnection();
-//                 PreparedStatement pstmt = conn.prepareStatement(sql)) {
-//
-//                pstmt.setString(1, idJadwal);
-//
-//                // 7. Eksekusi delete
-//                int rowsAffected = pstmt.executeUpdate();
-//
-//                if (rowsAffected > 0) {
-//                    JOptionPane.showMessageDialog(this, 
-//                            "Data jadwal berhasil dihapus.", 
-//                            "Sukses", 
-//                            JOptionPane.INFORMATION_MESSAGE);
-//
-//                    // 8. Muat ulang data (dan bersihkan pencarian)
-////                    txtCari.setText(""); // Bersihkan field pencarian
-////                    loadDataJadwal(null); // Muat ulang semua data
-//                } else {
-//                    JOptionPane.showMessageDialog(this, 
-//                            "Data jadwal tidak ditemukan (mungkin sudah dihapus).", 
-//                            "Info", 
-//                            JOptionPane.INFORMATION_MESSAGE);
-//                }
-//
-//            } catch (Exception e) {
-//                JOptionPane.showMessageDialog(this, 
-//                        "Gagal menghapus data: " + e.getMessage(), 
-//                        "Error Database", 
-//                        JOptionPane.ERROR_MESSAGE);
-////                e.printStackTrace();
-//            }
+            try (Connection conn = KoneksiDatabase.getConnection();
+                 PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+                pstmt.setString(1, idJadwal);
+
+                // 7. Eksekusi delete
+                int rowsAffected = pstmt.executeUpdate();
+
+                if (rowsAffected > 0) {
+                    JOptionPane.showMessageDialog(this, 
+                            "Data jadwal berhasil dihapus.", 
+                            "Sukses", 
+                            JOptionPane.INFORMATION_MESSAGE);
+
+                    // 8. Muat ulang data (dan bersihkan pencarian)
+                       String filterSaatIni = comboFilterHari.getSelectedItem().toString();
+                       loadDataJadwal(filterSaatIni);
+                } else {
+                    JOptionPane.showMessageDialog(this, 
+                            "Data jadwal tidak ditemukan (mungkin sudah dihapus).", 
+                            "Info", 
+                            JOptionPane.INFORMATION_MESSAGE);
+                }
+
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(this, 
+                        "Gagal menghapus data: " + e.getMessage(), 
+                        "Error Database", 
+                        JOptionPane.ERROR_MESSAGE);
+//                e.printStackTrace();
+            }
         }
     }//GEN-LAST:event_btnHapusActionPerformed
 
     private void comboFilterHariActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboFilterHariActionPerformed
         // TODO add your handling code here:
-        loadDataJadwal();
+        String hariDipilih = comboFilterHari.getSelectedItem().toString();
+    
+        // Panggil method load tadi
+        loadDataJadwal(hariDipilih);
     }//GEN-LAST:event_comboFilterHariActionPerformed
 
 
