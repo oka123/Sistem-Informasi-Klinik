@@ -284,7 +284,7 @@ public class JDialog_Form_Dokter extends javax.swing.JDialog implements Manajeme
         jLabel3.setText("Spesialisasi");
 
         comboSpesialisasi.setFont(new java.awt.Font("SansSerif", 0, 14)); // NOI18N
-        comboSpesialisasi.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Umum", "Gigi", "Anak", "THT" }));
+        comboSpesialisasi.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Umum", "Gigi", "Anak", "Mata", "THT" }));
         comboSpesialisasi.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
 
         jLabel4.setFont(new java.awt.Font("SansSerif", 0, 14)); // NOI18N
