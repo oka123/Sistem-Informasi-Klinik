@@ -4,6 +4,13 @@
  */
 package Dokter;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+
+import Database.KoneksiDatabase;
+import Dokter.SessionDokter;
+
 import Main.JFrame_Login;
 import java.awt.CardLayout;
 import javax.swing.JFrame;
@@ -18,31 +25,71 @@ public class JFrame_Main_Dokter extends javax.swing.JFrame {
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(JFrame_Main_Dokter.class.getName());
     private String loggedInDoctorId;
 
+    private String loadDataDokterAndGetId() {
+    String dokterId = null;
+    try {
+        System.out.println("LOGIN USER ID = " + SessionDokter.userId);
+        Connection conn = KoneksiDatabase.getConnection();
+        String sql = """
+            SELECT u.nama_lengkap, d.spesialisasi, d.dokter_id
+            FROM dokter d
+            JOIN user u ON d.user_id = u.user_id
+            WHERE d.user_id = ?
+        """;
+
+        PreparedStatement ps = conn.prepareStatement(sql);
+        ps.setString(1, SessionDokter.userId);
+
+        ResultSet rs = ps.executeQuery();
+
+        if (rs.next()) {
+            lblNamaDokter.setText("dr. " + rs.getString("nama_lengkap"));
+            lblSpesialisasi.setText(rs.getString("spesialisasi"));
+            dokterId = rs.getString("dokter_id");
+            System.out.println("Found dokter_id: " + dokterId);
+        } else {
+            lblNamaDokter.setText("Dokter tidak ditemukan");
+            System.err.println("ERROR: User ID " + SessionDokter.userId + " not linked to any dokter!");
+        }
+
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+    return dokterId;
+}
+
+
     /**
      * Creates new form JFrame_Main_Admin
      */
     public JFrame_Main_Dokter() {
-        initComponents(); // Baris ini sudah ada, dibuat oleh NetBeans
-        
-        // Memusatkan jendela (ini mungkin sudah Anda tambahkan)
-        this.setLocationRelativeTo(null); 
-        
-        // --- TAMBAHKAN BARIS INI UNTUK MEMBUAT FULLSCREEN ---
-        this.setExtendedState(JFrame.MAXIMIZED_BOTH);
+    initComponents();
+    
+    this.setLocationRelativeTo(null);
+    this.setExtendedState(JFrame.MAXIMIZED_BOTH);
 
-        // 1. Inisialisasi semua panel halaman
-        JPanel_Antrean_Pasien panelAntrean = new JPanel_Antrean_Pasien(this.loggedInDoctorId);
-        JPanel_Riwayat_Rekam_Medis panelRiwayat = new JPanel_Riwayat_Rekam_Medis();
-
-        // 2. Tambahkan panel-panel tersebut ke panelContent
-        // "cardAntrean" adalah nama unik (key) untuk memanggilnya
-        panelContent.add(panelAntrean, "cardAntrean");
-        panelContent.add(panelRiwayat, "cardRiwayat");
-
-        // 3. Tampilkan panel pertama (Antrean) saat aplikasi dibuka
-        CardLayout cl = (CardLayout) panelContent.getLayout();
-        cl.show(panelContent, "cardAntrean");
+    // === DAPATKAN DOKTER_ID DAN DATA DOKTER ===
+    String dokterId = loadDataDokterAndGetId();
+    
+    if (dokterId == null) {
+        JOptionPane.showMessageDialog(this,
+            "Akun tidak terhubung dengan data dokter. Hubungi admin.",
+            "Error",
+            JOptionPane.ERROR_MESSAGE);
+        return; // Atau redirect ke login
     }
+    
+    // === CARD LAYOUT ===
+    JPanel_Antrean_Pasien panelAntrean = new JPanel_Antrean_Pasien(dokterId);
+
+    JPanel_Riwayat_Rekam_Medis panelRiwayat = new JPanel_Riwayat_Rekam_Medis();
+
+    panelContent.add(panelAntrean, "cardAntrean");
+    panelContent.add(panelRiwayat, "cardRiwayat");
+
+    CardLayout cl = (CardLayout) panelContent.getLayout();
+    cl.show(panelContent, "cardAntrean");
+}
     
     // --- BUAT CONSTRUCTOR BARU INI ---
     public JFrame_Main_Dokter(String idDokter, String namaDokter, String spesialisasi) {

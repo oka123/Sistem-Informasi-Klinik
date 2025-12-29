@@ -375,18 +375,21 @@ public class JDialog_Rekam_Medis extends javax.swing.JDialog {
             // STEP A: Insert Rekam Medis (DENGAN PERBAIKAN KOLOM)
             // -----------------------------------------------------------------
             // Query: 4 placeholder + NOW()
-            String sqlRM = "INSERT INTO rekam_medis (kunjungan_id, anamnesa, diagnosa) VALUES (?, ?, ?, NOW())";
-            PreparedStatement psRM = conn.prepareStatement(sqlRM, Statement.RETURN_GENERATED_KEYS);
-            
-            psRM.setString(1, this.idKunjungan);
-            psRM.setString(2, anamnesa);
-            psRM.setString(3, diagnosa);
-            psRM.executeUpdate();
+            String sqlRM = "INSERT INTO rekam_medis (kunjungan_id, anamnesa, pemeriksaan_fisik, diagnosa, tindakan) VALUES (?, ?, ?, ?, ?)";
+PreparedStatement psRM = conn.prepareStatement(sqlRM, Statement.RETURN_GENERATED_KEYS);
 
-            // Ambil ID Rekam Medis yg baru dibuat
-            ResultSet rsRM = psRM.getGeneratedKeys();
-            int idRekamMedis = rsRM.next() ? rsRM.getInt(1) : 0;
-            rsRM.close();
+psRM.setString(1, this.idKunjungan);
+psRM.setString(2, anamnesa);
+psRM.setString(3, diagnosa); // Mengisi pemeriksaan_fisik dengan teks diagnosa agar tidak kosong
+psRM.setString(4, diagnosa); 
+psRM.setString(5, "-");      // Mengisi tindakan dengan strip (-) agar tidak error
+
+psRM.executeUpdate();
+
+// Ambil ID Rekam Medis
+ResultSet rsRM = psRM.getGeneratedKeys();
+int idRekamMedis = rsRM.next() ? rsRM.getInt(1) : 0;
+rsRM.close();
             
             // -----------------------------------------------------------------
             // STEP B: Insert Resep & Detail (Jika ada obat)
@@ -413,11 +416,11 @@ public class JDialog_Rekam_Medis extends javax.swing.JDialog {
                 String sqlDetail = "INSERT INTO detail_resep (resep_id, obat_id, jumlah, dosis, subtotal_harga) VALUES (?, ?, ?, ?, ?)";
                 PreparedStatement psDetail = conn.prepareStatement(sqlDetail);
                 
-                String sqlStok = "UPDATE obat SET stok = stok - ? WHERE id_obat = ?";
+                String sqlStok = "UPDATE obat SET stok = stok - ? WHERE obat_id = ?";
                 PreparedStatement psStok = conn.prepareStatement(sqlStok);
                 
                 // Query untuk mengambil harga jual obat
-                String sqlGetHarga = "SELECT harga_jual FROM obat WHERE id_obat = ?"; // PASTIKAN KOLOM HARGA ANDA BERNAMA 'harga_jual'
+                String sqlGetHarga = "SELECT harga_jual FROM obat WHERE obat_id = ?"; // PASTIKAN KOLOM HARGA ANDA BERNAMA 'harga_jual'
                 PreparedStatement psGetHarga = conn.prepareStatement(sqlGetHarga);
 
                 // 3. Looping Data di Tabel
@@ -465,7 +468,7 @@ public class JDialog_Rekam_Medis extends javax.swing.JDialog {
             // -----------------------------------------------------------------
             // STEP C: Update Status Kunjungan
             // -----------------------------------------------------------------
-            String sqlUpdateKunjungan = "UPDATE kunjungan SET status = 'Selesai' WHERE kunjungan_id = ?";
+            String sqlUpdateKunjungan = "UPDATE kunjungan SET status_kunjungan = 'Selesai' WHERE kunjungan_id = ?";
             PreparedStatement psKunjungan = conn.prepareStatement(sqlUpdateKunjungan);
             psKunjungan.setString(1, this.idKunjungan);
             psKunjungan.executeUpdate();

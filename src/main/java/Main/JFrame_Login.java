@@ -4,6 +4,7 @@
  */
 package Main;
 
+import Dokter.SessionDokter;
 import Apoteker.JFrameMainApoteker;
 import Resepsionis.JFrame_Main_Resepsionis;
 import Dokter.JFrame_Main_Dokter;
@@ -271,7 +272,7 @@ public class JFrame_Login extends javax.swing.JFrame {
         String password = new String(txt_password.getPassword());
 
         // Query: hanya cari berdasarkan username
-        String sql = "SELECT Username, password, role FROM user WHERE Username=?";
+        String sql = "SELECT user_id, Username, password, role FROM user WHERE Username=?";
 
         try {
             // Prepare dan eksekusi query ke DB
@@ -288,6 +289,7 @@ public class JFrame_Login extends javax.swing.JFrame {
                 
                 if (verify.verified) {
                     
+                     SessionDokter.userId = result.getString("user_id");
                     // Ambil role dari database
                     String role = result.getString("role"); 
 
