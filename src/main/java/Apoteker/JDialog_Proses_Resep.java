@@ -1,132 +1,172 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JDialog.java to edit this template
- */
 package Apoteker;
 
-import java.awt.Color;
-import java.awt.FlowLayout;
-/**
- *
- * @author Joyrich
- */
-public class JDialog_Proses_Resep extends javax.swing.JDialog {
-    
-    private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(JDialog_Proses_Resep.class.getName());
+import Database.KoneksiDatabase;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
 
-    /**
-     * Creates new form JDialog_Proses_Resep
-     */
+
+public class JDialog_Proses_Resep extends javax.swing.JDialog {
+
+    private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(JDialog_Proses_Resep.class.getName());
+    private int kunjunganId;
+
+    public JDialog_Proses_Resep(java.awt.Frame parent, boolean modal, int kunjunganId) {
+        super(parent, modal);
+        this.kunjunganId = kunjunganId;
+        initComponents();
+        
+        setLocationRelativeTo(null);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        lblPeringatanStok.setVisible(false);
+        lblInfoPasien.setHorizontalAlignment(javax.swing.SwingConstants.CENTER); 
+        btnSelesai.addActionListener(e -> prosesPenyerahanObat());
+        btnTutup.addActionListener(e -> dispose());
+        loadDataResep();
+    }
+
     public JDialog_Proses_Resep(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
-        jPanel1 = new javax.swing.JPanel();
-        lblInfoPasien = new javax.swing.JLabel();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        tblDetailResep = new javax.swing.JTable();
-        // Menggunakan jPanel2 sebagai panel SOUTH (Aksi & Peringatan)
-        jPanel2 = new javax.swing.JPanel(); 
-        lblPeringatanStok = new javax.swing.JLabel();
-        btnSelesaiSerahkan = new javax.swing.JButton();
+    }
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+private void loadDataResep() {
+        try (Connection conn = new KoneksiDatabase().getConnection()) {
+            
+            String sqlPasien = """
+                SELECT p.nama_pasien, k.tanggal_kunjungan
+                FROM kunjungan k
+                JOIN pasien p ON k.pasien_id = p.pasien_id
+                WHERE k.kunjungan_id = ?
+            """;
 
-        lblInfoPasien.setText("Info pasien");
-
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(177, 177, 177)
-                .addComponent(lblInfoPasien, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(277, Short.MAX_VALUE))
-        );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(lblInfoPasien)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-
-        getContentPane().add(jPanel1, java.awt.BorderLayout.PAGE_START);
-
-        tblDetailResep.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
-            },
-            new String [] {
-                "Nama Obat", "Jumlah", "Dosis", "Stok Saat Ini"
+            try (PreparedStatement ps = conn.prepareStatement(sqlPasien)) {
+                ps.setInt(1, kunjunganId);
+                ResultSet rs = ps.executeQuery();
+                if (rs.next()) {
+                    lblInfoPasien.setText(
+                        "Resep Kunjungan ID: " + kunjunganId + 
+                        " | Pasien: " + rs.getString("nama_pasien") +
+                        " | Tgl: " + rs.getString("tanggal_kunjungan")
+                    );
+                }
             }
-        ));
-        jScrollPane1.setViewportView(tblDetailResep);
 
-        getContentPane().add(jScrollPane1, java.awt.BorderLayout.CENTER);
+            String sqlDetail = """
+                SELECT o.nama_obat, r.jumlah, r.dosis, o.stok, o.obat_id 
+                FROM detail_resep r
+                JOIN obat o ON r.obat_id = o.obat_id
+                WHERE r.kunjungan_id = ?
+            """;
 
-        // --- PENGATURAN PANEL SOUTH (jPanel2) ---
-        // FlowLayout sudah menjadi default, tetapi kita pastikan
-        jPanel2.setLayout(new FlowLayout(FlowLayout.CENTER)); 
+            DefaultTableModel model = (DefaultTableModel) tblDetailResep.getModel();
+            model.setRowCount(0);
 
-        // 1. Pengaturan JLabel Peringatan
-        lblPeringatanStok.setForeground(Color.RED); 
-        lblPeringatanStok.setText("⚠️ PERINGATAN: Stok obat tidak cukup. Transaksi dibatalkan.");
-        // Menyembunyikan komponen secara default
-        lblPeringatanStok.setVisible(false); 
+            boolean stokKurang = false;
+
+            try (PreparedStatement ps = conn.prepareStatement(sqlDetail)) {
+                ps.setInt(1, kunjunganId);
+                ResultSet rs = ps.executeQuery();
+
+                while (rs.next()) {
+                    int jumlah = rs.getInt("jumlah");
+                    int stok = rs.getInt("stok");
+
+                    String status = (stok < jumlah) ? "Stok Kurang" : "OK";
+                    if (stok < jumlah) stokKurang = true;
+
+                    model.addRow(new Object[]{
+                        rs.getString("nama_obat"),
+                        jumlah,
+                        rs.getString("dosis"),
+                        stok,
+                        status
+                    });
+                }
+            }
+
+            lblPeringatanStok.setVisible(stokKurang);
+            
+            if (stokKurang) {
+                btnSelesai.setVisible(false);
+            } else {
+                btnSelesai.setVisible(true);
+                btnSelesai.setEnabled(true);
+            }
+            
+            btnTutup.setVisible(true);
+            
+            this.setTitle("Proses Resep Kunjungan ID: " + kunjunganId);
+
+        } catch (SQLException e) {
+            logger.log(java.util.logging.Level.SEVERE, "Error saat memuat resep", e);
+            JOptionPane.showMessageDialog(this, "Gagal memuat data resep\n" + e.getMessage(), "Error Database", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+private void prosesPenyerahanObat() {
+        int confirm = JOptionPane.showConfirmDialog(this, 
+                "Anda yakin ingin menyelesaikan resep ini dan mengurangi stok obat?", 
+                "Konfirmasi Penyerahan", JOptionPane.YES_NO_OPTION);
         
-        jPanel2.add(lblPeringatanStok);
+        if (confirm != JOptionPane.YES_OPTION) return;
 
-        // 2. Pengaturan JButton
-        btnSelesaiSerahkan.setText("Selesai & Serahkan Obat");
-        jPanel2.add(btnSelesaiSerahkan);
+        try (Connection conn = new KoneksiDatabase().getConnection()) {
+            conn.setAutoCommit(false); 
 
-        getContentPane().add(jPanel2, java.awt.BorderLayout.PAGE_END);
+            String sqlDetail = "SELECT obat_id, jumlah FROM detail_resep WHERE kunjungan_id = ?";
+            try (PreparedStatement psDetail = conn.prepareStatement(sqlDetail)) {
+                psDetail.setInt(1, kunjunganId);
+                ResultSet rs = psDetail.executeQuery();
+                
+                String sqlUpdate = "UPDATE obat SET stok = stok - ? WHERE obat_id = ?";
+                try (PreparedStatement psUpdate = conn.prepareStatement(sqlUpdate)) {
+                    while (rs.next()) {
+                        psUpdate.setInt(1, rs.getInt("jumlah"));
+                        psUpdate.setString(2, rs.getString("obat_id"));
+                        psUpdate.addBatch();
+                    }
+                    psUpdate.executeBatch();
+                }
+            }
 
-        pack();
-    }// </editor-fold>    /**
-    
+            try (PreparedStatement ps = conn.prepareStatement(
+                "UPDATE kunjungan SET status_kunjungan = 'Menunggu Pembayaran' WHERE kunjungan_id = ?"
+            )) {
+                ps.setInt(1, kunjunganId);
+                ps.executeUpdate();
+            }
 
-    /**
-     * This method is called from within the constructor to initialize the form.
-     * WARNING: Do NOT modify this code. The content of this method is always
-     * regenerated by the Form Editor.
-     */
+            conn.commit(); 
+            JOptionPane.showMessageDialog(this, "Obat berhasil diserahkan dan status kunjungan diperbarui.");
+            dispose();
+
+        } catch (SQLException e) {
+            logger.log(java.util.logging.Level.SEVERE, "Gagal memproses penyerahan obat", e);
+            JOptionPane.showMessageDialog(this, "Gagal memproses penyerahan obat\n" + e.getMessage(), "Error Database", JOptionPane.ERROR_MESSAGE);
+        }
+    }
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
         jPanel1 = new javax.swing.JPanel();
         lblInfoPasien = new javax.swing.JLabel();
-        jScrollPane1 = new javax.swing.JScrollPane();
+        jScrollPane2 = new javax.swing.JScrollPane();
         tblDetailResep = new javax.swing.JTable();
         jPanel2 = new javax.swing.JPanel();
         lblPeringatanStok = new javax.swing.JLabel();
-        btnSelesaiSerahkan = new javax.swing.JButton();
+        btnTutup = new javax.swing.JButton();
+        btnSelesai = new javax.swing.JButton();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setTitle("Detail Resep");
 
         lblInfoPasien.setText("Info pasien");
-
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(177, 177, 177)
-                .addComponent(lblInfoPasien, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(277, Short.MAX_VALUE))
-        );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(lblInfoPasien)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
+        jPanel1.add(lblInfoPasien);
 
         getContentPane().add(jPanel1, java.awt.BorderLayout.PAGE_START);
 
@@ -141,24 +181,29 @@ public class JDialog_Proses_Resep extends javax.swing.JDialog {
                 "Nama Obat", "Jumlah", "Dosis", "Stok Saat Ini"
             }
         ));
-        jScrollPane1.setViewportView(tblDetailResep);
+        tblDetailResep.getTableHeader().setReorderingAllowed(false);
+        jScrollPane2.setViewportView(tblDetailResep);
 
-        getContentPane().add(jScrollPane1, java.awt.BorderLayout.CENTER);
+        getContentPane().add(jScrollPane2, java.awt.BorderLayout.CENTER);
+
+        java.awt.FlowLayout flowLayout1 = new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT);
+        flowLayout1.setAlignOnBaseline(true);
+        jPanel2.setLayout(flowLayout1);
 
         lblPeringatanStok.setForeground(new java.awt.Color(255, 0, 0));
         lblPeringatanStok.setText("PERINGATAN: Stok obat tidak cukup. Transaksi dibatalkan");
         jPanel2.add(lblPeringatanStok);
 
-        btnSelesaiSerahkan.setText("Selesai & Serahkan Obat");
-        jPanel2.add(btnSelesaiSerahkan);
+        btnTutup.setText("Tutup");
+        jPanel2.add(btnTutup);
+
+        btnSelesai.setText("Selesai");
+        jPanel2.add(btnSelesai);
 
         getContentPane().add(jPanel2, java.awt.BorderLayout.PAGE_END);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
-    
-
 
     /**
      * @param args the command line arguments
@@ -198,10 +243,11 @@ public class JDialog_Proses_Resep extends javax.swing.JDialog {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btnSelesaiSerahkan;
+    private javax.swing.JButton btnSelesai;
+    private javax.swing.JButton btnTutup;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
-    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JLabel lblInfoPasien;
     private javax.swing.JLabel lblPeringatanStok;
     private javax.swing.JTable tblDetailResep;
