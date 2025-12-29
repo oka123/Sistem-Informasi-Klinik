@@ -119,6 +119,7 @@ public final class JPanel_Informasi_Dokter extends javax.swing.JPanel {
         scrollPaneTabel = new javax.swing.JScrollPane();
         tblDokter = new javax.swing.JTable();
         txtCari = new javax.swing.JTextField();
+        btn_refresh = new javax.swing.JButton();
 
         setBackground(new java.awt.Color(255, 255, 255));
 
@@ -179,6 +180,21 @@ public final class JPanel_Informasi_Dokter extends javax.swing.JPanel {
         scrollPaneTabel.setViewportView(tblDokter);
 
         txtCari.setFont(new java.awt.Font("SansSerif", 0, 14)); // NOI18N
+        txtCari.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtCariActionPerformed(evt);
+            }
+        });
+
+        btn_refresh.setBackground(new java.awt.Color(51, 102, 255));
+        btn_refresh.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
+        btn_refresh.setForeground(new java.awt.Color(255, 255, 255));
+        btn_refresh.setText("Refresh");
+        btn_refresh.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_refreshActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout panelKontrolLayout = new javax.swing.GroupLayout(panelKontrol);
         panelKontrol.setLayout(panelKontrolLayout);
@@ -187,9 +203,10 @@ public final class JPanel_Informasi_Dokter extends javax.swing.JPanel {
             .addGroup(panelKontrolLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(panelKontrolLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(scrollPaneTabel, javax.swing.GroupLayout.DEFAULT_SIZE, 842, Short.MAX_VALUE)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelKontrolLayout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
+                    .addComponent(scrollPaneTabel, javax.swing.GroupLayout.DEFAULT_SIZE, 843, Short.MAX_VALUE)
+                    .addGroup(panelKontrolLayout.createSequentialGroup()
+                        .addComponent(btn_refresh, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(txtCari, javax.swing.GroupLayout.PREFERRED_SIZE, 250, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnCari, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)))
@@ -202,7 +219,8 @@ public final class JPanel_Informasi_Dokter extends javax.swing.JPanel {
                     .addComponent(txtCari, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(panelKontrolLayout.createSequentialGroup()
                         .addContainerGap()
-                        .addComponent(btnCari, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(btnCari, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(btn_refresh, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addComponent(scrollPaneTabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(30, Short.MAX_VALUE))
@@ -248,9 +266,19 @@ public final class JPanel_Informasi_Dokter extends javax.swing.JPanel {
         loadDataDokter(searchTerm);
     }//GEN-LAST:event_btnCariActionPerformed
 
+    private void btn_refreshActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_refreshActionPerformed
+        // TODO add your handling code here:
+        loadDataDokter("");
+    }//GEN-LAST:event_btn_refreshActionPerformed
+
+    private void txtCariActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtCariActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtCariActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCari;
+    private javax.swing.JButton btn_refresh;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JLabel lblJudul;
     private javax.swing.JPanel panelKontrol;

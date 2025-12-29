@@ -143,7 +143,7 @@
                       <Component id="lblJumlahPasien" min="-2" max="-2" attributes="0"/>
                       <Component id="lblTitlePasien" alignment="0" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace pref="17" max="32767" attributes="0"/>
+                  <EmptySpace pref="19" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -224,7 +224,7 @@
                       <Component id="lblJumlahDokter" alignment="0" min="-2" max="-2" attributes="0"/>
                       <Component id="lblTitleDokter" alignment="0" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace pref="18" max="32767" attributes="0"/>
+                  <EmptySpace pref="19" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -302,7 +302,7 @@
                       <Component id="lblJumlahKunjungan" alignment="0" min="-2" max="-2" attributes="0"/>
                       <Component id="lblTitleKunjungan" alignment="0" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace pref="16" max="32767" attributes="0"/>
+                  <EmptySpace pref="19" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
