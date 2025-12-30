@@ -218,12 +218,12 @@ private void loadDataResep() {
             }
 >>>>>>> 907995d (final (kayaknya))
 
-            String sqlDetail = """
-                SELECT o.nama_obat, r.jumlah, r.dosis, o.stok, o.obat_id 
-                FROM detail_resep r
-                JOIN obat o ON r.obat_id = o.obat_id
-                WHERE r.kunjungan_id = ?
-            """;
+                    String sqlDetail = """
+             SELECT o.nama_obat, r.jumlah, r.dosis, o.stok, o.obat_id 
+             FROM detail_resep r
+             JOIN obat o ON r.obat_id = o.obat_id
+             WHERE r.kunjungan_id_ = ?  -- Gunakan nama kolom dengan garis bawah
+         """;
 
             DefaultTableModel model = (DefaultTableModel) tblDetailResep.getModel();
             model.setRowCount(0);

@@ -1,7 +1,5 @@
 package Apoteker;
 
-
-
 import java.awt.Frame;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
