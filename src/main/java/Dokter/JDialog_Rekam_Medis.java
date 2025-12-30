@@ -1,138 +1,75 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JDialog.java to edit this template
- */
+// no-compact
 package Dokter;
 
+import Database.KoneksiDatabase;
 import Resepsionis.JPanel_Informasi_Dokter;
-import javax.swing.JOptionPane;
+import java.sql.*;
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+import java.util.ArrayList;
+import java.util.List;
+import Dokter.ObatItem;
 
-/**
- *
- * @author USER
- */
 public class JDialog_Rekam_Medis extends javax.swing.JDialog {
-    
-    private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(JDialog_Rekam_Medis.class.getName());
+    private List<ObatItem> listObat = new ArrayList<>();
+    private static final java.util.logging.Logger logger =
+            java.util.logging.Logger.getLogger(JDialog_Rekam_Medis.class.getName());
 
-    /**
-     * Creates new form JDialog_Form_Dokter
-     */
-    private String idDokterToEdit = null;
-    // Tambahkan juga referensi ke panel tabel (opsional tapi berguna)
-    private JPanel_Informasi_Dokter panelManajemen;
-    
+    // Variabel
     private String idKunjungan;
     private String idPasien;
-    private javax.swing.table.DefaultTableModel modelResep;
-    
-    public JDialog_Rekam_Medis(java.awt.Frame parent, boolean modal, 
-                           String idKunjungan, String idPasien, String namaPasien) {
-    super(parent, modal);
-    initComponents();
+    private String idDokterToEdit = null;
+    private JPanel_Informasi_Dokter panelManajemen;
 
-    // Simpan data yang dikirim
-    this.idKunjungan = idKunjungan;
-    this.idPasien = idPasien;
+    private DefaultTableModel modelResep;
 
-    // Set label info pasien
-    lblNamaPasien.setText(namaPasien);
-    lblIdPasien.setText(idPasien);
-    lblIdKunjungan.setText(idKunjungan);
+    // Constructor utama
+    public JDialog_Rekam_Medis(java.awt.Frame parent, boolean modal,
+                               String idKunjungan, String idPasien, String namaPasien) {
+        super(parent, modal);
+        initComponents();
+        loadDataObat(); 
 
-    // Panggil method inisialisasi kustom
-    initCustomComponents();
-    loadDataObat();
-}
-    
-    public JDialog_Rekam_Medis(java.awt.Frame parent, boolean modal, JPanel_Informasi_Dokter panelManajemen, String idDokter) {
-        
+        this.idKunjungan = idKunjungan;
+        this.idPasien = idPasien;
 
-        this.idDokterToEdit = idDokter; // Simpan ID untuk diedit
+        lblNamaPasien.setText(namaPasien);
+        lblIdPasien.setText(idPasien);
+        lblIdKunjungan.setText(idKunjungan);
 
-        
-
-        // Panggil method untuk memuat data lama
-        loadDataForEdit();
+        initCustomComponents();
+        loadDataObat();
     }
-    
-    class ObatItem {
-        public String id;
-        public String nama;
 
-        public ObatItem(String id, String nama) {
-            this.id = id;
-            this.nama = nama;
-        }
+    // Constructor sekunder
+    public JDialog_Rekam_Medis(java.awt.Frame parent, boolean modal,
+                               JPanel_Informasi_Dokter panelManajemen, String idDokter) {
+        super(parent, modal);
+        initComponents();
 
-        @Override
-        public String toString() {
-            return nama; // Tampilkan nama di combo box
-        }
+        this.idDokterToEdit = idDokter;
     }
-    
+
     private void initCustomComponents() {
         setLocationRelativeTo(null);
 
-        // Siapkan JSpinner (angka 1-100)
+        // Spinner
         spinnerJumlah.setModel(new javax.swing.SpinnerNumberModel(1, 1, 100, 1));
 
-        // Siapkan Model Tabel Resep
-//        modelResep = (DefaultTableModel) tblResep.getModel();
+        // Tabel resep
+        modelResep = (DefaultTableModel) tblResep.getModel();
+        modelResep.setRowCount(0);  // hapus dummy row
 
-        // Sembunyikan kolom ID Obat (kolom 0)
+        // Sembunyikan kolom ID obat
         tblResep.getColumnModel().getColumn(0).setMinWidth(0);
         tblResep.getColumnModel().getColumn(0).setMaxWidth(0);
-
-        // Style header (opsional tapi bagus)
-        tblResep.getTableHeader().setFont(new java.awt.Font("Segoe UI", java.awt.Font.BOLD, 12));
+        tblResep.getColumnModel().getColumn(0).setWidth(0);
 
         // Placeholder
         txtDosis.putClientProperty("JTextField.placeholderText", "Contoh: 3 x 1 hari sesudah makan");
     }
 
-    private void loadDataObat() {
-        // Mengisi JComboBox 'comboObat' dari database
-        try {
-            // SQL: "SELECT id_obat, nama_obat FROM obat WHERE stok > 0 ORDER BY nama_obat"
-            // ... (Eksekusi query) ...
 
-            // while (rs.next()) {
-            //    comboObat.addItem(new ObatItem(rs.getString("id_obat"), rs.getString("nama_obat")));
-            // }
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "Gagal memuat data obat: " + e.getMessage());
-        }
-    }
-
-    private String generateNewDokterID() {
-        // Buat logika Anda di sini, misal query ke DB untuk ID terakhir + 1
-        // atau format P-TahunBulan-001
-        return "D202510-001"; // Contoh
-    }
-
-    private void loadDataForEdit() {
-        // 1. Buat koneksi ke database
-        // 2. Jalankan SQL: SELECT * FROM dokter WHERE id_dokter = ? (gunakan idDokterToEdit)
-        // 3. Ambil hasilnya (ResultSet)
-        // 4. Set setiap komponen:
-        //    txtNamaPasien.setText(rs.getString("nama_dokter"));
-        //    dcTanggalLahir.setDate(rs.getDate("tanggal_lahir"));
-        //    txtAlamat.setText(rs.getString("alamat"));
-        //    if (rs.getString("jenis_kelamin").equals("Laki-laki")) {
-        //        rbLakiLaki.setSelected(true);
-        //    } else {
-        //        rbPerempuan.setSelected(true);
-        //    }
-        //    ... dan seterusnya
-    }
-
-    /**
-     * This method is called from within the constructor to initialize the form.
-     * WARNING: Do NOT modify this code. The content of this method is always
-     * regenerated by the Form Editor.
-     */
-    @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
@@ -191,7 +128,7 @@ public class JDialog_Rekam_Medis extends javax.swing.JDialog {
                     .addComponent(lblNamaPasien)
                     .addComponent(lblIdPasien)
                     .addComponent(lblIdKunjungan))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(742, Short.MAX_VALUE))
         );
         panelInfoPasienLayout.setVerticalGroup(
             panelInfoPasienLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -206,7 +143,6 @@ public class JDialog_Rekam_Medis extends javax.swing.JDialog {
         );
 
         lblIdKunjungan1.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
-        lblIdKunjungan1.setForeground(java.awt.Color.black);
         lblIdKunjungan1.setText("Anamnesa / Keluhan Pasien");
 
         txtAnamnesa.setColumns(20);
@@ -217,7 +153,6 @@ public class JDialog_Rekam_Medis extends javax.swing.JDialog {
         jScrollPane2.setViewportView(txtAnamnesa);
 
         lblIdKunjungan2.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
-        lblIdKunjungan2.setForeground(java.awt.Color.black);
         lblIdKunjungan2.setText("Diagnosa / Pemeriksaan Fisik");
 
         txtDiagnosa.setColumns(20);
@@ -231,8 +166,6 @@ public class JDialog_Rekam_Medis extends javax.swing.JDialog {
 
         lblNamaPasien1.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
         lblNamaPasien1.setText("Obat");
-
-        comboObat.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Paracetamol", "Ibuprofen", "Amoxicillin" }));
 
         lblNamaPasien2.setFont(new java.awt.Font("SansSerif", 1, 14)); // NOI18N
         lblNamaPasien2.setText("Jumlah");
@@ -279,7 +212,7 @@ public class JDialog_Rekam_Medis extends javax.swing.JDialog {
         panelResepLayout.setVerticalGroup(
             panelResepLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panelResepLayout.createSequentialGroup()
-                .addGap(20, 20, 20)
+                .addGap(14, 14, 14)
                 .addGroup(panelResepLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblNamaPasien1, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(comboObat, javax.swing.GroupLayout.DEFAULT_SIZE, 30, Short.MAX_VALUE))
@@ -397,10 +330,10 @@ public class JDialog_Rekam_Medis extends javax.swing.JDialog {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
                 .addComponent(scrollDialog, javax.swing.GroupLayout.PREFERRED_SIZE, 909, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -414,130 +347,194 @@ public class JDialog_Rekam_Medis extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnHapusObatActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnHapusObatActionPerformed
-        // TODO add your handling code here:
-        int selectedRow = tblResep.getSelectedRow();
-        if (selectedRow != -1) {
-            modelResep.removeRow(selectedRow); // Hapus baris dari model
+        int row = tblResep.getSelectedRow();
+        if (row != -1) {
+            modelResep.removeRow(row);
         } else {
-            JOptionPane.showMessageDialog(this, "Pilih obat di tabel resep yang ingin dihapus.");
-        }
+            JOptionPane.showMessageDialog(this, "Pilih obat yang ingin dihapus.");
+        }       
     }//GEN-LAST:event_btnHapusObatActionPerformed
 
     private void btnSimpanRekamMedisActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSimpanRekamMedisActionPerformed
-        // TODO add your handling code here:
         String anamnesa = txtAnamnesa.getText();
         String diagnosa = txtDiagnosa.getText();
 
         if (anamnesa.trim().isEmpty() || diagnosa.trim().isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Anamnesa dan Diagnosa wajib diisi!", "Error", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Anamnesa dan Diagnosa wajib diisi!", "Peringatan", JOptionPane.WARNING_MESSAGE);
             return;
         }
 
-        // Dapatkan koneksi database
-        // Connection conn = ... (misal: Koneksi.getConnection());
+        Connection conn = null;
 
         try {
-            // --- MULAI TRANSAKSI ---
-            // conn.setAutoCommit(false);
+            // 1. Dapatkan koneksi dan Matikan autocommit
+            conn = KoneksiDatabase.getConnection();
+            conn.setAutoCommit(false);
 
-            // 1. INSERT ke tabel 'rekam_medis'
-            //    SQL: "INSERT INTO rekam_medis (id_kunjungan, anamnesa, diagnosa) VALUES (?, ?, ?)"
-            //    (Gunakan PreparedStatement, set idKunjungan, anamnesa, diagnosa)
-            //    ... (execute INSERT rekam_medis) ...
+            // -----------------------------------------------------------------
+            // STEP A: Insert Rekam Medis (DENGAN PERBAIKAN KOLOM)
+            // -----------------------------------------------------------------
+            // Query: 4 placeholder + NOW()
+            String sqlRM = "INSERT INTO rekam_medis (kunjungan_id, anamnesa, pemeriksaan_fisik, diagnosa, tindakan) VALUES (?, ?, ?, ?, ?)";
+PreparedStatement psRM = conn.prepareStatement(sqlRM, Statement.RETURN_GENERATED_KEYS);
 
-            //    Ambil ID rekam medis yang baru saja dibuat
-            //    ResultSet generatedKeys = pstmt.getGeneratedKeys();
-            //    String idRekamMedisBaru = "";
-            //    if (generatedKeys.next()) {
-            //        idRekamMedisBaru = generatedKeys.getString(1);
-            //    } else {
-            //        throw new SQLException("Gagal mendapatkan ID rekam medis.");
-            //    }
+psRM.setString(1, this.idKunjungan);
+psRM.setString(2, anamnesa);
+psRM.setString(3, diagnosa); // Mengisi pemeriksaan_fisik dengan teks diagnosa agar tidak kosong
+psRM.setString(4, diagnosa); 
+psRM.setString(5, "-");      // Mengisi tindakan dengan strip (-) agar tidak error
 
-            // 2. Cek apakah ada resep di tabel
+psRM.executeUpdate();
+
+// Ambil ID Rekam Medis
+ResultSet rsRM = psRM.getGeneratedKeys();
+int idRekamMedis = rsRM.next() ? rsRM.getInt(1) : 0;
+rsRM.close();
+            
+            // -----------------------------------------------------------------
+            // STEP B: Insert Resep & Detail (Jika ada obat)
+            // -----------------------------------------------------------------
             if (modelResep.getRowCount() > 0) {
-                // 3. Jika ada, INSERT ke tabel 'resep'
-                //    SQL: "INSERT INTO resep (rekam_medis_id, tanggal_resep) VALUES (?, NOW())"
-                //    (set idRekamMedisBaru)
-                //    ... (execute INSERT resep) ...
+                // 1. Buat Header Resep
+                PreparedStatement psResep = conn.prepareStatement(
+                        "INSERT INTO resep (rekam_medis_id, tanggal_resep, status_resep) VALUES (?, NOW(), ?)",
+                        Statement.RETURN_GENERATED_KEYS
+                );
+                psResep.setInt(1, idRekamMedis);
+                psResep.setString(2, "Belum Diambil"); // Status Resep
+                psResep.executeUpdate();
+                
+                int idResep = 0;
+                ResultSet rsResep = psResep.getGeneratedKeys();
+                if (rsResep.next()) {
+                    idResep = rsResep.getInt(1);
+                }
+                rsResep.close();
+                psResep.close();
 
-                //    Ambil ID resep yang baru saja dibuat
-                //    (Gunakan getGeneratedKeys() lagi)
-                //    String idResepBaru = ...
+                // 2. Siapkan Query Detail, Stok, dan Ambil Harga
+                String sqlDetail = "INSERT INTO detail_resep (resep_id, obat_id, jumlah, dosis, subtotal_harga) VALUES (?, ?, ?, ?, ?)";
+                PreparedStatement psDetail = conn.prepareStatement(sqlDetail);
+                
+                String sqlStok = "UPDATE obat SET stok = stok - ? WHERE obat_id = ?";
+                PreparedStatement psStok = conn.prepareStatement(sqlStok);
+                
+                // Query untuk mengambil harga jual obat
+                String sqlGetHarga = "SELECT harga_jual FROM obat WHERE obat_id = ?"; // PASTIKAN KOLOM HARGA ANDA BERNAMA 'harga_jual'
+                PreparedStatement psGetHarga = conn.prepareStatement(sqlGetHarga);
 
-                // 4. Looping JTable dan INSERT ke 'detail_resep'
-                //    String sqlDetail = "INSERT INTO detail_resep (resep_id, obat_id, jumlah, dosis) VALUES (?, ?, ?, ?)";
-                //    PreparedStatement pstmtDetail = conn.prepareStatement(sqlDetail);
+                // 3. Looping Data di Tabel
+                for (int i = 0; i < modelResep.getRowCount(); i++) {
+                    String idObat = modelResep.getValueAt(i, 0).toString();
+                    int jumlah = Integer.parseInt(modelResep.getValueAt(i, 2).toString());
+                    String dosis = modelResep.getValueAt(i, 3).toString();
 
-                //    for (int i = 0; i < modelResep.getRowCount(); i++) {
-                //        String idObat = modelResep.getValueAt(i, 0).toString();
-                //        int jumlah = (Integer) modelResep.getValueAt(i, 2);
-                //        String dosis = modelResep.getValueAt(i, 3).toString();
-                //
-                //        pstmtDetail.setString(1, idResepBaru);
-                //        pstmtDetail.setString(2, idObat);
-                //        pstmtDetail.setInt(3, jumlah);
-                //        pstmtDetail.setString(4, dosis);
-                //        pstmtDetail.addBatch(); // Tambah ke batch
-                //    }
-                //    pstmtDetail.executeBatch(); // Eksekusi semua INSERT detail resep
+                    // Perhitungan Harga (FIX: Deklarasi subtotalHarga)
+                    double hargaSatuan = 0.0;
+                    psGetHarga.setString(1, idObat);
+                    try (ResultSet rsHarga = psGetHarga.executeQuery()) {
+                        if (rsHarga.next()) {
+                            hargaSatuan = rsHarga.getDouble("harga_jual"); 
+                        }
+                    }
+                    double subtotalHarga = hargaSatuan * jumlah; // Variabel dideklarasikan di sini
+
+                    // Batch Insert Detail
+                    psDetail.setInt(1, idResep);
+                    psDetail.setString(2, idObat);
+                    psDetail.setInt(3, jumlah);
+                    psDetail.setString(4, dosis);
+                    psDetail.setDouble(5, subtotalHarga); // Kini subtotalHarga ditemukan
+                    psDetail.addBatch();
+                    
+                    // Batch Update Stok
+                    psStok.setInt(1, jumlah);
+                    psStok.setString(2, idObat);
+                    psStok.addBatch();
+                }
+                
+                // Eksekusi Batch
+                psDetail.executeBatch();
+                psStok.executeBatch();
+                
+                // Tutup PreparedStatement yang digunakan di loop
+                psDetail.close();
+                psStok.close();
+                psGetHarga.close();
             }
 
-            // 5. UPDATE status kunjungan
-            //    SQL: "UPDATE kunjungan SET status_kunjungan = 'Selesai' WHERE id_kunjungan = ?"
-            //    (set idKunjungan)
-            //    ... (execute UPDATE kunjungan) ...
+            psRM.close(); // Tutup PreparedStatement Rekam Medis
+            
+            // -----------------------------------------------------------------
+            // STEP C: Update Status Kunjungan
+            // -----------------------------------------------------------------
+            String sqlUpdateKunjungan = "UPDATE kunjungan SET status_kunjungan = 'Selesai' WHERE kunjungan_id = ?";
+            PreparedStatement psKunjungan = conn.prepareStatement(sqlUpdateKunjungan);
+            psKunjungan.setString(1, this.idKunjungan);
+            psKunjungan.executeUpdate();
+            psKunjungan.close();
 
-            // --- SELESAI TRANSAKSI ---
-            // conn.commit();
-
+            // -----------------------------------------------------------------
+            // STEP D: Commit Transaksi (Simpan Permanen)
+            // -----------------------------------------------------------------
+            conn.commit();
+            
             JOptionPane.showMessageDialog(this, "Rekam medis berhasil disimpan!");
             this.dispose(); // Tutup form
 
+        } catch (SQLException e) {
+            // Jika ada error, ROLLBACK (Batalkan semua perubahan)
+            if (conn != null) {
+                try { conn.rollback(); } catch (SQLException ex) {}
+            }
+            JOptionPane.showMessageDialog(this, "GAGAL: Terjadi kesalahan database: " + e.getMessage(), "Error Database", JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace(); // Cek console output untuk detail error
         } catch (Exception e) {
-            // Jika terjadi error, batalkan semua
-            // try { conn.rollback(); } catch (SQLException ex) { ... }
-            JOptionPane.showMessageDialog(this, "GAGAL MENYIMPAN DATA: " + e.getMessage(), "Error Transaksi", JOptionPane.ERROR_MESSAGE);
-        } finally {
-            // try { conn.setAutoCommit(true); } catch (SQLException ex) { ... }
+             if (conn != null) {
+                try { conn.rollback(); } catch (SQLException ex) {}
+            }
+            JOptionPane.showMessageDialog(this, "GAGAL: Terjadi kesalahan umum: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
+        finally {
+            // Kembalikan ke mode auto commit
+            if (conn != null) {
+                try { conn.setAutoCommit(true); } catch (SQLException ex) {}
+                 try { conn.close(); } catch (SQLException ex) {} // Pastikan koneksi ditutup
+            }
+        }                                         
     }//GEN-LAST:event_btnSimpanRekamMedisActionPerformed
 
     private void btnTambahObatActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTambahObatActionPerformed
-        // TODO add your handling code here:
         ObatItem item = (ObatItem) comboObat.getSelectedItem();
-        int jumlah = (Integer) spinnerJumlah.getValue();
-        String dosis = txtDosis.getText();
+    int jumlah = (Integer) spinnerJumlah.getValue();
+    String dosis = txtDosis.getText();
 
-        if (dosis.trim().isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Dosis tidak boleh kosong!");
-            return;
-        }
+    if (dosis.trim().isEmpty()) {
+        JOptionPane.showMessageDialog(this, "Dosis tidak boleh kosong!");
+        return;
+    }
 
-        // Tambahkan ke JTable
-        modelResep.addRow(new Object[]{
-            item.id,
-            item.nama,
-            jumlah,
-            dosis
-        });
+    modelResep.addRow(new Object[]{
+        item.getId(),
+        item.getNama(),
+        jumlah,
+        dosis
+    });
 
-        // Reset input
-        txtDosis.setText("");
-        spinnerJumlah.setValue(1);
+    txtDosis.setText("");
+    spinnerJumlah.setValue(1);
     }//GEN-LAST:event_btnTambahObatActionPerformed
 
     /**
      * @param args the command line arguments
      */
-    
-
+    private List<ObatItem> daftarObat = new ArrayList<>();
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnHapusObat;
     private javax.swing.JButton btnSimpanRekamMedis;
     private javax.swing.JButton btnTambahObat;
     private javax.swing.ButtonGroup buttonGroup1;
-    private javax.swing.JComboBox<String> comboObat;
+    private javax.swing.JComboBox<ObatItem> comboObat;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JSeparator jSeparator1;
@@ -560,4 +557,27 @@ public class JDialog_Rekam_Medis extends javax.swing.JDialog {
     private javax.swing.JTextArea txtDiagnosa;
     private javax.swing.JTextField txtDosis;
     // End of variables declaration//GEN-END:variables
+
+    private void loadDataObat() {
+    comboObat.removeAllItems();
+    try {
+        Connection conn = KoneksiDatabase.getConnection();
+        String sql = "SELECT obat_id, nama_obat, harga_jual FROM obat WHERE stok > 0 ORDER BY nama_obat ASC";
+        Statement st = conn.createStatement();
+        ResultSet rs = st.executeQuery(sql);
+
+        while (rs.next()) {
+            comboObat.addItem(new ObatItem(
+                rs.getString("obat_id"),
+                rs.getString("nama_obat"),
+                rs.getInt("harga_jual")
+            ));
+        }
+
+    } catch (SQLException e) {
+        JOptionPane.showMessageDialog(this,
+                "Gagal memuat data obat: " + e.getMessage());
+    }
+}
+
 }

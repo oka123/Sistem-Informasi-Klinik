@@ -3,144 +3,147 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JPanel.java to edit this template
  */
 package Dokter;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-//import java.sql.ResultSet;
-//import javax.swing.table.DefaultTableModel;
+import java.sql.ResultSet;
+import javax.swing.table.DefaultTableModel;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
-import java.awt.Frame;
 import java.awt.Image;
 import javax.swing.ImageIcon;
-import javax.swing.table.DefaultTableModel;
+import Database.KoneksiDatabase;
 
-/**
- *
- * @author USER
- */
 public final class JPanel_Riwayat_Rekam_Medis extends javax.swing.JPanel {
-    
+
     private final ImageIcon searchIcon = new ImageIcon(getClass().getResource("/search.png"));
-    
-    /**
-     * Creates new form JPanel_Manajemen_Pasien
-     */
+
     public JPanel_Riwayat_Rekam_Medis() {
         initComponents();
+        initCustomSettings();
+    }
+
+    private void initCustomSettings() {
+        txtCariPasien.putClientProperty("JTextField.placeholderText", "Cari nama atau ID pasien...");
         
-        txtCariPasien.putClientProperty("JTextField.placeholderText", "Cari pasien...");
-        
-        // Menjadwalkan update gambar setelah ukuran tombol tersedia
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                // Sesuaikan ukuran gambar
-                btnCariPasien.setIcon(new ImageIcon(searchIcon.getImage().getScaledInstance(btnCariPasien.getWidth(), btnCariPasien.getHeight(), Image.SCALE_SMOOTH)));
+        // Membersihkan tabel dari data dummy bawaan GUI Builder
+        ((DefaultTableModel) tblRiwayat.getModel()).setRowCount(0);
+        ((DefaultTableModel) tblDetailResep.getModel()).setRowCount(0);
+
+        SwingUtilities.invokeLater(() -> {
+            if (btnCariPasien.getWidth() > 0) {
+                btnCariPasien.setIcon(new ImageIcon(searchIcon.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH)));
             }
         });
-        
+
+        // Sembunyikan kolom ID Rekam Medis (indeks 0) tapi tetap bisa diakses datanya
+        tblRiwayat.getColumnModel().getColumn(0).setMinWidth(0);
         tblRiwayat.getColumnModel().getColumn(0).setMaxWidth(0);
-
-//        loadDataToTable(null);
+        tblRiwayat.getColumnModel().getColumn(0).setPreferredWidth(0);
     }
-    
+
+    // Helper class untuk menampung hasil pencarian
     class PasienItem {
-        public String id;
-        public String nama;
-        public String tglLahir;
-
+        String id, nama, tglLahir;
         public PasienItem(String id, String nama, String tglLahir) {
-            this.id = id;
-            this.nama = nama;
-            this.tglLahir = tglLahir;
+            this.id = id; this.nama = nama; this.tglLahir = tglLahir;
         }
-
-        // Ini yang akan ditampilkan di dialog pilihan
         @Override
         public String toString() {
-            return nama + " (ID: " + id + ", Lahir: " + tglLahir + ")";
+            return nama + " (ID: " + id + " | Lahir: " + tglLahir + ")";
         }
     }
 
-    public void loadDataToTable() {
-        
-    }
-    
     private void loadRiwayat(String idPasien, String namaPasien) {
-        // 1. Set judul TitledBorder di panel kiri
-        javax.swing.border.TitledBorder border = (javax.swing.border.TitledBorder) panelMaster.getBorder();
-        border.setTitle("Riwayat Kunjungan: " + namaPasien);
-        panelMaster.repaint(); // Refresh border
+    DefaultTableModel model = (DefaultTableModel) tblRiwayat.getModel();
+    model.setRowCount(0); 
+    clearDetailFields();
 
-        // 2. Bersihkan detail panel (kanan)
-        clearDetailPanel();
+    // Update judul panel
+    javax.swing.border.TitledBorder border = (javax.swing.border.TitledBorder) panelMaster.getBorder();
+    border.setTitle("Riwayat Kunjungan: " + namaPasien);
+    panelMaster.repaint();
 
-        // 3. Muat data ke tblRiwayat
-        DefaultTableModel model = (DefaultTableModel) tblRiwayat.getModel();
-        model.setRowCount(0);
+    // Perbaikan Query: Menggunakan u.username (Sesuaikan jika nama kolom di tabel user berbeda)
+    String sql = "SELECT r.rekam_medis_id, k.tanggal_kunjungan, u.username AS nama_dokter, r.diagnosa " +
+                 "FROM rekam_medis r " +
+                 "JOIN kunjungan k ON r.kunjungan_id = k.kunjungan_id " +
+                 "JOIN dokter d ON k.dokter_id = d.dokter_id " +
+                 "JOIN user u ON d.user_id = u.user_id " + 
+                 "WHERE k.pasien_id = ? ORDER BY k.tanggal_kunjungan DESC";
 
-        // SQL: Query JOIN kunjungan, rekam_medis, dan dokter
-        // "SELECT r.id_rekam_medis, k.tanggal_kunjungan, d.nama_dokter, r.diagnosa " +
-        // "FROM kunjungan k " +
-        // "JOIN rekam_medis r ON k.id_kunjungan = r.id_kunjungan " +
-        // "JOIN dokter d ON k.dokter_id = d.id_dokter " +
-        // "WHERE k.pasien_id = ? ORDER BY k.tanggal_kunjungan DESC"
-
-        // ... (Eksekusi query dengan idPasien) ...
-        // while (rs.next()) {
-        //    model.addRow(new Object[]{
-        //        rs.getString("id_rekam_medis"),
-        //        rs.getDate("tanggal_kunjungan"),
-        //        rs.getString("nama_dokter"),
-        //        rs.getString("diagnosa")
-        //    });
-        // }
+    try (Connection conn = KoneksiDatabase.getConnection();
+         PreparedStatement pst = conn.prepareStatement(sql)) {
+        pst.setString(1, idPasien);
+        ResultSet rs = pst.executeQuery();
+        while (rs.next()) {
+            model.addRow(new Object[]{
+                rs.getString("rekam_medis_id"),
+                rs.getString("tanggal_kunjungan"),
+                rs.getString("nama_dokter"),
+                rs.getString("diagnosa")
+            });
+        }
+    } catch (Exception e) {
+        JOptionPane.showMessageDialog(this, "Gagal memuat riwayat: " + e.getMessage());
     }
-    
+}
+
     private void loadDetail(String idRekamMedis) {
-        try {
-            // 1. Ambil data rekam medis
-            // SQL: "SELECT anamnesa, diagnosa FROM rekam_medis WHERE id_rekam_medis = ?"
-            // ... (Eksekusi query 1) ...
-            // if (rs.next()) {
-            //    txtDetailAnamnesa.setText(rs.getString("anamnesa"));
-            //    txtDetailDiagnosa.setText(rs.getString("diagnosa"));
-            // }
-
-            // 2. Ambil data resep
-            DefaultTableModel modelResep = (DefaultTableModel) tblDetailResep.getModel();
-            modelResep.setRowCount(0);
-
-            // SQL: Query JOIN resep, detail_resep, dan obat
-            // "SELECT o.nama_obat, dr.jumlah, dr.dosis " +
-            // "FROM resep r " +
-            // "JOIN detail_resep dr ON r.resep_id = dr.resep_id " +
-            // "JOIN obat o ON dr.obat_id = o.obat_id " +
-            // "WHERE r.rekam_medis_id = ?"
-
-            // ... (Eksekusi query 2 dengan idRekamMedis) ...
-            // while (rs2.next()) {
-            //    modelResep.addRow(new Object[]{
-            //        rs2.getString("nama_obat"),
-            //        rs2.getInt("jumlah"),
-            //        rs2.getString("dosis")
-            //    });
-            // }
-
+        String sql = "SELECT anamnesa, pemeriksaan_fisik, diagnosa, tindakan FROM rekam_medis WHERE rekam_medis_id = ?";
+        
+        try (Connection conn = KoneksiDatabase.getConnection();
+             PreparedStatement pst = conn.prepareStatement(sql)) {
+            
+            pst.setString(1, idRekamMedis);
+            ResultSet rs = pst.executeQuery();
+            
+            if (rs.next()) {
+                txtDetailAnamnesa.setText(rs.getString("anamnesa"));
+                
+                String infoLengkap = "--- PEMERIKSAAN FISIK ---\n" + rs.getString("pemeriksaan_fisik") + 
+                                     "\n\n--- DIAGNOSA ---\n" + rs.getString("diagnosa") + 
+                                     "\n\n--- TINDAKAN ---\n" + rs.getString("tindakan");
+                txtDetailDiagnosa.setText(infoLengkap);
+                
+                // Muat resep menggunakan koneksi yang sama
+                loadTabelResep(idRekamMedis, conn);
+            }
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "Gagal memuat detail rekam medis: " + e.getMessage());
+            e.printStackTrace();
         }
     }
-    
-    private void clearDetailPanel() {
+
+    private void loadTabelResep(String idRekamMedis, Connection conn) {
+        DefaultTableModel modelResep = (DefaultTableModel) tblDetailResep.getModel();
+        modelResep.setRowCount(0);
+
+        String sqlResep = "SELECT o.nama_obat, dr.jumlah, dr.dosis " +
+                          "FROM resep r " +
+                          "JOIN detail_resep dr ON r.resep_id = dr.resep_id " +
+                          "JOIN obat o ON dr.obat_id = o.obat_id " +
+                          "WHERE r.rekam_medis_id = ?";
+
+        try (PreparedStatement pstResep = conn.prepareStatement(sqlResep)) {
+            pstResep.setString(1, idRekamMedis);
+            try (ResultSet rsResep = pstResep.executeQuery()) {
+                while (rsResep.next()) {
+                    modelResep.addRow(new Object[]{
+                        rsResep.getString("nama_obat"),
+                        rsResep.getString("jumlah"),
+                        rsResep.getString("dosis")
+                    });
+                }
+            }
+        } catch (Exception e) {
+            System.out.println("Error resep: " + e.getMessage());
+        }
+    }
+
+    private void clearDetailFields() {
         txtDetailAnamnesa.setText("");
         txtDetailDiagnosa.setText("");
         ((DefaultTableModel) tblDetailResep.getModel()).setRowCount(0);
-        ((DefaultTableModel) tblRiwayat.getModel()).setRowCount(0);
-
-        javax.swing.border.TitledBorder border = (javax.swing.border.TitledBorder) panelMaster.getBorder();
-        border.setTitle("Riwayat Kunjungan Pasien");
-        panelMaster.repaint();
     }
 
     /**
@@ -321,7 +324,7 @@ public final class JPanel_Riwayat_Rekam_Medis extends javax.swing.JPanel {
         panelPencarianLayout.setHorizontalGroup(
             panelPencarianLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelPencarianLayout.createSequentialGroup()
-                .addContainerGap(694, Short.MAX_VALUE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(txtCariPasien, javax.swing.GroupLayout.PREFERRED_SIZE, 250, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnCariPasien, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -348,7 +351,7 @@ public final class JPanel_Riwayat_Rekam_Medis extends javax.swing.JPanel {
             .addGroup(layout.createSequentialGroup()
                 .addGap(17, 17, 17)
                 .addComponent(lblJudul)
-                .addContainerGap(653, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -370,61 +373,45 @@ public final class JPanel_Riwayat_Rekam_Medis extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnCariPasienActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCariPasienActionPerformed
-        // TODO add your handling code here:
-        String searchTerm = txtCariPasien.getText().trim();
-        if (searchTerm.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Masukkan ID atau Nama Pasien untuk dicari.");
+        String keyword = txtCariPasien.getText().trim();
+        if (keyword.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Masukkan nama atau ID pasien.");
             return;
         }
 
-        java.util.List<PasienItem> hasilPasien = new java.util.ArrayList<>();
+        java.util.List<PasienItem> list = new java.util.ArrayList<>();
+        String sql = "SELECT pasien_id, nama_pasien, tanggal_lahir FROM pasien WHERE nama_pasien LIKE ? OR pasien_id = ?";
 
-        // SQL: "SELECT pasien_id, nama_pasien, tanggal_lahir FROM pasien WHERE nama_pasien LIKE ? OR pasien_id LIKE ?"
-        // ... (Eksekusi query dengan searchTerm) ...
-        // while (rs.next()) {
-        //    hasilPasien.add(new PasienItem(rs.getString("pasien_id"), rs.getString("nama_pasien"), rs.getString("tanggal_lahir")));
-        // }
-
-        // --- (Simulasi Data untuk Tes) ---
-        hasilPasien.add(new PasienItem("P001", "Budi Santoso", "1990-05-10"));
-        hasilPasien.add(new PasienItem("P007", "Budi Hartono", "1985-11-20"));
-        // --- (Hapus Simulasi) ---
-
-        if (hasilPasien.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Pasien tidak ditemukan.");
-            clearDetailPanel();
-        } else if (hasilPasien.size() == 1) {
-            // Jika hanya 1 hasil, langsung muat riwayatnya
-            PasienItem pasien = hasilPasien.get(0);
-            loadRiwayat(pasien.id, pasien.nama);
-        } else {
-            // Jika banyak hasil, tampilkan dialog pilihan
-            PasienItem pilihan = (PasienItem) JOptionPane.showInputDialog(
-                    this,
-                    "Ditemukan beberapa pasien, pilih satu:",
-                    "Hasil Pencarian",
-                    JOptionPane.PLAIN_MESSAGE,
-                    null,
-                    hasilPasien.toArray(), // Array pilihan
-                    hasilPasien.get(0)     // Pilihan default
-            );
-
-            if (pilihan != null) { // Jika user memilih (tidak menekan 'cancel')
-                loadRiwayat(pilihan.id, pilihan.nama);
+        try (Connection conn = KoneksiDatabase.getConnection();
+             PreparedStatement pst = conn.prepareStatement(sql)) {
+            pst.setString(1, "%" + keyword + "%");
+            pst.setString(2, keyword);
+            ResultSet rs = pst.executeQuery();
+            
+            while (rs.next()) {
+                list.add(new PasienItem(rs.getString("pasien_id"), rs.getString("nama_pasien"), rs.getString("tanggal_lahir")));
             }
+
+            if (list.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Pasien tidak ditemukan.");
+            } else if (list.size() == 1) {
+                loadRiwayat(list.get(0).id, list.get(0).nama);
+            } else {
+                PasienItem pilihan = (PasienItem) JOptionPane.showInputDialog(this, "Pilih Pasien:", "Hasil Pencarian",
+                        JOptionPane.QUESTION_MESSAGE, null, list.toArray(), list.get(0));
+                if (pilihan != null) loadRiwayat(pilihan.id, pilihan.nama);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }//GEN-LAST:event_btnCariPasienActionPerformed
 
     private void tblRiwayatMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblRiwayatMouseClicked
-        // TODO add your handling code here:
         int selectedRow = tblRiwayat.getSelectedRow();
-        if (selectedRow == -1) return;
-
-        // Ambil ID Rekam Medis dari kolom tersembunyi (index 0)
-        String idRekamMedis = tblRiwayat.getValueAt(selectedRow, 0).toString();
-
-        // Panggil method untuk mengisi panel detail (kanan)
-        loadDetail(idRekamMedis);
+        if (selectedRow != -1) {
+            String idRM = tblRiwayat.getValueAt(selectedRow, 0).toString();
+            loadDetail(idRM);
+        }
     }//GEN-LAST:event_tblRiwayatMouseClicked
 
 

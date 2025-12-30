@@ -3,12 +3,13 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JPanel.java to edit this template
  */
 package Dokter;
-//import java.sql.Connection;
-//import java.sql.PreparedStatement;
-//import java.sql.ResultSet;
-//import javax.swing.table.DefaultTableModel;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import javax.swing.table.DefaultTableModel;
 import Dokter.JDialog_Rekam_Medis;
 import javax.swing.JOptionPane;
+import Database.KoneksiDatabase;
 //import javax.swing.SwingUtilities;
 //import java.awt.Frame;
 
@@ -25,95 +26,155 @@ public final class JPanel_Antrean_Pasien extends javax.swing.JPanel {
     private String loggedInDoctorId;
     
     public JPanel_Antrean_Pasien(String idDokter) {
-        initComponents();
-        this.loggedInDoctorId = idDokter;
-        
-        tblAntrean.getTableHeader().setFont(new java.awt.Font("Segoe UI", java.awt.Font.BOLD, 12));
-        tblAntrean.getTableHeader().setOpaque(false);
-        tblAntrean.getTableHeader().setBackground(new java.awt.Color(32, 136, 203)); // Warna biru
-        tblAntrean.getTableHeader().setForeground(new java.awt.Color(255,255,255)); // Teks putih
-        
-        tblAntrean.getColumnModel().getColumn(0).setMinWidth(0);
-        tblAntrean.getColumnModel().getColumn(0).setMaxWidth(0);
-        tblAntrean.getColumnModel().getColumn(0).setWidth(0);
-        
-        initPanel();
-        
-//        loadDataToTable(null);
-    }
+    initComponents();
+    this.loggedInDoctorId = idDokter;
     
+    System.out.println("=== DOCTOR LOGIN INFO ===");
+    System.out.println("Logged in Doctor ID: " + this.loggedInDoctorId);
+    System.out.println("=========================");
+    
+    tblAntrean.getTableHeader().setFont(new java.awt.Font("Segoe UI", java.awt.Font.BOLD, 12));
+    tblAntrean.getTableHeader().setOpaque(false);
+    tblAntrean.getTableHeader().setBackground(new java.awt.Color(32, 136, 203));
+    tblAntrean.getTableHeader().setForeground(new java.awt.Color(255,255,255));
+    
+    // Hapus resetTableModel() dari sini
+    // resetTableModel(); // HAPUS BARIS INI
+    
+    initPanel();
+}
     private void initPanel() {
-        // Set tanggal hari ini
-        java.time.LocalDate today = java.time.LocalDate.now();
-        java.time.format.DateTimeFormatter formatter = 
+    // 1. Set tanggal hari ini
+    java.time.LocalDate today = java.time.LocalDate.now();
+    java.time.format.DateTimeFormatter formatter = 
             java.time.format.DateTimeFormatter.ofPattern("dd MMMM yyyy");
-        lblTanggal.setText("Tanggal: " + today.format(formatter));
+    lblTanggal.setText("Tanggal: " + today.format(formatter));
 
-        // Muat data pertama kali
-        loadDataAntrean();
+    // 2. Siapkan tabel dan muat data
+    resetTableModel();
+    loadDataAntrean();
+    
+    // 3. Pasang Listener untuk filter status (ComboBox)
+    comboFilterStatus.addActionListener(e -> loadDataAntrean());
 
-        // Tambahkan Listener ke filter
-        comboFilterStatus.addActionListener(e -> loadDataAntrean());
+    // 4. Matikan tombol periksa di awal (sebelum ada baris yang dipilih)
+    btnPeriksa.setEnabled(false);
 
-        // Tambahkan Listener ke Tabel (SANGAT PENTING)
-        tblAntrean.getSelectionModel().addListSelectionListener(e -> {
-            if (!e.getValueIsAdjusting() && tblAntrean.getSelectedRow() != -1) {
-                // Cek status di kolom 4 (index 4)
-                String status = tblAntrean.getValueAt(tblAntrean.getSelectedRow(), 4).toString();
+    // --- DI SINI TEMPATNYA ---
+    // Listener seleksi tabel untuk mengaktifkan/menonaktifkan tombol Periksa
+    tblAntrean.getSelectionModel().addListSelectionListener(e -> {
+        // Cek apakah user sedang mengklik baris (bukan sedang drag) dan ada baris yang terpilih
+        if (!e.getValueIsAdjusting() && tblAntrean.getSelectedRow() != -1) {
+            // Ambil data status dari baris yang diklik (Kolom Index 4)
+            String status = tblAntrean.getValueAt(tblAntrean.getSelectedRow(), 4).toString();
 
-                // Hanya aktifkan tombol jika statusnya "Menunggu"
-                btnPeriksa.setEnabled(status.equals("Menunggu"));
-            } else if (tblAntrean.getSelectedRow() == -1) {
-                btnPeriksa.setEnabled(false); // Nonaktifkan jika tidak ada yg dipilih
-            }
-        });
-    }
+            // Tombol hanya menyala (True) jika statusnya adalah "Menunggu"
+            btnPeriksa.setEnabled(status.equalsIgnoreCase("Menunggu"));
+        }
+    });
+    // -------------------------
+}
+
     
     public void loadDataAntrean() {
-//        // 1. Dapatkan model tabel
-//        DefaultTableModel model = (DefaultTableModel) tblAntrean.getModel();
-//
-//        // 2. Kosongkan tabel (hapus baris lama)
-//        model.setRowCount(0);
-//
-//        // 3. Buat query SQL dasar
-//        try {
-//                String statusFilter = comboFilterStatus.getSelectedItem().toString();
-//
-//                // Query JOIN kunjungan dan pasien, filter berdasarkan DOKTER, TANGGAL, dan STATUS
-//                String sql = "SELECT k.id_kunjungan, k.no_antrean, p.id_pasien, p.nama_pasien, k.status_kunjungan " +
-//                             "FROM kunjungan k JOIN pasien p ON k.pasien_id = p.pasien_id " +
-//                             "WHERE k.dokter_id = ? AND DATE(k.tanggal_kunjungan) = CURDATE() ";
-//
-//                if (!statusFilter.equals("Semua")) {
-//                    sql += "AND k.status_kunjungan = '" + statusFilter + "' ";
-//                }
-//                sql += "ORDER BY k.no_antrean A                     SC";
-//
-//        // 5. Gunakan try-with-resources untuk koneksi
-    //        try (Connection conn = Koneksi.getConnection(); // Asumsi Anda punya kelas Koneksi
-    //             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-    //
-    //            pstmt.setString(1, this.loggedInDoctorId);
-    //
-    //            // 7. Eksekusi query
-    //            try (ResultSet rs = pstmt.executeQuery()) {
-    //                // 8. Looping hasil dan tambahkan ke model tabel
-    //                while (rs.next()) {
-                    //    model.addRow(new Object[]{
-                    //        rs.getString("id_kunjungan"),
-                    //        rs.getString("no_antrean"),
-                    //        rs.getString("id_pasien"),
-                    //        rs.getString("nama_pasien"),
-                    //        rs.getString("status_kunjungan")
-                    //    });
-                    // }
-    //            }
-    //
-    //        } catch (Exception e) {
-//                  JOptionPane.showMessageDialog(this, "Gagal memuat antrean: " + e.getMessage());
-//              }
+    System.out.println("=== START loadDataAntrean ===");
+    
+    DefaultTableModel model = (DefaultTableModel) tblAntrean.getModel();
+    model.setRowCount(0);
+
+    String statusFilter = comboFilterStatus.getSelectedItem().toString();
+
+String sql = """
+    SELECT 
+        k.kunjungan_id, 
+        p.pasien_id, 
+        p.nama_pasien, 
+        k.status_kunjungan
+    FROM kunjungan k
+    JOIN pasien p ON k.pasien_id = p.pasien_id
+    WHERE k.dokter_id = ? 
+    
+"""; // CURDATE() memastikan hanya pasien hari ini yang muncul
+
+// Tambahkan filter status jika bukan "Semua"
+if (statusFilter.equals("Menunggu")) {
+    sql += " AND k.status_kunjungan = 'Menunggu'";
+} else if (statusFilter.equals("Selesai")) {
+    sql += " AND k.status_kunjungan = 'Selesai'";
+}
+
+sql += " ORDER BY k.kunjungan_id ASC";
+
+    System.out.println("4. SQL Query: " + sql);
+
+    try (
+        Connection conn = KoneksiDatabase.getConnection();
+        PreparedStatement ps = conn.prepareStatement(sql)
+    ) {
+        System.out.println("5. Connection OK: " + (conn != null));
+        
+        ps.setString(1, loggedInDoctorId);
+        System.out.println("6. Parameter doctor_id: " + loggedInDoctorId);
+        
+        try (ResultSet rs = ps.executeQuery()) {
+            int rowCount = 0;
+            
+            // Metadata check
+            java.sql.ResultSetMetaData meta = rs.getMetaData();
+            int columnCount = meta.getColumnCount();
+            System.out.println("7. Number of columns: " + columnCount);
+            
+            while (rs.next()) {
+                rowCount++;
+                model.addRow(new Object[]{
+                    rs.getString("kunjungan_id"), 
+                    rowCount,                     
+                    rs.getString("pasien_id"),    
+                    rs.getString("nama_pasien"),  
+                    rs.getString("status_kunjungan")
+                });
+            } // Penutup while
+
+            System.out.println("9. Total rows loaded: " + rowCount);
+            
+            if (rowCount == 0) {
+                System.out.println("10. WARNING: No data found!");
+            }
+        } // Penutup ResultSet (rs) otomatis tertutup di sini
+
+    } catch (Exception e) {
+        System.out.println("=== EXCEPTION DETAILS ===");
+        System.out.println("Error: " + e.getMessage());
+        e.printStackTrace();
     }
+    
+    System.out.println("=== END loadDataAntrean ===\n");
+} // <-- INI TUTUP METHOD loadDataAntrean()
+
+// BARU SETELAH INI METHOD resetTableModel()
+private void resetTableModel() {
+    DefaultTableModel model = new DefaultTableModel(
+        new Object[][]{}, 
+        new String[]{
+            "ID Kunjungan", "No. Antrean", "ID Pasien", "Nama Pasien", "Status"
+        }
+    ) {
+        @Override
+        public boolean isCellEditable(int row, int column) {
+            return false;
+        }
+    };
+
+    tblAntrean.setModel(model);
+    hideIdColumn(); // Tambahkan ini agar kolom ID langsung hilang setelah model di-set
+}
+
+    private void hideIdColumn() {
+    tblAntrean.getColumnModel().getColumn(0).setMinWidth(0);
+    tblAntrean.getColumnModel().getColumn(0).setMaxWidth(0);
+    tblAntrean.getColumnModel().getColumn(0).setWidth(0);
+}
+
 
     /**
      * This method is called from within the constructor to initialize the form.
