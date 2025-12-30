@@ -8,7 +8,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.util.Locale;
 import javax.swing.JOptionPane;
 import javax.swing.text.PlainDocument;
 
@@ -49,15 +50,7 @@ public class JDialog_Form_Layanan extends javax.swing.JDialog implements Manajem
                     txtNamaLayanan.setText(rs.getString("nama_layanan"));
                     PlainDocument doc = (PlainDocument) txtBiaya.getDocument();
                     doc.setDocumentFilter(null);
-                    
-                    // Ambil nilai biaya dari ResultSet
-                    double biaya = rs.getDouble("biaya");
-                    // Gunakan DecimalFormat untuk menghapus .0 pada angka bulat
-                    DecimalFormat df = new DecimalFormat("#.##");  // Format dengan dua angka desimal (jika ada)
-                    String biayaFormatted = df.format(biaya);  // Format angka
-                    // Set nilai biaya ke JTextField
-                    txtBiaya.setText(biayaFormatted);
-                    
+                    txtBiaya.setText(formatRupiah(rs.getDouble("biaya")));
                     doc.setDocumentFilter(new NumericFilter());
                 }
             }
@@ -87,6 +80,13 @@ public class JDialog_Form_Layanan extends javax.swing.JDialog implements Manajem
             pstmt.setInt(3, idLayanan);
             pstmt.executeUpdate();
         }
+    }
+    
+    // Format angka ke Rupiah Indonesia
+    private String formatRupiah(double number) {
+        Locale localeID = new Locale("id", "ID");
+        NumberFormat formatRupiah = NumberFormat.getCurrencyInstance(localeID);
+        return formatRupiah.format(number);
     }
     
     @SuppressWarnings("unchecked")

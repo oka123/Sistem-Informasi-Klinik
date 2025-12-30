@@ -4,11 +4,9 @@
  */
 package Resepsionis;
 
-import Database.KoneksiDatabase;
 import Main.JFrame_Login;
 import java.awt.CardLayout;
 import java.awt.Image;
-import java.sql.Connection;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;

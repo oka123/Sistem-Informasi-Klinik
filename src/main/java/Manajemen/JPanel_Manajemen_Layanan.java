@@ -8,9 +8,10 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
@@ -51,21 +52,11 @@ public class JPanel_Manajemen_Layanan extends javax.swing.JPanel implements Mana
                 }
 
                 try (ResultSet rs = pstmt.executeQuery()) {
-                    DecimalFormat df = new DecimalFormat("#,###");
                     while (rs.next()) {
-                        // Ambil nilai biaya dari ResultSet
-                        double biaya = rs.getDouble("biaya");
-                        // Cek apakah biaya memiliki desimal .0
-                        String biayaFormatted = df.format(biaya);  // Format angka dengan pemisah ribuan
-                        // Jika angka bulat, hapus bagian desimal
-                        if (biaya == (int) biaya) {
-                            biayaFormatted = df.format((int) biaya);  // Format sebagai integer
-                        }
-                        
                         dataList.add(new Object[]{
                             rs.getInt("layanan_id"),
                             rs.getString("nama_layanan"),
-                            biayaFormatted 
+                            formatRupiah(rs.getDouble("biaya"))
                         });
                     }
                 }
@@ -109,6 +100,14 @@ public class JPanel_Manajemen_Layanan extends javax.swing.JPanel implements Mana
             JOptionPane.showMessageDialog(this, "Gagal menghapus: " + e.getMessage());
         }
     }
+    
+    // Format angka ke Rupiah Indonesia
+    private String formatRupiah(double number) {
+        Locale localeID = new Locale("id", "ID");
+        NumberFormat formatRupiah = NumberFormat.getCurrencyInstance(localeID);
+        return formatRupiah.format(number);
+    }
+    
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
