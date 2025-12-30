@@ -75,28 +75,25 @@ public class JPanel_Dashboard_Manajemen extends javax.swing.JPanel implements Ma
                     String txtKunjungan = "0";
                     String txtPendapatan = "Rp 0";
                     String txtPasien = "0";
-
-                    // A. Hitung Kunjungan
-                    String sqlKunjungan = "SELECT COUNT(*) AS total FROM kunjungan WHERE DATE(tanggal_kunjungan) = CURDATE()";
-                    try (PreparedStatement ps = this.conn.prepareStatement(sqlKunjungan); 
-                            ResultSet rs = ps.executeQuery()) {
-                        if (rs.next()) txtKunjungan = String.valueOf(rs.getLong("total"));
+                    
+                    // Gabungkan semua query dalam satu query
+                    String sql = 
+                        "SELECT " + 
+                            " (SELECT COUNT(*) FROM kunjungan WHERE DATE(tanggal_kunjungan) = CURDATE()) AS total_kunjungan, " + 
+                            " (SELECT SUM(total_bayar) FROM pembayaran WHERE DATE(tanggal_bayar) = CURDATE()) AS total_pendapatan, " + 
+                            " (SELECT COUNT(*) FROM pasien) AS total_pasien";
+                    
+                    // Eksekusi query gabungan
+                    try (PreparedStatement ps = this.conn.prepareStatement(sql); 
+                         ResultSet rs = ps.executeQuery()) {
+                        if (rs.next()) {
+                            // Ambil hasil dari query gabungan
+                            txtKunjungan = String.valueOf(rs.getLong("total_kunjungan"));
+                            txtPendapatan = formatRupiah(rs.getDouble("total_pendapatan"));
+                            txtPasien = String.valueOf(rs.getLong("total_pasien"));
+                        }
                     }
-
-                    // B. Hitung Pendapatan
-                    String sqlPendapatan = "SELECT SUM(total_bayar) AS total FROM pembayaran WHERE DATE(tanggal_bayar) = CURDATE()";
-                    try (PreparedStatement ps = this.conn.prepareStatement(sqlPendapatan); 
-                            ResultSet rs = ps.executeQuery()) {
-                        if (rs.next()) txtPendapatan = formatRupiah(rs.getDouble("total"));
-                    }
-
-                    // C. Hitung Pasien
-                    String sqlPasien = "SELECT COUNT(*) AS total FROM pasien";
-                    try (PreparedStatement ps = this.conn.prepareStatement(sqlPasien); 
-                            ResultSet rs = ps.executeQuery()) {
-                        if (rs.next()) txtPasien = String.valueOf(rs.getLong("total"));
-                    }
-
+                    
                     // --- 3. UPDATE UI (SELESAI) ---
                     // Karena kita di dalam Thread, kita harus pakai SwingUtilities untuk update GUI
                     String finalKunjungan = txtKunjungan;

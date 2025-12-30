@@ -359,38 +359,38 @@ public class JPanel_Dashboard_Resepsionis extends javax.swing.JPanel {
     // End of variables declaration//GEN-END:variables
 
 public void loadStatistik() {
-    
+    // sql = ...
+    // Connection conn = KoneksiDatabase.getConnection();
+    // PreparedStatement pstmt = conn.prepareStatement(sql);
+    // pstmt.setInt(1, id);
+    // ResultSet rs = pstmt.executeQuery or executeUpdate()
+    // 
     
     try (Statement stmt = conn.createStatement()) {
 
-        ResultSet rs;
-        rs = stmt.executeQuery("SELECT COUNT(*) FROM pasien");
+        // Gabungkan ketiga query menjadi satu query
+        String query = 
+            "SELECT " +
+            "  (SELECT COUNT(*) FROM pasien) AS jumlah_pasien, " +
+            "  (SELECT COUNT(*) FROM dokter) AS jumlah_dokter, " +
+            "  (SELECT COUNT(*) FROM kunjungan WHERE DATE(tanggal_kunjungan) = CURDATE()) AS jumlah_kunjungan";
 
-        if(rs.next()){
-            int jumlahPasien = rs.getInt(1);
+        // Eksekusi query
+        try (ResultSet rs = stmt.executeQuery(query)) {
+            if (rs.next()) {
+                // Ambil hasil dari query gabungan
+                int jumlahPasien = rs.getInt("jumlah_pasien");
+                lblJumlahPasien.setText(String.valueOf(jumlahPasien));
 
-            lblJumlahPasien.setText(String.valueOf(jumlahPasien));
+                int jumlahDokter = rs.getInt("jumlah_dokter");
+                lblJumlahDokter.setText(String.valueOf(jumlahDokter));
 
+                int jumlahKunjungan = rs.getInt("jumlah_kunjungan");
+                lblJumlahKunjungan.setText(String.valueOf(jumlahKunjungan));
+            }
         }
 
-        rs = stmt.executeQuery("SELECT COUNT(*) FROM dokter");
-
-        if(rs.next()){
-            int jumlahDokter = rs.getInt(1);
-
-            lblJumlahDokter.setText(String.valueOf(jumlahDokter));
-        }
-
-        rs = stmt.executeQuery("SELECT COUNT(*) FROM kunjungan WHERE DATE(tanggal_kunjungan) = CURDATE()");
-
-        if(rs.next()){
-            int jumlahKunjungan = rs.getInt(1);
-
-            lblJumlahKunjungan.setText(String.valueOf(jumlahKunjungan));
-        }
-
-
-    } catch (SQLException e){
+    } catch (SQLException e) {
         System.out.println("Error Dashboard: " + e.getMessage());
     }
     
