@@ -1,7 +1,4 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JPanel.java to edit this template
- */
+
 package Manajemen;
 
 import Database.KoneksiDatabase;
@@ -11,6 +8,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JFrame;
@@ -53,11 +51,21 @@ public class JPanel_Manajemen_Layanan extends javax.swing.JPanel implements Mana
                 }
 
                 try (ResultSet rs = pstmt.executeQuery()) {
+                    DecimalFormat df = new DecimalFormat("#,###");
                     while (rs.next()) {
+                        // Ambil nilai biaya dari ResultSet
+                        double biaya = rs.getDouble("biaya");
+                        // Cek apakah biaya memiliki desimal .0
+                        String biayaFormatted = df.format(biaya);  // Format angka dengan pemisah ribuan
+                        // Jika angka bulat, hapus bagian desimal
+                        if (biaya == (int) biaya) {
+                            biayaFormatted = df.format((int) biaya);  // Format sebagai integer
+                        }
+                        
                         dataList.add(new Object[]{
                             rs.getInt("layanan_id"),
                             rs.getString("nama_layanan"),
-                            rs.getDouble("biaya")
+                            biayaFormatted 
                         });
                     }
                 }

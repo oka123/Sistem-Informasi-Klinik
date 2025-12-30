@@ -1,7 +1,4 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JPanel.java to edit this template
- */
+
 package Manajemen;
 
 import Database.KoneksiDatabase;
@@ -113,48 +110,6 @@ public class JPanel_Manajemen_User extends javax.swing.JPanel implements Manajem
             });
 
         });
-//        DefaultTableModel model = (DefaultTableModel) tblUser.getModel();
-//        model.setRowCount(0); // Bersihkan tabel lama
-//        
-//        // Kolom tabel
-//        String[] judulKolom = {"ID User", "Username", "Nama Lengkap", "Role", "No. Telepon", "Alamat"};
-//        model.setColumnIdentifiers(judulKolom);
-//        
-//        // SQL ambil data dari tabel user kecuali role dokter
-//        String sql = "SELECT user_id, username, nama_lengkap, role, no_telepon, alamat " +
-//                     "FROM user WHERE role != 'Dokter'";
-//        
-//        // Jika ada kata kunci pencarian, tambahkan klausa WHERE
-//        boolean isSearch = (key != null && !key.trim().isEmpty());
-//        
-//        if (isSearch) {
-//            // Mencari berdasarkan Username ATAU Nama Lengkap
-//            sql += " AND (username LIKE ? OR nama_lengkap LIKE ?)";
-//        }
-//
-//        try (PreparedStatement pstmt = this.conn.prepareStatement(sql)) {
-//
-//            if (isSearch) {
-//                String pattern = "%" + key + "%";
-//                pstmt.setString(1, pattern);
-//                pstmt.setString(2, pattern);
-//            }
-//
-//            try (ResultSet rs = pstmt.executeQuery()) {
-//                while (rs.next()) {
-//                    model.addRow(new Object[]{
-//                        rs.getString("user_id"),
-//                        rs.getString("username"),
-//                        rs.getString("nama_lengkap"),
-//                        rs.getString("role"),
-//                        rs.getString("no_telepon"), 
-//                        rs.getString("alamat")     
-//                    });
-//                }
-//            }
-//        } catch (Exception e) {
-//            JOptionPane.showMessageDialog(this, "Gagal memuat data user: " + e.getMessage());
-//        }
     }
     
     @Override

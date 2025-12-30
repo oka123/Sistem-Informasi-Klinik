@@ -1,7 +1,4 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JDialog.java to edit this template
- */
+
 package Manajemen;
 
 import Database.KoneksiDatabase;
@@ -33,12 +30,14 @@ public class JDialog_Form_User extends javax.swing.JDialog implements Manajemen 
         
         if (this.idUserToEdit != null) {
             // Mode EDIT: Muat data lama
+            lblJudul.setText("Edit Data User");
             loadDataUserForEdit();
             txt_user_id.setText(String.valueOf(idUser));
             txt_user_id.setEnabled(false); // ID tidak boleh diubah
             lblInfoPassword.setText("Biarkan kosong jika tidak ingin mengubah password");
         } else {
             // Mode TAMBAH
+            lblJudul.setText("Tambah Data User");
             txt_user_id.setText("Auto");
             txt_user_id.setEnabled(false);
             lblInfoPassword.setText("");
@@ -51,14 +50,14 @@ public class JDialog_Form_User extends javax.swing.JDialog implements Manajemen 
         try (PreparedStatement pstmt = this.conn.prepareStatement(sql)) {
 
             pstmt.setInt(1, this.idUserToEdit);
-            ResultSet rs = pstmt.executeQuery();
-
-            if (rs.next()) {
-                txt_username.setText(rs.getString("username"));
-                txt_nama_lengkap.setText(rs.getString("nama_lengkap"));
-                comboRole.setSelectedItem(rs.getString("role"));
-                txtNoTelepon.setText(rs.getString("no_telepon"));
-                txtAlamat.setText(rs.getString("alamat"));
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    txt_username.setText(rs.getString("username"));
+                    txt_nama_lengkap.setText(rs.getString("nama_lengkap"));
+                    comboRole.setSelectedItem(rs.getString("role"));
+                    txtNoTelepon.setText(rs.getString("no_telepon"));
+                    txtAlamat.setText(rs.getString("alamat"));
+                }
             }
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(this, "Gagal memuat data: " + e.getMessage());
@@ -140,7 +139,7 @@ public class JDialog_Form_User extends javax.swing.JDialog implements Manajemen 
 
         jScrollPane2 = new javax.swing.JScrollPane();
         jPanel1 = new javax.swing.JPanel();
-        jLabel1 = new javax.swing.JLabel();
+        lblJudul = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         txt_user_id = new javax.swing.JTextField();
         jLabel3 = new javax.swing.JLabel();
@@ -167,8 +166,8 @@ public class JDialog_Form_User extends javax.swing.JDialog implements Manajemen 
 
         jPanel1.setPreferredSize(new java.awt.Dimension(452, 538));
 
-        jLabel1.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
-        jLabel1.setText("Form Data User");
+        lblJudul.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
+        lblJudul.setText("Form Data User");
 
         jLabel2.setFont(new java.awt.Font("SansSerif", 0, 14)); // NOI18N
         jLabel2.setText("User ID");
@@ -257,7 +256,7 @@ public class JDialog_Form_User extends javax.swing.JDialog implements Manajemen 
                 .addGap(14, 14, 14)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jLabel1)
+                        .addComponent(lblJudul)
                         .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -293,7 +292,7 @@ public class JDialog_Form_User extends javax.swing.JDialog implements Manajemen 
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(19, 19, 19)
-                .addComponent(jLabel1)
+                .addComponent(lblJudul)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 12, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -409,7 +408,6 @@ public class JDialog_Form_User extends javax.swing.JDialog implements Manajemen 
     private javax.swing.JButton btnBatal;
     private javax.swing.JButton btnSimpanUser;
     private javax.swing.JComboBox<String> comboRole;
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -422,6 +420,7 @@ public class JDialog_Form_User extends javax.swing.JDialog implements Manajemen 
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JLabel lblInfoPassword;
+    private javax.swing.JLabel lblJudul;
     private javax.swing.JTextArea txtAlamat;
     private javax.swing.JTextField txtNoTelepon;
     private javax.swing.JTextField txt_nama_lengkap;
@@ -429,5 +428,5 @@ public class JDialog_Form_User extends javax.swing.JDialog implements Manajemen 
     private javax.swing.JTextField txt_user_id;
     private javax.swing.JTextField txt_username;
     // End of variables declaration//GEN-END:variables
-    
+
 }
