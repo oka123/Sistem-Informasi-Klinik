@@ -4,12 +4,19 @@
 
 package Main;
 
+<<<<<<< HEAD
 import java.sql.Connection;
 import java.sql.SQLException;
 import Database.KoneksiDatabase;
 
 import java.awt.Font;
 import javax.swing.JOptionPane;
+=======
+import Database.KoneksiDatabase;
+import java.awt.Font;
+import java.sql.Connection;
+import java.sql.SQLException;
+>>>>>>> 8cae046 (final (kayaknya)2)
 import javax.swing.UIManager;
 
 /**
@@ -19,6 +26,22 @@ import javax.swing.UIManager;
 public class Main {
 
     public static void main(String[] args) {
+<<<<<<< HEAD
+=======
+        // Koneksi ke Database
+        KoneksiDatabase koneksiDB = new KoneksiDatabase();
+        
+//        try {
+//            // Mencoba untuk membuat koneksi
+//            Connection conn = koneksiDB.connect();
+//            if (conn != null) {
+//                System.out.println("Koneksi berhasil!");
+//            }
+//        } catch (SQLException e) {
+//            System.out.println("Koneksi gagal: " + e.getMessage());
+//        }
+        
+>>>>>>> 8cae046 (final (kayaknya)2)
         /* Set the FlatLaf look and feel */
         // Ini adalah kode untuk mengaktifkan tema modern (Light Theme)
         try {
@@ -38,6 +61,7 @@ public class Main {
         UIManager.put("ComboBox.font", globalFont);  // Untuk combo box
         UIManager.put("Table.font", globalFont);     // Untuk tabel
         
+<<<<<<< HEAD
 //      Uji Coba Koneksi ke DB
         KoneksiDatabase koneksiDB = new KoneksiDatabase();
         try {
@@ -49,6 +73,8 @@ public class Main {
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(null, "Terjadi kesalahan saat koneksi: " + e.getMessage());
         }
+=======
+>>>>>>> 8cae046 (final (kayaknya)2)
         
         java.awt.EventQueue.invokeLater(() -> {
             new JFrame_Login().setVisible(true);

@@ -64,7 +64,11 @@
                           <Component id="btn_logout" min="-2" max="-2" attributes="0"/>
                           <EmptySpace min="0" pref="118" max="32767" attributes="0"/>
                       </Group>
+<<<<<<< HEAD
                       <Component id="btnAntreanPasien" alignment="0" max="32767" attributes="0"/>
+=======
+                      <Component id="btnAntreanPasien" alignment="0" pref="238" max="32767" attributes="0"/>
+>>>>>>> 8cae046 (final (kayaknya)2)
                       <Component id="btnRiwayatMedis" alignment="0" max="32767" attributes="0"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
@@ -86,7 +90,11 @@
                   <Component id="btnAntreanPasien" min="-2" pref="40" max="-2" attributes="0"/>
                   <EmptySpace type="unrelated" max="-2" attributes="0"/>
                   <Component id="btnRiwayatMedis" min="-2" pref="40" max="-2" attributes="0"/>
+<<<<<<< HEAD
                   <EmptySpace min="-2" pref="475" max="-2" attributes="0"/>
+=======
+                  <EmptySpace min="-2" pref="463" max="-2" attributes="0"/>
+>>>>>>> 8cae046 (final (kayaknya)2)
                   <Component id="btn_logout" min="-2" pref="40" max="-2" attributes="0"/>
                   <EmptySpace min="-2" pref="30" max="-2" attributes="0"/>
               </Group>
@@ -134,9 +142,12 @@
         </Component>
         <Component class="javax.swing.JButton" name="btnAntreanPasien">
           <Properties>
+<<<<<<< HEAD
             <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
               <Color blue="ff" green="ff" red="ff" type="rgb"/>
             </Property>
+=======
+>>>>>>> 8cae046 (final (kayaknya)2)
             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
               <Font name="sansserif" size="14" style="1"/>
             </Property>
@@ -160,9 +171,12 @@
         </Component>
         <Component class="javax.swing.JButton" name="btnRiwayatMedis">
           <Properties>
+<<<<<<< HEAD
             <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
               <Color blue="ff" green="ff" red="ff" type="rgb"/>
             </Property>
+=======
+>>>>>>> 8cae046 (final (kayaknya)2)
             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
               <Font name="sansserif" size="14" style="1"/>
             </Property>

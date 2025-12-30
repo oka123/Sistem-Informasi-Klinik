@@ -96,7 +96,10 @@ public class JFrame_Main_Dokter extends javax.swing.JFrame {
         lblSpesialisasi.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lblSpesialisasi.setText("[Spesialisasi Dokter]");
 
+<<<<<<< HEAD
         btnAntreanPasien.setBackground(new java.awt.Color(255, 255, 255));
+=======
+>>>>>>> 8cae046 (final (kayaknya)2)
         btnAntreanPasien.setFont(new java.awt.Font("sansserif", 1, 14)); // NOI18N
         btnAntreanPasien.setForeground(java.awt.Color.white);
         btnAntreanPasien.setText("⏳️  Antrean Pasien Hari Ini");
@@ -119,7 +122,10 @@ public class JFrame_Main_Dokter extends javax.swing.JFrame {
             }
         });
 
+<<<<<<< HEAD
         btnRiwayatMedis.setBackground(new java.awt.Color(255, 255, 255));
+=======
+>>>>>>> 8cae046 (final (kayaknya)2)
         btnRiwayatMedis.setFont(new java.awt.Font("sansserif", 1, 14)); // NOI18N
         btnRiwayatMedis.setForeground(java.awt.Color.white);
         btnRiwayatMedis.setText("📜  Riwayat Rekam Medis");
@@ -169,7 +175,11 @@ public class JFrame_Main_Dokter extends javax.swing.JFrame {
                         .addGap(14, 14, 14)
                         .addComponent(btn_logout)
                         .addGap(0, 118, Short.MAX_VALUE))
+<<<<<<< HEAD
                     .addComponent(btnAntreanPasien, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+=======
+                    .addComponent(btnAntreanPasien, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 238, Short.MAX_VALUE)
+>>>>>>> 8cae046 (final (kayaknya)2)
                     .addComponent(btnRiwayatMedis, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
@@ -188,7 +198,11 @@ public class JFrame_Main_Dokter extends javax.swing.JFrame {
                 .addComponent(btnAntreanPasien, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(btnRiwayatMedis, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+<<<<<<< HEAD
                 .addGap(475, 475, 475)
+=======
+                .addGap(463, 463, 463)
+>>>>>>> 8cae046 (final (kayaknya)2)
                 .addComponent(btn_logout, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(30, 30, 30))
         );
