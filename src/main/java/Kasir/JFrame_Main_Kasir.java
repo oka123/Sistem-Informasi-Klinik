@@ -1,3 +1,7 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
+ */
 package Kasir;
 import com.formdev.flatlaf.FlatLightLaf;
 /**
@@ -87,41 +91,66 @@ public class JFrame_Main_Kasir extends javax.swing.JFrame {
                 btnRiwayatTransaksiActionPerformed(evt);
             }
         });
-        panelLogout.add(btnLogout); // Menambahkan tombol logout ke panel
 
-        panelSidebar.add(panelLogout); // Menambahkan panel logout ke sidebar
+        javax.swing.GroupLayout panelSidebarLayout = new javax.swing.GroupLayout(panelSidebar);
+        panelSidebar.setLayout(panelSidebarLayout);
+        panelSidebarLayout.setHorizontalGroup(
+            panelSidebarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panelSidebarLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(panelSidebarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(panelSidebarLayout.createSequentialGroup()
+                        .addComponent(btnAntreanPembayaran)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addComponent(btnRiwayatTransaksi, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
+        );
+        panelSidebarLayout.setVerticalGroup(
+            panelSidebarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panelSidebarLayout.createSequentialGroup()
+                .addComponent(jLabel1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(btnAntreanPembayaran)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnRiwayatTransaksi)
+                .addGap(0, 220, Short.MAX_VALUE))
+        );
 
-        add(panelSidebar, BorderLayout.WEST);
+        getContentPane().add(panelSidebar, java.awt.BorderLayout.LINE_START);
 
-        // Content
-        panelContent = new JPanel(new CardLayout());
-        JPanel_Antrean_Pembayaran panelAntrean = new JPanel_Antrean_Pembayaran();
-        panelContent.add(panelAntrean, "PANEL_ANTREAN");
-        add(panelContent, BorderLayout.CENTER);
+        PanelKonten.setLayout(new java.awt.CardLayout());
+        getContentPane().add(PanelKonten, java.awt.BorderLayout.CENTER);
 
-        // Switch panel
-        btnAntrean.addActionListener(e -> {
-            CardLayout cl = (CardLayout) panelContent.getLayout();
-            cl.show(panelContent, "PANEL_ANTREAN");
-        });
-    }
+        pack();
+    }// </editor-fold>//GEN-END:initComponents
 
-    // Action listener untuk tombol logout
-    private void btn_logoutActionPerformed(java.awt.event.ActionEvent evt) {                                           
-        // Konfirmasi logout
-        int pilihan = JOptionPane.showConfirmDialog(this,
-            "Apakah Anda yakin ingin logout?",
-            "Konfirmasi Logout",
-            JOptionPane.YES_NO_OPTION,
-            JOptionPane.WARNING_MESSAGE);
+    private void btnRiwayatTransaksiActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRiwayatTransaksiActionPerformed
+   panelRiwayatTransaksi.tampilkanRiwayat(); // <--- TAMBAHAN: Memanggil method refresh data
+        showPanel("RIWAYAT_TRANSAKSI");
+    }//GEN-LAST:event_btnRiwayatTransaksiActionPerformed
 
-        if (pilihan == JOptionPane.YES_OPTION) {
-            new JFrame_Login().setVisible(true); // Buka login
-            this.dispose(); // Tutup dashboard ini
+    /**
+     * @param args the command line arguments
+     */
+public static void main(String args[]) {
+        /* Set the FlatLaf look and feel */
+        try {
+            FlatLightLaf.setup(); 
+  
+        } catch (Exception ex) {
+            logger.log(java.util.logging.Level.SEVERE, "Failed to initialize FlatLaf", ex);
         }
-    }    
 
-    public static void main(String[] args) {
-        new JFrame_Main_Kasir().setVisible(true);
+        /* Create and display the form */
+        java.awt.EventQueue.invokeLater(() -> new JFrame_Main_Kasir().setVisible(true));
     }
+
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JPanel PanelKonten;
+    private javax.swing.JButton btnAntreanPembayaran;
+    private javax.swing.JButton btnRiwayatTransaksi;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JPanel panelSidebar;
+    // End of variables declaration//GEN-END:variables
 }
