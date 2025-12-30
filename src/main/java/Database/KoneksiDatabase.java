@@ -48,4 +48,8 @@ public class KoneksiDatabase {
     public Connection getConnection() throws SQLException{
         return conn;
     }
+
+    public Connection connect() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
 }
