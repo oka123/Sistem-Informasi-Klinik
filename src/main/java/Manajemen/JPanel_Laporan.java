@@ -1,7 +1,4 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JPanel.java to edit this template
- */
+
 package Manajemen;
 
 import Database.KoneksiDatabase;
@@ -104,8 +101,6 @@ public class JPanel_Laporan extends javax.swing.JPanel implements Manajemen {
             String errorMsg = null;
 
             try {
-                // Panggil method load yang sudah kita modifikasi
-                // Method ini akan mengisi 'this.tempTotalText' juga
                 switch (jenisLaporan) {
                     case "Laporan Pendapatan" -> resultModel = loadLaporanPendapatan(sqlDari, sqlSampai);
                     case "Laporan Kunjungan Pasien" -> resultModel = loadLaporanKunjungan(sqlDari, sqlSampai);
@@ -138,164 +133,8 @@ public class JPanel_Laporan extends javax.swing.JPanel implements Manajemen {
                 this.setCursor(Cursor.getDefaultCursor());
                 btnTampilkan.setEnabled(true);
             });
-
         });
-//        
-//        // Validasi Input Tanggal
-//        if (dcDariTanggal.getDate() == null || dcSampaiTanggal.getDate() == null) {
-//            JOptionPane.showMessageDialog(this, "Harap pilih rentang tanggal 'Dari' dan 'Sampai'!", "Peringatan", JOptionPane.WARNING_MESSAGE);
-//            return;
-//        }
-//
-//        // Konversi Tanggal Java ke SQL Date
-//        Date sqlDari = new Date(dcDariTanggal.getDate().getTime());
-//        Date sqlSampai = new Date(dcSampaiTanggal.getDate().getTime());
-//
-//        String jenisLaporan = (String) comboJenisLaporan.getSelectedItem();
-//
-//        // Panggil method spesifik berdasarkan pilihan
-//        switch (jenisLaporan) {
-//            case "Laporan Pendapatan" -> loadLaporanPendapatan(sqlDari, sqlSampai);
-//            case "Laporan Kunjungan Pasien" -> loadLaporanKunjungan(sqlDari, sqlSampai);
-//            case "Laporan Penjualan Obat" -> loadLaporanObat(sqlDari, sqlSampai);
-//            default -> JOptionPane.showMessageDialog(this, "Jenis laporan tidak valid.");
-//        }
-//        this.setCursor(Cursor.getDefaultCursor());
-
     }
-    
-//    private void loadLaporanPendapatan(Date dari, Date sampai) {
-//        DefaultTableModel model = new DefaultTableModel();
-//        model.setColumnIdentifiers(new Object[]{"ID Pembayaran", "Tanggal Bayar", "Kasir", "Metode", "Biaya Jasa", "Biaya Obat", "Total Bayar"});
-//        
-//        double grandTotal = 0;
-//        
-//        // Query JOIN: Pembayaran -> User (Kasir)
-//        // Hitung total_bayar dinamis (jasa + obat) jika kolom total_bayar belum ada di DB
-//        String sql = "SELECT p.pembayaran_id, p.tanggal_bayar, u.nama_lengkap, " +
-//                     "p.metode_bayar, p.total_biaya_jasa, p.total_biaya_obat, p.total_bayar " +
-//                     "FROM pembayaran p " +
-//                     "LEFT JOIN user u ON p.user_kasir_id = u.user_id " +
-//                     "WHERE DATE(p.tanggal_bayar) BETWEEN ? AND ?";
-//
-//        try (PreparedStatement pstmt = this.conn.prepareStatement(sql)) {
-//            
-//            pstmt.setDate(1, dari);
-//            pstmt.setDate(2, sampai);
-//            
-//            ResultSet rs = pstmt.executeQuery();
-//            
-//            while (rs.next()) {
-//                double jasa = rs.getDouble("total_biaya_jasa");
-//                double obat = rs.getDouble("total_biaya_obat");
-//                double total = rs.getDouble("total_bayar");
-//                
-//                grandTotal += total;
-//                
-//                model.addRow(new Object[]{
-//                    rs.getInt("pembayaran_id"),
-//                    rs.getTimestamp("tanggal_bayar"),
-//                    rs.getString("nama_lengkap"), // Nama Kasir
-//                    rs.getString("metode_bayar"),
-//                    formatRupiah.format(jasa),
-//                    formatRupiah.format(obat),
-//                    formatRupiah.format(total)
-//                });
-//            }
-//            
-//            tblLaporan.setModel(model);
-//            lblTotalPendapatan.setText("Total Pendapatan: " + formatRupiah.format(grandTotal));
-//            
-//        } catch (SQLException e) {
-//            JOptionPane.showMessageDialog(this, "Gagal memuat laporan pendapatan: " + e.getMessage());
-//            e.printStackTrace();
-//        }
-//    }
-    
-//    private void loadLaporanKunjungan(Date dari, Date sampai) {
-//        DefaultTableModel model = new DefaultTableModel();
-//        model.setColumnIdentifiers(new Object[]{"Tanggal", "Pasien", "Dokter", "Status"});
-//        
-//        int totalKunjungan = 0;
-//
-//        // Query JOIN: Kunjungan -> Pasien -> Dokter -> User (Untuk nama dokter)
-//        String sql = "SELECT k.tanggal_kunjungan, p.nama_pasien, u.nama_lengkap AS nama_dokter, k.status_kunjungan " +
-//                     "FROM kunjungan k " +
-//                     "JOIN pasien p ON k.pasien_id = p.pasien_id " +
-//                     "JOIN dokter d ON k.dokter_id = d.dokter_id " +
-//                     "JOIN user u ON d.user_id = u.user_id " + // Ambil nama dokter dari tabel user
-//                     "WHERE DATE(k.tanggal_kunjungan) BETWEEN ? AND ?";
-//
-//        try (PreparedStatement pstmt = this.conn.prepareStatement(sql)) {
-//            
-//            pstmt.setDate(1, dari);
-//            pstmt.setDate(2, sampai);
-//            
-//            ResultSet rs = pstmt.executeQuery();
-//            
-//            while (rs.next()) {
-//                totalKunjungan++;
-//                model.addRow(new Object[]{
-//                    rs.getTimestamp("tanggal_kunjungan"),
-//                    rs.getString("nama_pasien"),
-//                    rs.getString("nama_dokter"),
-//                    rs.getString("status_kunjungan")
-//                });
-//            }
-//            
-//            tblLaporan.setModel(model);
-//            lblTotalPendapatan.setText("Total Kunjungan: " + totalKunjungan + " Pasien");
-//            
-//        } catch (SQLException e) {
-//            JOptionPane.showMessageDialog(this, "Gagal memuat laporan kunjungan: " + e.getMessage());
-//            e.printStackTrace();
-//        }
-//    }
-    
-//    private void loadLaporanObat(Date dari, Date sampai) {
-//        DefaultTableModel model = new DefaultTableModel();
-//        model.setColumnIdentifiers(new Object[]{"Nama Obat", "Satuan", "Total Terjual (Qty)", "Sisa Stok"});
-//        
-//        int totalItemTerjual = 0;
-//
-//        // Query Agregasi (SUM) dengan JOIN
-//        // Detail_Resep -> Resep (untuk filter tanggal) -> Obat (untuk nama & stok)
-//        String sql = "SELECT o.nama_obat, o.satuan, SUM(dr.jumlah) as total_qty, o.stok " +
-//                     "FROM detail_resep dr " +
-//                     "JOIN obat o ON dr.obat_id = o.obat_id " +
-//                     "JOIN resep r ON dr.resep_id = r.resep_id " +
-//                     "WHERE DATE(r.tanggal_resep) BETWEEN ? AND ? " +
-//                     "GROUP BY o.obat_id, o.nama_obat, o.satuan, o.stok " +
-//                     "ORDER BY total_qty DESC";
-//
-//        try (PreparedStatement pstmt = this.conn.prepareStatement(sql)) {
-//            
-//            pstmt.setDate(1, dari);
-//            pstmt.setDate(2, sampai);
-//            
-//            ResultSet rs = pstmt.executeQuery();
-//            while (rs.next()) {
-//                int qty = rs.getInt("total_qty");
-//                totalItemTerjual += qty;
-//                
-//                model.addRow(new Object[]{
-//                    rs.getString("nama_obat"),
-//                    rs.getString("satuan"),
-//                    qty,
-//                    rs.getInt("stok")
-//                });
-//            }
-//            
-//            tblLaporan.setModel(model);
-//            lblTotalPendapatan.setText("Total Item Obat Terjual: " + totalItemTerjual);
-//            
-//        } catch (SQLException e) {
-//            JOptionPane.showMessageDialog(this, "Gagal memuat laporan obat: " + e.getMessage());
-//            e.printStackTrace();
-//        }
-//    }
-    
-    // Test
     
     // 1. Laporan Pendapatan
     @Override
@@ -314,23 +153,23 @@ public class JPanel_Laporan extends javax.swing.JPanel implements Manajemen {
         try (PreparedStatement pstmt = this.conn.prepareStatement(sql)) {
             pstmt.setDate(1, dari);
             pstmt.setDate(2, sampai);
-            ResultSet rs = pstmt.executeQuery();
-            
-            while (rs.next()) {
-                double total = rs.getDouble("total_bayar");
-                double jasa = rs.getDouble("total_biaya_jasa");
-                double obat = rs.getDouble("total_biaya_obat");
-                grandTotal += total;
-                
-                model.addRow(new Object[]{
-                    rs.getInt("pembayaran_id"),
-                    rs.getTimestamp("tanggal_bayar"),
-                    rs.getString("nama_lengkap"), 
-                    rs.getString("metode_bayar"),
-                    formatRupiah.format(jasa),
-                    formatRupiah.format(obat),
-                    formatRupiah.format(total)
-                });
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    double total = rs.getDouble("total_bayar");
+                    double jasa = rs.getDouble("total_biaya_jasa");
+                    double obat = rs.getDouble("total_biaya_obat");
+                    grandTotal += total;
+
+                    model.addRow(new Object[]{
+                        rs.getInt("pembayaran_id"),
+                        rs.getTimestamp("tanggal_bayar"),
+                        rs.getString("nama_lengkap"), 
+                        rs.getString("metode_bayar"),
+                        formatRupiah.format(jasa),
+                        formatRupiah.format(obat),
+                        formatRupiah.format(total)
+                    });
+                }
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -357,16 +196,16 @@ public class JPanel_Laporan extends javax.swing.JPanel implements Manajemen {
         try (PreparedStatement pstmt = this.conn.prepareStatement(sql)) {
             pstmt.setDate(1, dari);
             pstmt.setDate(2, sampai);
-            ResultSet rs = pstmt.executeQuery();
-            
-            while (rs.next()) {
-                totalKunjungan++;
-                model.addRow(new Object[]{
-                    rs.getTimestamp("tanggal_kunjungan"),
-                    rs.getString("nama_pasien"),
-                    rs.getString("nama_dokter"),
-                    rs.getString("status_kunjungan")
-                });
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    totalKunjungan++;
+                    model.addRow(new Object[]{
+                        rs.getTimestamp("tanggal_kunjungan"),
+                        rs.getString("nama_pasien"),
+                        rs.getString("nama_dokter"),
+                        rs.getString("status_kunjungan")
+                    });
+                }
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -393,17 +232,17 @@ public class JPanel_Laporan extends javax.swing.JPanel implements Manajemen {
         try (PreparedStatement pstmt = this.conn.prepareStatement(sql)) {
             pstmt.setDate(1, dari);
             pstmt.setDate(2, sampai);
-            ResultSet rs = pstmt.executeQuery();
-            
-            while (rs.next()) {
-                int qty = rs.getInt("total_qty");
-                totalItemTerjual += qty;
-                model.addRow(new Object[]{
-                    rs.getString("nama_obat"),
-                    rs.getString("satuan"),
-                    qty,
-                    rs.getInt("stok")
-                });
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    int qty = rs.getInt("total_qty");
+                    totalItemTerjual += qty;
+                    model.addRow(new Object[]{
+                        rs.getString("nama_obat"),
+                        rs.getString("satuan"),
+                        qty,
+                        rs.getInt("stok")
+                    });
+                }
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -411,8 +250,6 @@ public class JPanel_Laporan extends javax.swing.JPanel implements Manajemen {
         this.tempTotalText = "Total Item Obat Terjual: " + totalItemTerjual;
         return model;
     }
-    
-    // Akhir Test
     
     @Override
     public void exportLaporanToExcel() {
@@ -461,7 +298,7 @@ public class JPanel_Laporan extends javax.swing.JPanel implements Manajemen {
                     try (Workbook workbook = new XSSFWorkbook()) {
                         Sheet sheet = workbook.createSheet("Laporan");
                         
-                        // ... (Styling code sama seperti sebelumnya) ...
+                        // ... (Styling code) ...
                         CellStyle headerStyle = workbook.createCellStyle();
                         Font headerFont = workbook.createFont();
                         headerFont.setBold(true);
@@ -526,107 +363,6 @@ public class JPanel_Laporan extends javax.swing.JPanel implements Manajemen {
                 }
             });
         }
-//        // Cek apakah ada data di tabel
-//        if (tblLaporan.getRowCount() == 0) {
-//            JOptionPane.showMessageDialog(this, "Tidak ada data untuk diexport.", "Info", JOptionPane.INFORMATION_MESSAGE);
-//            return;
-//        }
-//
-//        // Pilih Lokasi Penyimpanan File
-//        JFileChooser fileChooser = new JFileChooser();
-//        fileChooser.setDialogTitle("Simpan Laporan ke Excel");
-//        fileChooser.setFileFilter(new FileNameExtensionFilter("Excel File (*.xlsx)", "xlsx"));
-//
-//        // Set nama file default (berdasarkan jenis laporan + timestamp sederhana)
-//        String jenis = comboJenisLaporan.getSelectedItem().toString().replace(" ", "_");
-//        String namaFileDefault = jenis + "_" + System.currentTimeMillis() + ".xlsx";
-//        fileChooser.setSelectedFile(new File(namaFileDefault));
-//
-//        int userSelection = fileChooser.showSaveDialog(this);
-//
-//        if (userSelection == JFileChooser.APPROVE_OPTION) {
-//            File fileToSave = fileChooser.getSelectedFile();
-//
-//            // Pastikan ekstensi .xlsx
-//            if (!fileToSave.getAbsolutePath().endsWith(".xlsx")) {
-//                fileToSave = new File(fileToSave.getAbsolutePath() + ".xlsx");
-//            }
-//
-//            // roses Penulisan Excel (Apache POI)
-//            try (Workbook workbook = new XSSFWorkbook()) {
-//                Sheet sheet = workbook.createSheet("Laporan");
-//
-//                // --- HEADER STYLE ---
-//                CellStyle headerStyle = workbook.createCellStyle();
-//                Font headerFont = workbook.createFont();
-//                headerFont.setBold(true);
-//                headerStyle.setFont(headerFont);
-//                headerStyle.setBorderBottom(BorderStyle.THIN);
-//                headerStyle.setBorderTop(BorderStyle.THIN);
-//                headerStyle.setBorderRight(BorderStyle.THIN);
-//                headerStyle.setBorderLeft(BorderStyle.THIN);
-//                headerStyle.setFillForegroundColor(IndexedColors.GREY_25_PERCENT.getIndex());
-//                headerStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-//
-//                // --- MEMBUAT ROW HEADER ---
-//                Row headerRow = sheet.createRow(0);
-//                for (int i = 0; i < tblLaporan.getColumnCount(); i++) {
-//                    Cell cell = headerRow.createCell(i);
-//                    cell.setCellValue(tblLaporan.getColumnName(i));
-//                    cell.setCellStyle(headerStyle);
-//                }
-//
-//                // --- MENGISI DATA BARIS ---
-//                CellStyle dataStyle = workbook.createCellStyle();
-//                dataStyle.setBorderBottom(BorderStyle.THIN);
-//                dataStyle.setBorderRight(BorderStyle.THIN);
-//                dataStyle.setBorderLeft(BorderStyle.THIN);
-//
-//                for (int r = 0; r < tblLaporan.getRowCount(); r++) {
-//                    Row row = sheet.createRow(r + 1); // +1 karena baris 0 dipakai header
-//                    for (int c = 0; c < tblLaporan.getColumnCount(); c++) {
-//                        Cell cell = row.createCell(c);
-//                        Object value = tblLaporan.getValueAt(r, c);
-//
-//                        if (value != null) {
-//                            // Cek tipe data agar di Excel bisa dihitung (Sum/Avg)
-//                            String strValue = value.toString();
-//
-//                            // Coba parsing angka (menghapus "Rp " dan "." agar jadi angka murni di Excel)
-//                            // Logika ini opsional, tergantung apakah Anda ingin format "Rp" tetap ada atau jadi angka
-//                            if (strValue.startsWith("Rp")) {
-//                                // Jika ingin disimpan sebagai teks apa adanya:
-//                                cell.setCellValue(strValue);
-//                            } else if (value instanceof Number) {
-//                                cell.setCellValue(((Number) value).doubleValue());
-//                            } else {
-//                                cell.setCellValue(strValue);
-//                            }
-//                        } else {
-//                            cell.setCellValue("");
-//                        }
-//                        cell.setCellStyle(dataStyle);
-//                    }
-//                }
-//
-//                // Auto Size Kolom (agar lebar kolom pas)
-//                for (int i = 0; i < tblLaporan.getColumnCount(); i++) {
-//                    sheet.autoSizeColumn(i);
-//                }
-//
-//                // Simpan ke File
-//                try (FileOutputStream out = new FileOutputStream(fileToSave)) {
-//                    workbook.write(out);
-//                }
-//
-//                JOptionPane.showMessageDialog(this, "Data berhasil diexport ke:\n" + fileToSave.getAbsolutePath());
-//
-//            } catch (Exception e) {
-//                JOptionPane.showMessageDialog(this, "Gagal mengexport data: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-//                e.printStackTrace();
-//            }
-//        }
-
     }
     
     @Override
@@ -657,16 +393,14 @@ public class JPanel_Laporan extends javax.swing.JPanel implements Manajemen {
             try (PreparedStatement pstmt = this.conn.prepareStatement(sql)) {  // PreparedStatement ditangani oleh try-with-resources
                 pstmt.setDate(1, sqlDari);
                 pstmt.setDate(2, sqlSampai);
-                ResultSet rs = pstmt.executeQuery();
-
-                while (rs.next()) {
-                    String tanggal = rs.getString("tgl");
-                    double total = rs.getDouble("total");
-                    dataset.addValue(total, "Pendapatan", tanggal);
+                try (ResultSet rs = pstmt.executeQuery()) {
+                    while (rs.next()) {
+                        String tanggal = rs.getString("tgl");
+                        double total = rs.getDouble("total");
+                        dataset.addValue(total, "Pendapatan", tanggal);
+                    }
+                    success = true;  // Set success jika data berhasil diproses
                 }
-
-                success = true;  // Set success jika data berhasil diproses
-            
             } catch (SQLException e) {
                 errorMsg = e.getMessage();
             }
@@ -699,64 +433,6 @@ public class JPanel_Laporan extends javax.swing.JPanel implements Manajemen {
                 }
             });
         });
-//        // 1. Validasi Tanggal dulu
-//        if (dcDariTanggal.getDate() == null || dcSampaiTanggal.getDate() == null) {
-//            JOptionPane.showMessageDialog(this, "Pilih rentang tanggal terlebih dahulu!");
-//            return;
-//        }
-//
-//        Date sqlDari = new Date(dcDariTanggal.getDate().getTime());
-//        Date sqlSampai = new Date(dcSampaiTanggal.getDate().getTime());
-//
-//        // 2. Siapkan Dataset (Wadah Data untuk Grafik)
-//        DefaultCategoryDataset dataset = new DefaultCategoryDataset();
-//
-//        // 3. Query Data (Group by Tanggal)
-//        String sql = "SELECT DATE(tanggal_bayar) as tgl, SUM(total_bayar) as total " +
-//                     "FROM pembayaran " +
-//                     "WHERE DATE(tanggal_bayar) BETWEEN ? AND ? " +
-//                     "GROUP BY DATE(tanggal_bayar) " +
-//                     "ORDER BY tgl ASC";
-//
-//        try (PreparedStatement pstmt = this.conn.prepareStatement(sql)) {
-//
-//            pstmt.setDate(1, sqlDari);
-//            pstmt.setDate(2, sqlSampai);
-//
-//            ResultSet rs = pstmt.executeQuery();
-//
-//            // Masukkan hasil query ke Dataset JFreeChart
-//            while (rs.next()) {
-//                String tanggal = rs.getString("tgl"); // Sumbu X
-//                double total = rs.getDouble("total"); // Sumbu Y
-//                dataset.addValue(total, "Pendapatan", tanggal);
-//            }
-//
-//        } catch (Exception e) {
-//            JOptionPane.showMessageDialog(this, "Gagal mengambil data grafik: " + e.getMessage());
-//            return;
-//        }
-//
-//        // 4. Buat Objek Chart
-//        JFreeChart barChart = ChartFactory.createBarChart(
-//                "Grafik Pendapatan Klinik",  // Judul Grafik
-//                "Tanggal",                   // Label Sumbu X
-//                "Total Pendapatan (Rp)",     // Label Sumbu Y
-//                dataset,                     // Data
-//                PlotOrientation.VERTICAL,    // Orientasi
-//                true, true, false);
-//
-//        // 5. Tampilkan dalam Dialog Pop-up
-//        JDialog chartDialog = new JDialog((java.awt.Frame) javax.swing.SwingUtilities.getWindowAncestor(this), "Grafik", true);
-//        chartDialog.setSize(800, 600);
-//        chartDialog.setLocationRelativeTo(null);
-//
-//        // Bungkus chart ke dalam Panel
-//        ChartPanel chartPanel = new ChartPanel(barChart);
-//        chartDialog.add(chartPanel, BorderLayout.CENTER);
-//
-//        chartDialog.setVisible(true);
-
     }
 
     @SuppressWarnings("unchecked")
@@ -981,7 +657,6 @@ public class JPanel_Laporan extends javax.swing.JPanel implements Manajemen {
        dcDariTanggal.getCalendarButton().doClick();
     }//GEN-LAST:event_dcDariTanggalMouseClicked
     
-    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnExportData;
     private javax.swing.JButton btnGrafik;
@@ -998,4 +673,3 @@ public class JPanel_Laporan extends javax.swing.JPanel implements Manajemen {
     // End of variables declaration//GEN-END:variables
 
 }
-

@@ -1,7 +1,4 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JPanel.java to edit this template
- */
+
 package Manajemen;
 
 import Database.KoneksiDatabase;
@@ -107,52 +104,6 @@ public final class JPanel_Manajemen_Dokter extends javax.swing.JPanel implements
             });
 
         });
-//        DefaultTableModel model = (DefaultTableModel) tblDokter.getModel();
-//        model.setRowCount(0);
-//        
-//        // Set Header Kolom secara Programmatic (Agar sesuai urutan yang diminta)
-//        String[] judulKolom = {"ID Dokter", "Nama Lengkap", "Username", "Spesialisasi", "No. Telepon", "Alamat"};
-//        model.setColumnIdentifiers(judulKolom);
-//
-//        // Query JOIN: Mengambil data spesifik dokter dan data umum dari tabel user
-//        String sql = "SELECT d.dokter_id, u.nama_lengkap, u.username, d.spesialisasi, u.no_telepon, u.alamat " +
-//                     "FROM dokter d " +
-//                     "JOIN user u ON d.user_id = u.user_id";
-//
-//        boolean isSearch = (key != null && !key.trim().isEmpty());
-//        
-//        // Logika Pencarian (Sekarang bisa cari by Username juga)
-//        if (isSearch) {
-//            sql += " WHERE u.nama_lengkap LIKE ? OR u.username LIKE ? OR d.spesialisasi LIKE ?";
-//        }
-//        
-//        sql += " ORDER BY u.nama_lengkap ASC"; // Urutkan abjad nama
-//
-//        try (PreparedStatement pstmt = this.conn.prepareStatement(sql)) {
-//
-//            if (isSearch) {
-//                String pola = "%" + key + "%";
-//                pstmt.setString(1, pola);
-//                pstmt.setString(2, pola);
-//                pstmt.setString(3, pola);
-//            }
-//
-//            try (ResultSet rs = pstmt.executeQuery()) {
-//                while (rs.next()) {
-//                    model.addRow(new Object[]{
-//                        rs.getInt("dokter_id"),
-//                        rs.getString("nama_lengkap"),
-//                        rs.getString("username"),
-//                        rs.getString("spesialisasi"),
-//                        rs.getString("no_telepon"),
-//                        rs.getString("alamat")
-//                    });
-//                }
-//            }
-//        } catch (Exception e) {
-//            JOptionPane.showMessageDialog(this, "Gagal memuat data dokter: " + e.getMessage());
-//            e.printStackTrace();
-//        }
     }
     
     // Method Hapus dengan Transaksi (Hapus Dokter dulu, baru User)
@@ -166,9 +117,10 @@ public final class JPanel_Manajemen_Dokter extends javax.swing.JPanel implements
             int userId = -1;
             try (PreparedStatement pstmtGet = this.conn.prepareStatement(sqlGetUserId)) {
                 pstmtGet.setInt(1, idDokter); // SET INT
-                ResultSet rs = pstmtGet.executeQuery();
-                if (rs.next()) {
-                    userId = rs.getInt("user_id");
+                try (ResultSet rs = pstmtGet.executeQuery()) {
+                    if (rs.next()) {
+                        userId = rs.getInt("user_id");
+                    }
                 }
             }
 

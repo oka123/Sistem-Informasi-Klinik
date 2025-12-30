@@ -72,11 +72,10 @@
                                               <EmptySpace min="-2" pref="14" max="-2" attributes="0"/>
                                               <Component id="btn_logout" min="-2" max="-2" attributes="0"/>
                                           </Group>
-                                          <Component id="btnDashboard" alignment="0" min="-2" pref="193" max="-2" attributes="0"/>
-                                          <Component id="btnLaporan" alignment="0" min="-2" pref="210" max="-2" attributes="0"/>
                                           <Component id="btnManajemenUser" alignment="0" min="-2" pref="210" max="-2" attributes="0"/>
                                           <Component id="btnManajemenDokter" alignment="0" min="-2" pref="210" max="-2" attributes="0"/>
                                           <Component id="btnManajemenLayanan" alignment="0" min="-2" pref="210" max="-2" attributes="0"/>
+                                          <Component id="btnLaporan" alignment="0" min="-2" pref="172" max="-2" attributes="0"/>
                                       </Group>
                                   </Group>
                                   <Group type="102" alignment="0" attributes="0">
@@ -85,10 +84,17 @@
                                       <EmptySpace max="-2" attributes="0"/>
                                       <Component id="labelJudulKlinik" min="-2" max="-2" attributes="0"/>
                                   </Group>
+                                  <Group type="102" alignment="0" attributes="0">
+                                      <EmptySpace max="-2" attributes="0"/>
+                                      <Component id="btnDashboard" min="-2" max="-2" attributes="0"/>
+                                  </Group>
                               </Group>
-                              <EmptySpace min="0" pref="28" max="32767" attributes="0"/>
+                              <EmptySpace min="-2" pref="24" max="-2" attributes="0"/>
                           </Group>
-                          <Component id="jSeparator1" alignment="1" max="32767" attributes="0"/>
+                          <Group type="102" alignment="0" attributes="0">
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="jSeparator1" max="32767" attributes="0"/>
+                          </Group>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
@@ -97,7 +103,7 @@
             <DimensionLayout dim="1">
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
-                      <EmptySpace min="-2" pref="29" max="-2" attributes="0"/>
+                      <EmptySpace min="-2" pref="24" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="2" attributes="0">
                           <Component id="labelIconKlinik" alignment="2" min="-2" pref="40" max="-2" attributes="0"/>
                           <Component id="labelJudulKlinik" alignment="2" min="-2" pref="58" max="-2" attributes="0"/>
@@ -114,7 +120,7 @@
                       <Component id="btnManajemenDokter" min="-2" pref="40" max="-2" attributes="0"/>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Component id="btnManajemenLayanan" min="-2" pref="40" max="-2" attributes="0"/>
-                      <EmptySpace max="32767" attributes="0"/>
+                      <EmptySpace type="separate" max="32767" attributes="0"/>
                       <Component id="btn_logout" min="-2" pref="40" max="-2" attributes="0"/>
                       <EmptySpace min="-2" pref="24" max="-2" attributes="0"/>
                   </Group>

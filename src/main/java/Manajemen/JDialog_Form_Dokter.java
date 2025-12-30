@@ -1,7 +1,4 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JDialog.java to edit this template
- */
+
 package Manajemen;
 
 import Database.KoneksiDatabase;
@@ -57,17 +54,16 @@ public class JDialog_Form_Dokter extends javax.swing.JDialog implements Manajeme
 
         try (PreparedStatement pstmt = this.conn.prepareStatement(sql)) {  // PreparedStatement ditangani oleh try-with-resources
             pstmt.setInt(1, this.idDokterToEdit);
-            ResultSet rs = pstmt.executeQuery();
-
-            if (rs.next()) {
-                txtNamaLengkap.setText(rs.getString("nama_lengkap"));
-                txtUsername.setText(rs.getString("username"));
-                txtPassword.setText("");
-                comboSpesialisasi.setSelectedItem(rs.getString("spesialisasi"));
-                txtAlamat.setText(rs.getString("alamat"));
-                txtNoTelepon.setText(rs.getString("no_telepon"));
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    txtNamaLengkap.setText(rs.getString("nama_lengkap"));
+                    txtUsername.setText(rs.getString("username"));
+                    txtPassword.setText("");
+                    comboSpesialisasi.setSelectedItem(rs.getString("spesialisasi"));
+                    txtAlamat.setText(rs.getString("alamat"));
+                    txtNoTelepon.setText(rs.getString("no_telepon"));
+                }
             }
-        
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(this, "Gagal memuat data: " + e.getMessage());
         }
@@ -103,8 +99,9 @@ public class JDialog_Form_Dokter extends javax.swing.JDialog implements Manajeme
             pstmtUser.setString(5, alamat);
             pstmtUser.executeUpdate();
 
-            ResultSet rs = pstmtUser.getGeneratedKeys();
-            if (rs.next()) userIdBaru = rs.getInt(1);
+            try (ResultSet rs = pstmtUser.getGeneratedKeys()) {
+                if (rs.next()) userIdBaru = rs.getInt(1);
+            }
         }
 
         if (userIdBaru == -1) throw new Exception("Gagal mendapatkan generated User ID.");
@@ -118,7 +115,7 @@ public class JDialog_Form_Dokter extends javax.swing.JDialog implements Manajeme
             pstmtDokter.setString(4, alamat);
             pstmtDokter.executeUpdate();
         }
-        
+        this.conn.commit();
         JOptionPane.showMessageDialog(this, "Dokter berhasil ditambahkan!");
     }
     
@@ -130,8 +127,9 @@ public class JDialog_Form_Dokter extends javax.swing.JDialog implements Manajeme
         String sqlGetId = "SELECT user_id FROM dokter WHERE dokter_id = ?";
         try (PreparedStatement ps = conn.prepareStatement(sqlGetId)) {
             ps.setInt(1, idDokterToEdit);
-            ResultSet rs = ps.executeQuery();
-            if (rs.next()) userId = rs.getInt("user_id");
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) userId = rs.getInt("user_id");
+            }
         }
 
         if (userId == -1) throw new Exception("Data User tidak ditemukan untuk Dokter ini.");
@@ -170,7 +168,7 @@ public class JDialog_Form_Dokter extends javax.swing.JDialog implements Manajeme
             psDokter.setInt(2, idDokterToEdit);
             psDokter.executeUpdate();
         }
-
+        this.conn.commit();
         JOptionPane.showMessageDialog(this, "Data dokter berhasil diperbarui!");
     }
     
@@ -434,7 +432,6 @@ public class JDialog_Form_Dokter extends javax.swing.JDialog implements Manajeme
                 editDokter(this.conn, nama, username, passwordChars, spesialisasi, telp, alamat);
             }
 
-            this.conn.commit(); 
             this.dispose();
 
         } catch (Exception e) {

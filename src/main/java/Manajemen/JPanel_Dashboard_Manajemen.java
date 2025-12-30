@@ -1,7 +1,4 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JPanel.java to edit this template
- */
+
 package Manajemen;
 
 import Database.KoneksiDatabase;
@@ -71,9 +68,7 @@ public class JPanel_Dashboard_Manajemen extends javax.swing.JPanel implements Ma
         lblJumlahPasien.setText("...");
         
         // 2. PROSES BACKGROUND (Thread Sederhana)
-        // Kita pakai "new Thread" agar UI bisa update teks "..." tadi dulu
         ThreadPoolManager.getInstance().submit(() -> {
-//            KoneksiDatabase koneksi = new KoneksiDatabase();
             try {
                 if (this.conn != null) {
                     // Variabel penampung hasil
@@ -127,55 +122,7 @@ public class JPanel_Dashboard_Manajemen extends javax.swing.JPanel implements Ma
                 });
             } 
         });
-//        koneksi = new KoneksiDatabase();
-//        
-//        try {
-//            if (this.conn != null) {
-//                // Hitung Kunjungan Hari Ini
-//                // Asumsi: tabel 'kunjungan', kolom 'tanggal_kunjungan'
-//                String sqlKunjungan = "SELECT COUNT(*) AS total FROM kunjungan WHERE DATE(tanggal_kunjungan) = CURDATE()";
-//                setLabelFromQuery(this.conn, sqlKunjungan, lblJumlahKunjungan, false);
-//
-//                // Hitung Total Pendapatan Hari Ini
-//                // Asumsi: tabel 'pembayaran', kolom 'total_bayar', 'tanggal_bayar'
-//                String sqlPendapatan = "SELECT SUM(total_bayar) AS total FROM pembayaran WHERE DATE(tanggal_bayar) = CURDATE()";
-//                setLabelFromQuery(this.conn, sqlPendapatan, lblTotalPendapatan, true);
-//
-//                // Hitung Total Pasien Terdaftar
-//                // Asumsi: tabel 'pasien'
-//                String sqlPasien = "SELECT COUNT(*) AS total FROM pasien";
-//                setLabelFromQuery(this.conn, sqlPasien, lblJumlahPasien, false);
-//            }
-//        } catch (SQLException e) {
-//            JOptionPane.showMessageDialog(this, "Gagal memuat data dashboard: " + e.getMessage());
-//            e.printStackTrace();
-//        }
     }
-    
-    // Method bantuan untuk menjalankan query dan set text ke label
-//    private void setLabelFromQuery(Connection this.conn, String sql, javax.swing.JLabel label, boolean isCurrency) {
-//        try (PreparedStatement pstmt = this.conn.prepareStatement(sql);
-//             ResultSet rs = pstmt.executeQuery()) {
-//            
-//            if (rs.next()) {
-//                double nilai = rs.getDouble("total");
-//                
-//                if (isCurrency) {
-//                    // Format ke Rupiah (Rp 1.000.000)
-//                    label.setText(formatRupiah(nilai));
-//                } else {
-//                    // Format angka biasa (tanpa koma desimal untuk count)
-//                    label.setText(String.valueOf((int)nilai));
-//                }
-//            } else {
-//                label.setText("0");
-//            }
-//            
-//        } catch (SQLException e) {
-//            System.err.println("Error query: " + sql);
-//            label.setText("Error");
-//        }
-//    }
     
     // Format angka ke Rupiah Indonesia
     private String formatRupiah(double number) {

@@ -1,7 +1,4 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JDialog.java to edit this template
- */
+
 package Manajemen;
 
 import Database.KoneksiDatabase;
@@ -11,6 +8,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.DecimalFormat;
 import javax.swing.JOptionPane;
 import javax.swing.text.PlainDocument;
 
@@ -33,7 +31,7 @@ public class JDialog_Form_Layanan extends javax.swing.JDialog implements Manajem
         
         if (idLayanan != null) {
             lblTitle.setText("Edit Layanan / Jasa");
-            txtIDLayanan.setText(String.valueOf(idLayanan)); // Tampilkan sebagai String di GUI          
+            txtIDLayanan.setText(String.valueOf(idLayanan)); // Tampilkan sebagai String di GUI
             loadDataLayananForEdit();
         } else {
             lblTitle.setText("Tambah Layanan Baru");
@@ -46,11 +44,22 @@ public class JDialog_Form_Layanan extends javax.swing.JDialog implements Manajem
 
         try (PreparedStatement pstmt = this.conn.prepareStatement(sql)) {  // PreparedStatement ditangani oleh try-with-resources
             pstmt.setInt(1, idLayanan);
-            ResultSet rs = pstmt.executeQuery();
-
-            if (rs.next()) {
-                txtNamaLayanan.setText(rs.getString("nama_layanan"));
-                txtBiaya.setText(String.valueOf(rs.getDouble("biaya")));
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    txtNamaLayanan.setText(rs.getString("nama_layanan"));
+                    PlainDocument doc = (PlainDocument) txtBiaya.getDocument();
+                    doc.setDocumentFilter(null);
+                    
+                    // Ambil nilai biaya dari ResultSet
+                    double biaya = rs.getDouble("biaya");
+                    // Gunakan DecimalFormat untuk menghapus .0 pada angka bulat
+                    DecimalFormat df = new DecimalFormat("#.##");  // Format dengan dua angka desimal (jika ada)
+                    String biayaFormatted = df.format(biaya);  // Format angka
+                    // Set nilai biaya ke JTextField
+                    txtBiaya.setText(biayaFormatted);
+                    
+                    doc.setDocumentFilter(new NumericFilter());
+                }
             }
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(this, "Gagal memuat data: " + e.getMessage());
