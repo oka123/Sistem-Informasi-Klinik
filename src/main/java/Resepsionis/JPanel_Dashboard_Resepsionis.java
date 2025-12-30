@@ -25,6 +25,7 @@ public class JPanel_Dashboard_Resepsionis extends javax.swing.JPanel {
      */
     public JPanel_Dashboard_Resepsionis() {
         initComponents();
+        loadStatistik();
         // Menjadwalkan update gambar setelah ukuran tombol tersedia
         SwingUtilities.invokeLater(() -> {
             // Sesuaikan ukuran gambar
@@ -327,4 +328,46 @@ public class JPanel_Dashboard_Resepsionis extends javax.swing.JPanel {
     private javax.swing.JLabel lblTitlePasien;
     private javax.swing.JLabel lblWelcome;
     // End of variables declaration//GEN-END:variables
+
+public void loadStatistik(){
+    
+    try{
+      java.sql.Connection conn = Database.KoneksiDatabase.getConnection();
+      java.sql.Statement stmt = conn.createStatement();
+      java.sql.ResultSet rs;
+    
+      rs = stmt.executeQuery("SELECT COUNT(*) FROM pasien");
+              
+      if(rs.next()){
+            int jumlahPasien = rs.getInt(1);
+
+            lblJumlahPasien.setText(String.valueOf(jumlahPasien));
+        
+        }
+        
+        rs = stmt.executeQuery("SELECT COUNT(*) FROM dokter");
+        
+        if(rs.next()){
+            int jumlahDokter = rs.getInt(1);
+            
+            lblJumlahDokter.setText(String.valueOf(jumlahDokter));
+        }
+        
+        rs = stmt.executeQuery("SELECT COUNT(*) FROM kunjungan WHERE DATE(tanggal_kunjungan) = CURDATE()");
+        
+        if(rs.next()){
+            int jumlahKunjungan = rs.getInt(1);
+            
+            lblJumlahKunjungan.setText(String.valueOf(jumlahKunjungan));
+        }
+        
+        
+        conn.close();
+    }catch (Exception e){
+        System.out.println("Error Dashboard: " + e.getMessage());
+    }
+    
+}
+
+
 }
