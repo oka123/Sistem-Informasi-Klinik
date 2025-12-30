@@ -55,12 +55,12 @@ private void loadDataResep() {
                 }
             }
 
-            String sqlDetail = """
-                SELECT o.nama_obat, r.jumlah, r.dosis, o.stok, o.obat_id 
-                FROM detail_resep r
-                JOIN obat o ON r.obat_id = o.obat_id
-                WHERE r.kunjungan_id = ?
-            """;
+                    String sqlDetail = """
+             SELECT o.nama_obat, r.jumlah, r.dosis, o.stok, o.obat_id 
+             FROM detail_resep r
+             JOIN obat o ON r.obat_id = o.obat_id
+             WHERE r.kunjungan_id_ = ?  -- Gunakan nama kolom dengan garis bawah
+         """;
 
             DefaultTableModel model = (DefaultTableModel) tblDetailResep.getModel();
             model.setRowCount(0);
@@ -117,7 +117,7 @@ private void prosesPenyerahanObat() {
         try (Connection conn = new KoneksiDatabase().getConnection()) {
             conn.setAutoCommit(false); 
 
-            String sqlDetail = "SELECT obat_id, jumlah FROM detail_resep WHERE kunjungan_id = ?";
+            String sqlDetail = "SELECT obat_id, jumlah FROM detail_resep WHERE resep_id = ?";
             try (PreparedStatement psDetail = conn.prepareStatement(sqlDetail)) {
                 psDetail.setInt(1, kunjunganId);
                 ResultSet rs = psDetail.executeQuery();

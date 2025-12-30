@@ -1,7 +1,5 @@
 package Apoteker;
 
-
-
 import java.awt.Frame;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
@@ -22,25 +20,26 @@ public class JPanel_Antrean_Resep extends javax.swing.JPanel {
     
 
     private void initializeTableModel() {
-        tableModel = new DefaultTableModel(
-            new Object [][] {},
-            new String [] {"ID Kunjungan", "Waktu Masuk", "Nama Pasien", "Dokter"}
-        );
-        jTable1.setModel(tableModel);
-    }
+    tableModel = new DefaultTableModel(
+        new Object [][] {},
+        new String [] {"ID Kunjungan", "Waktu Masuk", "Nama Pasien", "Dokter"} // Tambah kolom
+    );
+    jTable1.setModel(tableModel);
+}
 
     public void loadDataAntrean() {
     tableModel.setRowCount(0);
 
 
 
-    String sql = "SELECT k.kunjungan_id, k.tanggal_kunjungan, p.nama_pasien, d.nama_lengkap AS nama_dokter " +
-                 "FROM klinik.kunjungan k " +
-                 "JOIN klinik.pasien p ON k.pasien_id = p.pasien_id " +
-                 "JOIN klinik.user d ON k.dokter_id = d.user_id " +
-                 "WHERE k.status_kunjungan = 'Menunggu Obat' " +
-                 "AND d.role = 'Dokter' " + 
-                 "ORDER BY k.tanggal_kunjungan ASC";
+    String sql = "SELECT k.kunjungan_id, k.tanggal_kunjungan, p.nama_pasien, " +
+             "u.nama_lengkap AS nama_dokter, d.spesialisasi " +
+             "FROM klinik.kunjungan k " +
+             "JOIN klinik.pasien p ON k.pasien_id = p.pasien_id " +
+             "JOIN klinik.dokter d ON k.dokter_id = d.dokter_id " + // Join ke tabel dokter
+             "JOIN klinik.user u ON d.user_id = u.user_id " +      // Join ke tabel user untuk ambil nama
+             "WHERE k.status_kunjungan = 'Menunggu Obat' " +
+             "ORDER BY k.tanggal_kunjungan ASC";
 
 
 
@@ -49,14 +48,17 @@ public class JPanel_Antrean_Resep extends javax.swing.JPanel {
          PreparedStatement pstmt = conn.prepareStatement(sql);
          ResultSet rs = pstmt.executeQuery()) {
 
-        while (rs.next()) {
-            tableModel.addRow(new Object[]{
-                rs.getString("kunjungan_id"),
-                rs.getString("tanggal_kunjungan"),
-                rs.getString("nama_pasien"),
-                rs.getString("nama_dokter")
-            });
-        }
+   while (rs.next()) {
+    // Menggabungkan Nama dan Spesialisasi
+    String infoDokter = rs.getString("nama_dokter") + " (" + rs.getString("spesialisasi") + ")";
+    
+        tableModel.addRow(new Object[]{
+            rs.getString("kunjungan_id"),
+            rs.getString("tanggal_kunjungan"),
+            rs.getString("nama_pasien"),
+            infoDokter // Ini yang akan muncul di kolom Dokter
+        });
+     }
     } catch (SQLException e) {
         e.printStackTrace();
         JOptionPane.showMessageDialog(this, "Gagal memuat antrean resep: " + e.getMessage(), "Error DB", JOptionPane.ERROR_MESSAGE);
