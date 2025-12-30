@@ -110,15 +110,38 @@ public class JPanel_Antrean_Resep extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+<<<<<<< HEAD
+<<<<<<< HEAD
         jScrollPane2 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
         tblAntreanResep = new javax.swing.JLabel();
+=======
+        jLabel1 = new javax.swing.JLabel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        tblAntreanResep = new javax.swing.JTable();
+>>>>>>> 0a4dd43 ()
+=======
+        jScrollPane2 = new javax.swing.JScrollPane();
+        jTable1 = new javax.swing.JTable();
+        tblAntreanResep = new javax.swing.JLabel();
+>>>>>>> 4a77825 ()
         jPanel1 = new javax.swing.JPanel();
         btnProsesResep = new javax.swing.JButton();
 
         setLayout(new java.awt.BorderLayout());
 
+<<<<<<< HEAD
+<<<<<<< HEAD
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
+=======
+        jLabel1.setText("Antrean Resep Belum Diambil");
+        add(jLabel1, java.awt.BorderLayout.PAGE_START);
+
+        tblAntreanResep.setModel(new javax.swing.table.DefaultTableModel(
+>>>>>>> 0a4dd43 ()
+=======
+        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+>>>>>>> 4a77825 ()
             new Object [][] {
                 {null, null, null, null},
                 {null, null, null, null},
@@ -126,6 +149,8 @@ public class JPanel_Antrean_Resep extends javax.swing.JPanel {
                 {null, null, null, null}
             },
             new String [] {
+<<<<<<< HEAD
+<<<<<<< HEAD
                 "ID Pasien", "Waktu", "Nama Pasien", "Dokter"
             }
         ));
@@ -135,6 +160,7 @@ public class JPanel_Antrean_Resep extends javax.swing.JPanel {
             jTable1.getColumnModel().getColumn(0).setResizable(false);
             jTable1.getColumnModel().getColumn(1).setResizable(false);
             jTable1.getColumnModel().getColumn(2).setResizable(false);
+<<<<<<< HEAD
         }
 
         add(jScrollPane2, java.awt.BorderLayout.CENTER);
@@ -144,6 +170,36 @@ public class JPanel_Antrean_Resep extends javax.swing.JPanel {
         tblAntreanResep.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         tblAntreanResep.setText("Antrean Resep");
         add(tblAntreanResep, java.awt.BorderLayout.PAGE_START);
+=======
+                "ID Resep", "Waktu", "Nama Pasien", "Nama Dokter"
+=======
+                "ID Pasien", "Waktu", "Nama Pasien", "Dokter"
+>>>>>>> 4a77825 ()
+            }
+        ));
+        jTable1.getTableHeader().setReorderingAllowed(false);
+        jScrollPane2.setViewportView(jTable1);
+        if (jTable1.getColumnModel().getColumnCount() > 0) {
+            jTable1.getColumnModel().getColumn(0).setResizable(false);
+            jTable1.getColumnModel().getColumn(1).setResizable(false);
+            jTable1.getColumnModel().getColumn(2).setResizable(false);
+            jTable1.getColumnModel().getColumn(3).setResizable(false);
+=======
+>>>>>>> 907995d (final (kayaknya))
+        }
+
+<<<<<<< HEAD
+        add(jScrollPane1, java.awt.BorderLayout.CENTER);
+>>>>>>> 0a4dd43 ()
+=======
+        add(jScrollPane2, java.awt.BorderLayout.CENTER);
+
+        tblAntreanResep.setBackground(new java.awt.Color(255, 255, 255));
+        tblAntreanResep.setFont(new java.awt.Font("Segoe UI", 0, 36)); // NOI18N
+        tblAntreanResep.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        tblAntreanResep.setText("Antrean Resep");
+        add(tblAntreanResep, java.awt.BorderLayout.PAGE_START);
+>>>>>>> 4a77825 ()
 
         jPanel1.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT));
 
@@ -156,9 +212,23 @@ public class JPanel_Antrean_Resep extends javax.swing.JPanel {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnProsesResep;
+<<<<<<< HEAD
+<<<<<<< HEAD
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTable jTable1;
     private javax.swing.JLabel tblAntreanResep;
+=======
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JTable tblAntreanResep;
+>>>>>>> 0a4dd43 ()
+=======
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JTable jTable1;
+    private javax.swing.JLabel tblAntreanResep;
+>>>>>>> 4a77825 ()
     // End of variables declaration//GEN-END:variables
 }

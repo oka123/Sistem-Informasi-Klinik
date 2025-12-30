@@ -47,6 +47,10 @@ public class JFrame_Main_Apoteker extends javax.swing.JFrame {
         btnAntreanResep = new javax.swing.JButton();
         btnManajemenObat = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
+<<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 907995d (final (kayaknya))
         btn_logout = new javax.swing.JButton();
         panelKonten = new javax.swing.JPanel();
 
@@ -62,10 +66,31 @@ public class JFrame_Main_Apoteker extends javax.swing.JFrame {
 
         btnManajemenObat.setText("Manajemen Obat");
         btnManajemenObat.setName("btnManajemenObat"); // NOI18N
+=======
+        panelKonten = new javax.swing.JPanel();
+
+        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Menu Apoteker");
+        setName("Form"); // NOI18N
+
+        jPanel1.setBackground(new java.awt.Color(34, 40, 49));
+        jPanel1.setName("jPanel1"); // NOI18N
+
+        btnAntreanResep.setText("Antrean Resep");
+        btnAntreanResep.setName("btnAntreanResep"); // NOI18N
+
+        btnManajemenObat.setText("Manajemen Obat");
+<<<<<<< HEAD
+>>>>>>> 0a4dd43 ()
+=======
+        btnManajemenObat.setName("btnManajemenObat"); // NOI18N
+>>>>>>> 4a77825 ()
 
         jLabel1.setForeground(new java.awt.Color(255, 255, 255));
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel1.setText("Menu Apoteker");
+<<<<<<< HEAD
+<<<<<<< HEAD
         jLabel1.setName("jLabel1"); // NOI18N
 
         btn_logout.setBackground(new java.awt.Color(220, 53, 69));
@@ -80,12 +105,22 @@ public class JFrame_Main_Apoteker extends javax.swing.JFrame {
                 btn_logoutActionPerformed(evt);
             }
         });
+<<<<<<< HEAD
+=======
+>>>>>>> 0a4dd43 ()
+=======
+        jLabel1.setName("jLabel1"); // NOI18N
+>>>>>>> 4a77825 ()
+=======
+>>>>>>> 907995d (final (kayaknya))
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
+<<<<<<< HEAD
+<<<<<<< HEAD
                 .addGap(22, 22, 22)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(btn_logout)
@@ -94,6 +129,24 @@ public class JFrame_Main_Apoteker extends javax.swing.JFrame {
                         .addComponent(btnManajemenObat, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(btnAntreanResep, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addContainerGap(23, Short.MAX_VALUE))
+=======
+                .addContainerGap()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(btnManajemenObat, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btnAntreanResep, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+>>>>>>> 0a4dd43 ()
+=======
+                .addGap(22, 22, 22)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(btn_logout)
+                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                        .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(btnManajemenObat, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(btnAntreanResep, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                .addContainerGap(23, Short.MAX_VALUE))
+>>>>>>> 4a77825 ()
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -104,20 +157,41 @@ public class JFrame_Main_Apoteker extends javax.swing.JFrame {
                 .addComponent(btnAntreanResep, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(btnManajemenObat, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
+<<<<<<< HEAD
+<<<<<<< HEAD
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 164, Short.MAX_VALUE)
                 .addComponent(btn_logout, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(49, 49, 49))
+=======
+                .addContainerGap(253, Short.MAX_VALUE))
+>>>>>>> 0a4dd43 ()
+=======
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 164, Short.MAX_VALUE)
+                .addComponent(btn_logout, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(49, 49, 49))
+>>>>>>> 907995d (final (kayaknya))
         );
 
         getContentPane().add(jPanel1, java.awt.BorderLayout.LINE_START);
 
+<<<<<<< HEAD
+<<<<<<< HEAD
         panelKonten.setName("panelKonten"); // NOI18N
+=======
+>>>>>>> 0a4dd43 ()
+=======
+        panelKonten.setName("panelKonten"); // NOI18N
+>>>>>>> 4a77825 ()
         panelKonten.setLayout(new java.awt.CardLayout());
         getContentPane().add(panelKonten, java.awt.BorderLayout.CENTER);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+<<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 907995d (final (kayaknya))
     private void btn_logoutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_logoutActionPerformed
         // TODO add your handling code here:
         // Tampilkan konfirmasi
@@ -136,6 +210,11 @@ public class JFrame_Main_Apoteker extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_btn_logoutActionPerformed
 
+<<<<<<< HEAD
+=======
+>>>>>>> 0a4dd43 ()
+=======
+>>>>>>> 907995d (final (kayaknya))
     /**
      * @param args the command line arguments
      */
@@ -155,7 +234,14 @@ public static void main(String args[]) {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAntreanResep;
     private javax.swing.JButton btnManajemenObat;
+<<<<<<< HEAD
+<<<<<<< HEAD
     private javax.swing.JButton btn_logout;
+=======
+>>>>>>> 0a4dd43 ()
+=======
+    private javax.swing.JButton btn_logout;
+>>>>>>> 907995d (final (kayaknya))
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel panelKonten;

@@ -16,7 +16,19 @@
     <AuxValue name="FormSettings_listenerGenerationStyle" type="java.lang.Integer" value="0"/>
     <AuxValue name="FormSettings_variablesLocal" type="java.lang.Boolean" value="false"/>
     <AuxValue name="FormSettings_variablesModifier" type="java.lang.Integer" value="2"/>
+<<<<<<< HEAD
+<<<<<<< HEAD
+<<<<<<< HEAD
     <AuxValue name="designerSize" type="java.awt.Dimension" value="-84,-19,0,5,115,114,0,18,106,97,118,97,46,97,119,116,46,68,105,109,101,110,115,105,111,110,65,-114,-39,-41,-84,95,68,20,2,0,2,73,0,6,104,101,105,103,104,116,73,0,5,119,105,100,116,104,120,112,0,0,1,44,0,0,2,-54"/>
+=======
+    <AuxValue name="designerSize" type="java.awt.Dimension" value="-84,-19,0,5,115,114,0,18,106,97,118,97,46,97,119,116,46,68,105,109,101,110,115,105,111,110,65,-114,-39,-41,-84,95,68,20,2,0,2,73,0,6,104,101,105,103,104,116,73,0,5,119,105,100,116,104,120,112,0,0,1,44,0,0,2,-71"/>
+>>>>>>> 0a4dd43 ()
+=======
+    <AuxValue name="designerSize" type="java.awt.Dimension" value="-84,-19,0,5,115,114,0,18,106,97,118,97,46,97,119,116,46,68,105,109,101,110,115,105,111,110,65,-114,-39,-41,-84,95,68,20,2,0,2,73,0,6,104,101,105,103,104,116,73,0,5,119,105,100,116,104,120,112,0,0,1,44,0,0,1,-14"/>
+>>>>>>> 4a77825 ()
+=======
+    <AuxValue name="designerSize" type="java.awt.Dimension" value="-84,-19,0,5,115,114,0,18,106,97,118,97,46,97,119,116,46,68,105,109,101,110,115,105,111,110,65,-114,-39,-41,-84,95,68,20,2,0,2,73,0,6,104,101,105,103,104,116,73,0,5,119,105,100,116,104,120,112,0,0,1,44,0,0,2,-54"/>
+>>>>>>> 907995d (final (kayaknya))
   </AuxValues>
 
   <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout"/>
@@ -35,17 +47,33 @@
             <Property name="text" type="java.lang.String" value="Cari Obat"/>
           </Properties>
         </Component>
+<<<<<<< HEAD
+<<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 907995d (final (kayaknya))
         <Component class="javax.swing.JTextField" name="txtCariObat">
           <Properties>
             <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
               <Dimension value="[140, 22]"/>
             </Property>
           </Properties>
+<<<<<<< HEAD
+=======
+        <Component class="javax.swing.JTextField" name="txtCari">
+>>>>>>> 0a4dd43 ()
+=======
+        <Component class="javax.swing.JTextField" name="jTextField1">
+>>>>>>> 4a77825 ()
+=======
+>>>>>>> 907995d (final (kayaknya))
         </Component>
         <Component class="javax.swing.JButton" name="btnCari">
           <Properties>
             <Property name="text" type="java.lang.String" value="Cari"/>
           </Properties>
+<<<<<<< HEAD
+<<<<<<< HEAD
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnCariActionPerformed"/>
           </Events>
@@ -60,6 +88,16 @@
               <Dimension value="[70, 10]"/>
             </Property>
           </Properties>
+<<<<<<< HEAD
+=======
+>>>>>>> 0a4dd43 ()
+=======
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnCariActionPerformed"/>
+          </Events>
+>>>>>>> 4a77825 ()
+=======
+>>>>>>> 907995d (final (kayaknya))
         </Component>
         <Component class="javax.swing.JButton" name="btnTambahObat">
           <Properties>
@@ -91,36 +129,90 @@
           <Properties>
             <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
               <Table columnCount="5" rowCount="4">
+<<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 907995d (final (kayaknya))
                 <Column editable="false" title="ID Obat" type="java.lang.Object"/>
                 <Column editable="false" title="Nama Obat" type="java.lang.Object"/>
                 <Column editable="false" title="Satuan" type="java.lang.Object"/>
                 <Column editable="false" title="Harga" type="java.lang.Object"/>
                 <Column editable="false" title="Stok" type="java.lang.Object"/>
+<<<<<<< HEAD
+=======
+                <Column editable="true" title="ID Obat" type="java.lang.Object"/>
+                <Column editable="true" title="Nama Obat" type="java.lang.Object"/>
+                <Column editable="true" title="Satuan" type="java.lang.Object"/>
+                <Column editable="true" title="Harga" type="java.lang.Object"/>
+                <Column editable="true" title="Stok" type="java.lang.Object"/>
+>>>>>>> 0a4dd43 ()
+=======
+>>>>>>> 907995d (final (kayaknya))
               </Table>
             </Property>
             <Property name="columnModel" type="javax.swing.table.TableColumnModel" editor="org.netbeans.modules.form.editors2.TableColumnModelEditor">
               <TableColumnModel selectionModel="0">
+<<<<<<< HEAD
+<<<<<<< HEAD
                 <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="false">
+=======
+                <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
+>>>>>>> 0a4dd43 ()
+=======
+                <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="false">
+>>>>>>> 907995d (final (kayaknya))
                   <Title/>
                   <Editor/>
                   <Renderer/>
                 </Column>
+<<<<<<< HEAD
+<<<<<<< HEAD
                 <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="false">
+=======
+                <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
+>>>>>>> 0a4dd43 ()
+=======
+                <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="false">
+>>>>>>> 907995d (final (kayaknya))
                   <Title/>
                   <Editor/>
                   <Renderer/>
                 </Column>
+<<<<<<< HEAD
+<<<<<<< HEAD
                 <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="false">
+=======
+                <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
+>>>>>>> 0a4dd43 ()
+=======
+                <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="false">
+>>>>>>> 907995d (final (kayaknya))
                   <Title/>
                   <Editor/>
                   <Renderer/>
                 </Column>
+<<<<<<< HEAD
+<<<<<<< HEAD
                 <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="false">
+=======
+                <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
+>>>>>>> 0a4dd43 ()
+=======
+                <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="false">
+>>>>>>> 907995d (final (kayaknya))
                   <Title/>
                   <Editor/>
                   <Renderer/>
                 </Column>
+<<<<<<< HEAD
+<<<<<<< HEAD
                 <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="false">
+=======
+                <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
+>>>>>>> 0a4dd43 ()
+=======
+                <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="false">
+>>>>>>> 907995d (final (kayaknya))
                   <Title/>
                   <Editor/>
                   <Renderer/>
@@ -128,12 +220,24 @@
               </TableColumnModel>
             </Property>
             <Property name="tableHeader" type="javax.swing.table.JTableHeader" editor="org.netbeans.modules.form.editors2.JTableHeaderEditor">
+<<<<<<< HEAD
+<<<<<<< HEAD
               <TableHeader reorderingAllowed="false" resizingAllowed="true"/>
+=======
+              <TableHeader reorderingAllowed="true" resizingAllowed="true"/>
+>>>>>>> 0a4dd43 ()
+=======
+              <TableHeader reorderingAllowed="false" resizingAllowed="true"/>
+>>>>>>> 4a77825 ()
             </Property>
           </Properties>
         </Component>
       </SubComponents>
     </Container>
+<<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 907995d (final (kayaknya))
     <Component class="javax.swing.JScrollBar" name="jScrollBar1">
       <Constraints>
         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout" value="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout$BorderConstraintsDescription">
@@ -141,5 +245,10 @@
         </Constraint>
       </Constraints>
     </Component>
+<<<<<<< HEAD
+=======
+>>>>>>> 0a4dd43 ()
+=======
+>>>>>>> 907995d (final (kayaknya))
   </SubComponents>
 </Form>
