@@ -35,9 +35,15 @@
             <version>1.4</version>
         </dependency>
         <dependency>
+<<<<<<< HEAD
             <groupId>at.favre.lib</groupId>
             <artifactId>bcrypt</artifactId>
             <version>0.10.2</version>
+=======
+            <groupId>org.netbeans.external</groupId>
+            <artifactId>AbsoluteLayout</artifactId>
+            <version>RELEASE270</version>
+>>>>>>> 8cae046 (final (kayaknya)2)
         </dependency>
     </dependencies>
 

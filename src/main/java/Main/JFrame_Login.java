@@ -4,17 +4,25 @@
  */
 package Main;
 
+<<<<<<< HEAD
 import Apoteker.JFrameMainApoteker;
+=======
+import Apoteker.JFrame_Main_Apoteker;
+>>>>>>> 8cae046 (final (kayaknya)2)
 import Resepsionis.JFrame_Main_Resepsionis;
 import Dokter.JFrame_Main_Dokter;
 import Kasir.JFrame_Main_Kasir;
 import Manajemen.JFrame_Main_Manajemen;
+<<<<<<< HEAD
 //import Resepsionis.JPanel_Dashboard_Resepsionis;
 
+=======
+>>>>>>> 8cae046 (final (kayaknya)2)
 import java.awt.Image;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
+<<<<<<< HEAD
 
 import Database.KoneksiDatabase;
 import java.sql.Connection;
@@ -24,6 +32,11 @@ import java.sql.SQLException;
 
 import at.favre.lib.crypto.bcrypt.BCrypt;
 
+=======
+import java.sql.*;
+import Database.KoneksiDatabase;
+import Resepsionis.JPanel_Dashboard_Resepsionis;
+>>>>>>> 8cae046 (final (kayaknya)2)
 
 /**
  *
@@ -32,20 +45,36 @@ import at.favre.lib.crypto.bcrypt.BCrypt;
 public class JFrame_Login extends javax.swing.JFrame {
     
     Connection conn;
+<<<<<<< HEAD
     KoneksiDatabase koneksi;
 //    Statement stmt;
 //    ResultSet rs;
+=======
+    Statement stmt;
+    ResultSet rs;
+    
+    KoneksiDatabase koneksi;
+>>>>>>> 8cae046 (final (kayaknya)2)
     
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(JFrame_Login.class.getName());
     
     private boolean isPasswordVisible = false;
+<<<<<<< HEAD
     // Ikon klinik
     private final ImageIcon clinicIcon = new ImageIcon(getClass().getResource("/gambarKlinik.png"));
     // Ikon tombol show/hide (mata terbuka)
     private final ImageIcon eyeOpenIcon = new ImageIcon(getClass().getResource("/eye.png"));
     // Ikon tombol show/hide (mata tertutup)
     private final ImageIcon eyeClosedIcon = new ImageIcon(getClass().getResource("/eyeslash.png")); 
+=======
+    
+    private final ImageIcon clinicIcon = new ImageIcon(getClass().getResource("/gambarKlinik.png"));
+    
+    // Ikon untuk tombol Show/Hide
+    private final ImageIcon eyeOpenIcon = new ImageIcon(getClass().getResource("/eye.png")); // Ganti dengan path ke gambar "mata terbuka"
+    private final ImageIcon eyeClosedIcon = new ImageIcon(getClass().getResource("/eyeslash.png")); // Ganti dengan path ke gambar "mata tertutup"
+>>>>>>> 8cae046 (final (kayaknya)2)
     
     /**
      * Creates new form JFrame_Login
@@ -55,6 +84,7 @@ public class JFrame_Login extends javax.swing.JFrame {
         this.setLocationRelativeTo(null); 
         
         koneksi = new KoneksiDatabase();
+<<<<<<< HEAD
         try {
             conn = koneksi.getConnection();
             if (conn != null) {
@@ -63,6 +93,11 @@ public class JFrame_Login extends javax.swing.JFrame {
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(this, "Terjadi kesalahan saat koneksi: " + e.getMessage());
         }
+=======
+        conn = koneksi.getConnection();
+        
+
+>>>>>>> 8cae046 (final (kayaknya)2)
         // Menambahkan placeholder text secara manual
         txt_username.putClientProperty("JTextField.placeholderText", "Masukkan username...");
         txt_password.putClientProperty("JTextField.placeholderText", "Masukkan password...");
@@ -75,6 +110,7 @@ public class JFrame_Login extends javax.swing.JFrame {
             showHidePasswordButton.setIcon(new ImageIcon(eyeClosedIcon.getImage().getScaledInstance(showHidePasswordButton.getWidth(), showHidePasswordButton.getHeight(), Image.SCALE_SMOOTH)));
             
         });
+<<<<<<< HEAD
     }
     
     private void notifikasiLoginGagal() {
@@ -99,6 +135,26 @@ public class JFrame_Login extends javax.swing.JFrame {
 //        
 //    private final String usernameManajemen = "manajemen";
 //    private final String passwordManajemen = "manajemen";
+=======
+        
+    }
+    
+    // Username dan Password Login Sementara
+    private final String usernameResepsionis = "resepsionis";
+    private final String passwordResepsionis = "resepsionis";
+        
+    private final String usernameDokter = "dokter";
+    private final String passwordDokter = "dokter";
+        
+    private final String usernameApoteker = "apoteker";
+    private final String passwordApoteker = "apoteker";
+        
+    private final String usernameKasir = "kasir";
+    private final String passwordKasir = "kasir";
+        
+    private final String usernameManajemen = "manajemen";
+    private final String passwordManajemen = "manajemen";
+>>>>>>> 8cae046 (final (kayaknya)2)
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -173,17 +229,28 @@ public class JFrame_Login extends javax.swing.JFrame {
                 txt_passwordActionPerformed(evt);
             }
         });
+<<<<<<< HEAD
         txt_password.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyPressed(java.awt.event.KeyEvent evt) {
                 txt_passwordKeyPressed(evt);
             }
         });
+=======
+>>>>>>> 8cae046 (final (kayaknya)2)
 
         btn_login.setBackground(new java.awt.Color(50, 120, 220));
         btn_login.setFont(new java.awt.Font("sansserif", 1, 14)); // NOI18N
         btn_login.setForeground(java.awt.Color.white);
         btn_login.setText("➜]  Login");
         btn_login.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+<<<<<<< HEAD
+=======
+        btn_login.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btn_loginMouseClicked(evt);
+            }
+        });
+>>>>>>> 8cae046 (final (kayaknya)2)
         btn_login.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btn_loginActionPerformed(evt);
@@ -275,6 +342,7 @@ public class JFrame_Login extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_txt_passwordActionPerformed
     
+<<<<<<< HEAD
     private void btn_loginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_loginActionPerformed
         String username = txt_username.getText();
         String password = new String(txt_password.getPassword());
@@ -345,6 +413,87 @@ public class JFrame_Login extends javax.swing.JFrame {
         }
  
 
+=======
+    private void notifikasiLoginGagal() {
+        JOptionPane.showMessageDialog(this, 
+                "Username atau Password salah.", 
+                "Login Gagal", 
+                JOptionPane.ERROR_MESSAGE);
+    }
+    
+    private void btn_loginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_loginActionPerformed
+                                              
+    String username = txt_username.getText();
+    String password = new String(txt_password.getPassword());
+
+    String sql = "SELECT Username, role FROM user WHERE Username=? AND password=?";
+
+    try {
+        PreparedStatement pst = conn.prepareStatement(sql);
+        pst.setString(1, username);
+        pst.setString(2, password);
+        ResultSet result = pst.executeQuery();
+
+        if (result.next()) {
+            // Ambil role dari database
+            String role = result.getString("role"); 
+
+            JOptionPane.showMessageDialog(this, "Login Berhasil sebagai " + role);
+
+            dispose();  // Tutup form login
+
+            // ===========================
+            //  ROLE-BASED NAVIGATION
+            // ===========================
+            switch (role.toLowerCase()) {
+                case "administrasi" -> {
+                    JFrame_Main_Resepsionis tampil = new JFrame_Main_Resepsionis();
+                  tampil.setVisible(true);
+                }
+                case "dokter" -> {
+                    JFrame_Main_Dokter tampil1 = new JFrame_Main_Dokter();
+                    tampil1.setVisible(true);
+                }
+                case "apoteker" -> {
+                    JFrame_Main_Apoteker tampil2 = new JFrame_Main_Apoteker();
+                    tampil2.setVisible(true);
+                }
+                case "kasir" -> {
+                    new JFrame_Main_Kasir().setVisible(true);
+                }
+                case "superadmin" -> {
+                    JFrame_Main_Manajemen tampil3 = new JFrame_Main_Manajemen();
+                    tampil3.setVisible(true);
+                }
+                default -> {
+                    JOptionPane.showMessageDialog(this, 
+                        "Role tidak dikenal: " + role, 
+                        "Error", 
+                        JOptionPane.ERROR_MESSAGE);
+                }
+            }
+
+        } else {
+            JOptionPane.showMessageDialog(this, 
+                "Username atau Password salah!",
+                "Login Gagal",
+                JOptionPane.ERROR_MESSAGE);
+        }
+
+    } catch (SQLException e) {
+        JOptionPane.showMessageDialog(this, e.getMessage());
+    }
+ 
+
+        
+        
+        
+        
+        
+        
+        
+        
+>>>>>>> 8cae046 (final (kayaknya)2)
     //kode berhasil login sederhana    
 //    String username = txt_username.getText();
 //    String pass = new String(txt_passw   ord.getPassword());
@@ -478,8 +627,15 @@ public class JFrame_Login extends javax.swing.JFrame {
 //        }
     }//GEN-LAST:event_btn_loginActionPerformed
     
+<<<<<<< HEAD
  
     private void showHidePasswordButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showHidePasswordButtonActionPerformed
+=======
+    
+  
+    private void showHidePasswordButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showHidePasswordButtonActionPerformed
+        // TODO add your handling code here:
+>>>>>>> 8cae046 (final (kayaknya)2)
         Image eyeOpenIconResized = eyeOpenIcon.getImage().getScaledInstance(showHidePasswordButton.getWidth(), showHidePasswordButton.getHeight(), Image.SCALE_SMOOTH);
         Image eyeClosedIconResized = eyeClosedIcon.getImage().getScaledInstance(showHidePasswordButton.getWidth(), showHidePasswordButton.getHeight(), Image.SCALE_SMOOTH);
         if (isPasswordVisible) {
@@ -496,6 +652,7 @@ public class JFrame_Login extends javax.swing.JFrame {
         isPasswordVisible = !isPasswordVisible;
     }//GEN-LAST:event_showHidePasswordButtonActionPerformed
 
+<<<<<<< HEAD
     private void txt_passwordKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txt_passwordKeyPressed
         // TODO add your handling code here:
         // Cek apakah tombol yang ditekan adalah ENTER (VK_ENTER)
@@ -507,6 +664,31 @@ public class JFrame_Login extends javax.swing.JFrame {
             btn_loginActionPerformed(null); 
         }
     }//GEN-LAST:event_txt_passwordKeyPressed
+=======
+    private void btn_loginMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btn_loginMouseClicked
+        // TODO add your handling code here:
+//        String username = txt_username.getText();
+//        char[] password = txt_password.getPassword();
+//        
+//        String sql = "SELECT * FROM user WHERE Username = '" + username + " AND password = " + password + "'";
+//        try{
+//            stmt = conn.createStatement();
+//            rs = stmt.executeQuery(sql);
+//            
+//            while (rs.next()){
+//                JOptionPane.showMessageDialog(rootPane, "Welcome " + rs.getString("nama") + "!");
+//                dispose();
+//                
+//                JPanel_Dashboard_Resepsionis tampil = new JPanel_Dashboard_Resepsionis();
+//                tampil.setVisible(true);
+//            }
+//            
+//        }
+//        catch (SQLException e){
+//            JOptionPane.showMessageDialog(rootPane, e);
+//        }
+    }//GEN-LAST:event_btn_loginMouseClicked
+>>>>>>> 8cae046 (final (kayaknya)2)
 
     /**
      * @param args the command line arguments
