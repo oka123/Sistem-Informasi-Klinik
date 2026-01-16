@@ -3,7 +3,9 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 package Kasir;
+import Main.JFrame_Login;
 import com.formdev.flatlaf.FlatLightLaf;
+import javax.swing.JOptionPane;
 /**
  *
  * @author karuna
@@ -73,6 +75,7 @@ public class JFrame_Main_Kasir extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         btnAntreanPembayaran = new javax.swing.JButton();
         btnRiwayatTransaksi = new javax.swing.JButton();
+        btn_logout = new javax.swing.JButton();
         PanelKonten = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -88,6 +91,18 @@ public class JFrame_Main_Kasir extends javax.swing.JFrame {
             }
         });
 
+        btn_logout.setBackground(new java.awt.Color(220, 53, 69));
+        btn_logout.setFont(new java.awt.Font("sansserif", 1, 14)); // NOI18N
+        btn_logout.setForeground(new java.awt.Color(255, 255, 255));
+        btn_logout.setText("[➜  Logout");
+        btn_logout.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btn_logout.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        btn_logout.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_logoutActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout panelSidebarLayout = new javax.swing.GroupLayout(panelSidebar);
         panelSidebar.setLayout(panelSidebarLayout);
         panelSidebarLayout.setHorizontalGroup(
@@ -97,9 +112,12 @@ public class JFrame_Main_Kasir extends javax.swing.JFrame {
                 .addGroup(panelSidebarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(panelSidebarLayout.createSequentialGroup()
-                        .addComponent(btnAntreanPembayaran)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addComponent(btnRiwayatTransaksi, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGroup(panelSidebarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(panelSidebarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                .addComponent(btnRiwayatTransaksi, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(btnAntreanPembayaran, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addComponent(btn_logout))
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         panelSidebarLayout.setVerticalGroup(
@@ -110,7 +128,9 @@ public class JFrame_Main_Kasir extends javax.swing.JFrame {
                 .addComponent(btnAntreanPembayaran)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnRiwayatTransaksi)
-                .addGap(0, 220, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 176, Short.MAX_VALUE)
+                .addComponent(btn_logout)
+                .addGap(18, 18, 18))
         );
 
         getContentPane().add(panelSidebar, java.awt.BorderLayout.LINE_START);
@@ -125,6 +145,24 @@ public class JFrame_Main_Kasir extends javax.swing.JFrame {
    panelRiwayatTransaksi.tampilkanRiwayat(); // <--- TAMBAHAN: Memanggil method refresh data
         showPanel("RIWAYAT_TRANSAKSI");
     }//GEN-LAST:event_btnRiwayatTransaksiActionPerformed
+
+    private void btn_logoutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_logoutActionPerformed
+        // TODO add your handling code here:
+        // Tampilkan konfirmasi
+        int pilihan = JOptionPane.showConfirmDialog(this,
+            "Apakah Anda yakin ingin logout?",
+            "Konfirmasi Logout",
+            JOptionPane.YES_NO_OPTION,
+            JOptionPane.WARNING_MESSAGE);
+
+        if (pilihan == JOptionPane.YES_OPTION) {
+            // Buka kembali jendela Login
+            new JFrame_Login().setVisible(true);
+
+            // Tutup dashboard ini
+            this.dispose();
+        }
+    }//GEN-LAST:event_btn_logoutActionPerformed
 
     /**
      * @param args the command line arguments
@@ -146,6 +184,7 @@ public static void main(String args[]) {
     private javax.swing.JPanel PanelKonten;
     private javax.swing.JButton btnAntreanPembayaran;
     private javax.swing.JButton btnRiwayatTransaksi;
+    private javax.swing.JButton btn_logout;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel panelSidebar;
     // End of variables declaration//GEN-END:variables

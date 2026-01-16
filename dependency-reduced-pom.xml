@@ -3,8 +3,9 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.mycompany</groupId>
   <artifactId>KlinikGUI</artifactId>
-  <version>Beta</version>
+  <version>1.0.0</version>
   <build>
+    <finalName>Sistem-Informasi-Klinik</finalName>
     <plugins>
       <plugin>
         <artifactId>maven-shade-plugin</artifactId>
@@ -16,11 +17,21 @@
               <goal>shade</goal>
             </goals>
             <configuration>
+              <filters>
+                <filter>
+                  <artifact>*:*</artifact>
+                  <excludes>
+                    <exclude>META-INF/*.SF</exclude>
+                    <exclude>META-INF/*.DSA</exclude>
+                    <exclude>META-INF/*.RSA</exclude>
+                  </excludes>
+                </filter>
+              </filters>
               <shadedArtifactAttached>true</shadedArtifactAttached>
-              <outputFile>${project.build.directory}/${project.artifactId}-${project.version}-standalone.jar</outputFile>
+              <outputFile>${project.build.directory}/Sistem-Informasi-Klinik.jar</outputFile>
               <transformers>
                 <transformer>
-                  <mainClass>${exec.mainClass}</mainClass>
+                  <mainClass>Main.Main</mainClass>
                 </transformer>
               </transformers>
             </configuration>
@@ -32,6 +43,31 @@
         <version>3.14.1</version>
         <configuration>
           <release>${maven.compiler.release}</release>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>com.akathist.maven.plugins.launch4j</groupId>
+        <artifactId>launch4j-maven-plugin</artifactId>
+        <version>2.7.0</version>
+        <executions>
+          <execution>
+            <id>launch4j</id>
+            <phase>package</phase>
+            <goals>
+              <goal>launch4j</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <outfile>${project.build.directory}/Sistem-Informasi-Klinik.exe</outfile>
+          <jar>${project.build.directory}/Sistem-Informasi-Klinik.jar</jar>
+          <dontWrapJar>false</dontWrapJar>
+          <headerType>gui</headerType>
+          <cmdLine />
+          <errTitle>SI Klinik Error</errTitle>
+          <chdir>.</chdir>
+          <stayAlive>false</stayAlive>
+          <icon>${project.basedir}/clinic.ico</icon>
         </configuration>
       </plugin>
     </plugins>

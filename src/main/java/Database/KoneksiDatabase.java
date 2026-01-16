@@ -2,6 +2,7 @@
 package Database;
 
 import io.github.cdimascio.dotenv.Dotenv;
+import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -12,8 +13,57 @@ public class KoneksiDatabase {
     
     // Atribut
     private static Connection koneksi;
-    // Load file .env
-    private static final Dotenv dotenv = Dotenv.load();
+    
+    // Load file .env secara dinamis
+    private static final Dotenv dotenv = loadDotenv();
+
+    private static Dotenv loadDotenv() {
+        Dotenv dotenv = null;
+
+        // Cek folder tempat EXE/JAR dijalankan (user.dir)
+        try {
+            File fileInWorkingDir = new File(System.getProperty("user.dir"), ".env");
+            if (fileInWorkingDir.exists()) {
+                dotenv = Dotenv.configure()
+                               .directory(System.getProperty("user.dir"))
+                               .ignoreIfMalformed()
+                               .ignoreIfMissing()
+                               .load();
+                return dotenv;
+            }
+        } catch (Exception e) {
+            // lanjut ke lokasi berikutnya
+        }
+
+        // Cek folder parent (satu tingkat di atas)
+        try {
+            File parentDir = new File(System.getProperty("user.dir")).getParentFile();
+            if (parentDir != null) {
+                File fileInParent = new File(parentDir, ".env");
+                if (fileInParent.exists()) {
+                    dotenv = Dotenv.configure()
+                                   .directory(parentDir.getAbsolutePath())
+                                   .ignoreIfMalformed()
+                                   .ignoreIfMissing()
+                                   .load();
+                    return dotenv;
+                }
+            }
+        } catch (Exception e) {
+            // lanjut ke classpath
+        }
+
+        // Fallback ke classpath/resources
+        try {
+            dotenv = Dotenv.configure()
+                           .ignoreIfMissing()
+                           .load();
+        } catch (Exception e) {
+            System.err.println("WARNING: Could not find any .env file, using default values");
+        }
+
+        return dotenv;
+    }
     
     public static Connection getConnection() {
         try {

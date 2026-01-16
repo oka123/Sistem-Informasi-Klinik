@@ -83,6 +83,7 @@ public class JFrame_Main_Resepsionis extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jScrollPane1 = new javax.swing.JScrollPane();
         panelSidebar = new javax.swing.JPanel();
         labelJudulKlinik = new javax.swing.JLabel();
         labelIconKlinik = new javax.swing.JLabel();
@@ -93,10 +94,12 @@ public class JFrame_Main_Resepsionis extends javax.swing.JFrame {
         btnManajemenJadwal = new javax.swing.JButton();
         btn_logout = new javax.swing.JButton();
         btnRegistrasiKunjungan = new javax.swing.JButton();
+        jScrollPane2 = new javax.swing.JScrollPane();
         panelContent = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Admin Dashboard - Klinik Sehat Selalu");
+        setPreferredSize(new java.awt.Dimension(274, 496));
 
         panelSidebar.setBackground(new java.awt.Color(34, 40, 49));
         panelSidebar.setPreferredSize(new java.awt.Dimension(250, 389));
@@ -239,23 +242,24 @@ public class JFrame_Main_Resepsionis extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(panelSidebarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(panelSidebarLayout.createSequentialGroup()
-                        .addGap(14, 14, 14)
-                        .addGroup(panelSidebarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(btn_logout)
-                            .addGroup(panelSidebarLayout.createSequentialGroup()
-                                .addComponent(labelIconKlinik, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(labelJudulKlinik, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addGap(42, 42, 42))
-                    .addGroup(panelSidebarLayout.createSequentialGroup()
                         .addGroup(panelSidebarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jSeparator1, javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(btnDashboard, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(btnRegistrasiKunjungan, javax.swing.GroupLayout.DEFAULT_SIZE, 238, Short.MAX_VALUE)
+                            .addComponent(btnRegistrasiKunjungan, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(btnManajemenPasien, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(btnManajemenJadwal, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(btnInformasiDokter, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addContainerGap())))
+                        .addContainerGap())
+                    .addGroup(panelSidebarLayout.createSequentialGroup()
+                        .addGap(14, 14, 14)
+                        .addComponent(labelIconKlinik, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(labelJudulKlinik, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+            .addGroup(panelSidebarLayout.createSequentialGroup()
+                .addGap(18, 18, 18)
+                .addComponent(btn_logout)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
         panelSidebarLayout.setVerticalGroup(
             panelSidebarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -281,22 +285,27 @@ public class JFrame_Main_Resepsionis extends javax.swing.JFrame {
                 .addGap(24, 24, 24))
         );
 
+        jScrollPane1.setViewportView(panelSidebar);
+
         panelContent.setBackground(new java.awt.Color(255, 255, 255));
         panelContent.setLayout(new java.awt.CardLayout());
+        jScrollPane2.setViewportView(panelContent);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(panelSidebar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(panelContent, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(0, 0, 0)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, 0)
+                .addComponent(jScrollPane2)
+                .addGap(0, 0, 0))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(panelContent, javax.swing.GroupLayout.DEFAULT_SIZE, 537, Short.MAX_VALUE)
-            .addComponent(panelSidebar, javax.swing.GroupLayout.DEFAULT_SIZE, 537, Short.MAX_VALUE)
+            .addComponent(jScrollPane1)
+            .addComponent(jScrollPane2)
         );
 
         pack();
@@ -328,24 +337,6 @@ public class JFrame_Main_Resepsionis extends javax.swing.JFrame {
         CardLayout cl = (CardLayout) panelContent.getLayout();
         cl.show(panelContent, "cardPasien");
     }//GEN-LAST:event_btnManajemenPasienActionPerformed
-
-    private void btn_logoutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_logoutActionPerformed
-        // TODO add your handling code here:
-        // Tampilkan konfirmasi
-        int pilihan = JOptionPane.showConfirmDialog(this, 
-                "Apakah Anda yakin ingin logout?", 
-                "Konfirmasi Logout", 
-                JOptionPane.YES_NO_OPTION, 
-                JOptionPane.WARNING_MESSAGE);
-
-        if (pilihan == JOptionPane.YES_OPTION) {
-            // Buka kembali jendela Login
-            new JFrame_Login().setVisible(true);
-
-            // Tutup dashboard ini
-            this.dispose(); 
-        }
-    }//GEN-LAST:event_btn_logoutActionPerformed
 
     private void btnDashboardMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnDashboardMouseEntered
         // TODO add your handling code here:
@@ -405,6 +396,24 @@ public class JFrame_Main_Resepsionis extends javax.swing.JFrame {
 //        cl.show(panelContent, "cardRegistrasi");
         
     }//GEN-LAST:event_btnRegistrasiKunjunganActionPerformed
+
+    private void btn_logoutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_logoutActionPerformed
+        // TODO add your handling code here:
+        // Tampilkan konfirmasi
+        int pilihan = JOptionPane.showConfirmDialog(this,
+            "Apakah Anda yakin ingin logout?",
+            "Konfirmasi Logout",
+            JOptionPane.YES_NO_OPTION,
+            JOptionPane.WARNING_MESSAGE);
+
+        if (pilihan == JOptionPane.YES_OPTION) {
+            // Buka kembali jendela Login
+            new JFrame_Login().setVisible(true);
+
+            // Tutup dashboard ini
+            this.dispose();
+        }
+    }//GEN-LAST:event_btn_logoutActionPerformed
     
     /**
      * @param args the command line arguments
@@ -438,6 +447,8 @@ public class JFrame_Main_Resepsionis extends javax.swing.JFrame {
     private javax.swing.JButton btnManajemenPasien;
     private javax.swing.JButton btnRegistrasiKunjungan;
     private javax.swing.JButton btn_logout;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JLabel labelIconKlinik;
     private javax.swing.JLabel labelJudulKlinik;
