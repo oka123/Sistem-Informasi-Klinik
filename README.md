@@ -16,7 +16,7 @@
 8. [Contoh Akun / Role Pengguna](#-contoh-akun--role-pengguna)
 9. [Screenshot / Diagram](#-screenshot)
 10. [Lisensi](#-lisensi)
-11. [Developer](#-developer)
+11. [Developer](#%E2%80%8D-developer)
 
 ---
 
