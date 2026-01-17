@@ -6,18 +6,17 @@
 
 ## 📌 Daftar Isi
 
-1. [Latar Belakang & Tujuan](#latar-belakang-tujuan)
-2. [Fitur Utama](#fitur-utama)
-3. [Teknologi yang Digunakan](#teknologi-yang-digunakan)
-4. [Struktur Direktori Proyek](#struktur-direktori-proyek)
-5. [Prasyarat Instalasi](#prasyarat-instalasi)
-6. [Langkah Instalasi & Konfigurasi](#langkah-instalasi-konfigurasi)
-7. [Cara Menjalankan Aplikasi](#cara-menjalankan-aplikasi)
-8. [Contoh Akun / Role Pengguna](#contoh-akun-role-pengguna)
-9. [Screenshot / Diagram (Placeholder)](#screenshot-diagram)
-10. [Panduan Kontribusi](#panduan-kontribusi)
-11. [Lisensi](#lisensi)
-12. [Kontak & Identitas Pengembang](#kontak-identitas-pengembang)
+1. [Latar Belakang & Tujuan](#-latar-belakang--tujuan)
+2. [Fitur Utama](#-fitur-utama)
+3. [Teknologi yang Digunakan](#️-teknologi-yang-digunakan)
+4. [Struktur Direktori Proyek](#-struktur-direktori-proyek)
+5. [Prasyarat Instalasi](#-prasyarat-instalasi)
+6. [Langkah Instalasi & Konfigurasi](#️-langkah-instalasi--konfigurasi)
+7. [Cara Menjalankan Aplikasi](#️-cara-menjalankan-aplikasi)
+8. [Contoh Akun / Role Pengguna](#-contoh-akun--role-pengguna)
+9. [Screenshot / Diagram](#-screenshot)
+10. [Lisensi](#-lisensi)
+11. [Developer](#-developer)
 
 ---
 
